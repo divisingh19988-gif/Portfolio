@@ -1,0 +1,293 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Brush from "../components/Brush.astro";
+import { brandStats, certificates, contactTiles, nav, showcase, site, skills, stats, timeline } from "../data/site";
+
+const works = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
+const gallery = works.filter((entry) => entry.data.featured);
+---
+
+<Base title={`${site.name} — ${site.role}`} page="home">
+  <div slot="fixed">
+    <aside class="sidebar" aria-label="Identity">
+      <div class="side-name-slot">
+        <p class="side-fallback">Digvijay <span>Rathore</span></p>
+      </div>
+      <div class="side-portrait-slot"></div>
+      <div class="side-chrome">
+        <p class="side-kicker">GTM / Motion / <span data-rotate>Signal</span></p>
+        <Brush />
+        <p class="role">{site.role} · {site.place}</p>
+        <p class="role-sub">{site.line}</p>
+        <div class="side-socials">
+          <a href={site.linkedin} target="_blank" rel="noreferrer" title={site.linkedinNote}>LinkedIn ↗</a>
+          <button class="textlink" type="button" data-copy={site.email}>Email</button>
+        </div>
+        <nav class="side-nav" aria-label="Sections">
+          {
+            nav.map((item) => (
+              <a href={`#${item.id}`} data-nav={item.id}>
+                {item.n} {item.label}
+              </a>
+            ))
+          }
+        </nav>
+        <div class="side-minis">
+          {
+            gallery.slice(0, 8).map((entry) => (
+              <a href={`/work/${entry.id}`}>
+                <img src={entry.data.thumbnail} alt="" width="320" height="180" />
+              </a>
+            ))
+          }
+        </div>
+        <button class="side-mail" type="button" data-copy={site.email}>
+          <span>{site.email}</span>
+          <span data-copy-label>Copy</span>
+        </button>
+      </div>
+    </aside>
+    <div class="mobile-menu" id="menu">
+      {
+        nav.map((item) => (
+          <a href={`#${item.id}`}>
+            {item.n} {item.label}
+          </a>
+        ))
+      }
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </div>
+  </div>
+
+  <section class="hero" id="top" data-screen="HERO">
+    <header class="topbar">
+      <p class="brand-lock">
+        <strong>GTM / Motion / <span data-rotate>Signal</span></strong>
+        <small>Index — Berlin / 2026</small>
+      </p>
+      <nav class="top-nav" aria-label="Sections">
+        {
+          nav.map((item) => (
+            <a href={`#${item.id}`} data-nav={item.id}>
+              {item.n} {item.label}
+            </a>
+          ))
+        }
+        <span class="loc-badge" title="Based in Berlin">DE</span>
+      </nav>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu">
+        <span></span>
+        <span class="skip">Menu</span>
+      </button>
+    </header>
+    <div class="hero-stage">
+      <p class="hero-kicker">↙ I make growth misbehave</p>
+      <div class="hero-name-row">
+        <div class="name-home">
+          <h1 class="fly-name">
+            <span class="first">Digvijay</span> <span class="last">Rathore</span>
+          </h1>
+          <Brush class="hero-line" />
+        </div>
+        <div class="portrait-home">
+          <div class="fly-portrait">
+            <img
+              src="/portrait/digvijay.png"
+              alt="Monogram stand-in for Digvijay Rathore. Drop a cut-out portrait at public/portrait/digvijay.png."
+              width="900"
+              height="1100"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="hero-foot">
+        <a class="keep" href="#introduce">↙ Go deeper</a>
+        <div class="hero-socials">
+          <a href={site.linkedin} target="_blank" rel="noreferrer" title={site.linkedinNote}>LinkedIn ↗</a>
+          <button class="textlink" type="button" data-copy={site.email}>Email ↗</button>
+          <a href={site.cv} download>CV ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="introduce" data-screen="INTRODUCE">
+    <h2 class="display">
+      <span class="line" data-split>Find the signal,</span>
+      <span class="line hot" data-split>then make it scale...</span>
+    </h2>
+    <Brush class="hot" />
+    <p class="lede">GTM systems for prospecting, outbound, and AI visibility. Based in Berlin.</p>
+    <div class="stats">
+      {
+        stats.map((stat) => (
+          <div class="stat">
+            <b>{stat.value}</b>
+            <span>{stat.label}</span>
+            <small>{stat.note}</small>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="sheet" id="skills" data-screen="SKILLS">
+    <p class="eyebrow">02 — Skills</p>
+    <div class="skill-grid">
+      {
+        skills.map((skill) => (
+          <article class="skill">
+            <span class="index-no">{skill.n}</span>
+            <h3>{skill.title}</h3>
+            <p>{skill.copy}</p>
+            <div class="chips">
+              {skill.chips.map((chip) => (
+                <span class:list={["chip", { todo: chip.startsWith("TODO") }]}>{chip}</span>
+              ))}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <div id="works" data-screen="WORKS">
+    <section class="sheet">
+      <div class="works-head">
+        <h2 class="display">
+          <span class="line" data-split>Shipped some.</span>
+          <span class="line hot" data-split>Rewired some...</span>
+        </h2>
+        <Brush />
+      </div>
+      <div class="curve" aria-label="Project gallery">
+        {
+          gallery.map((entry) => (
+            <a class="gcard" href={`/work/${entry.id}`} style={`--shot:url(${entry.data.thumbnail})`}>
+              <span class="gcard-visual">
+                <i></i>
+                <i></i>
+                <i></i>
+              </span>
+              <span class="gcard-meta">
+                <em>{String(entry.data.order).padStart(2, "0")}</em>
+                <strong>{entry.data.title}</strong>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+      <div class="works-foot">
+        <p>Scoped. Built. Shipped.</p>
+        <p class="hot">7 demos / 6 weeks</p>
+      </div>
+    </section>
+
+    <section class="sheet brand">
+      <p class="exp">GTM / Berlin → <span class="now hot">Now</span></p>
+      <h2 class="giant">Digvijay</h2>
+      <Brush class="hot" />
+      <p class="faint">The work got specific.</p>
+      <a class="enter" href="/work/getmow-agentic-loop">Enter the work ↗</a>
+      <div class="mini-stats">
+        {
+          brandStats.map((stat) => (
+            <div>
+              <b>{stat.value}</b>
+              <span>{stat.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="sheet showcase">
+      <div class="showcase-head">
+        <p class="counter"><span data-counter>01</span><span> / 05</span></p>
+        <p class="scroll-hint">Scroll →</p>
+      </div>
+      <div class="showcase-viewport">
+        <div class="showcase-track">
+          {
+            showcase.map((panel) => (
+              <article class="panel">
+                <div>
+                  <span class="index-no">{panel.n} — {panel.kicker}</span>
+                  <h3>{panel.title}</h3>
+                  <p>{panel.copy}</p>
+                  <a href={panel.href}>Open the case →</a>
+                </div>
+                <img src={panel.image} alt="" width="1400" height="900" />
+              </article>
+            ))
+          }
+        </div>
+      </div>
+      <ol class="timeline">
+        {
+          timeline.map((item) => (
+            <li>
+              <span>{item.when}</span>
+              <strong>{item.title}</strong>
+              <em>{item.role}</em>
+              <small>{item.detail}</small>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </div>
+
+  <section class="sheet" id="awards" data-screen="AWARDS">
+    <div class="award-layout">
+      <div>
+        <p class="eyebrow">Selected certificates</p>
+        <ul class="cert-list">
+          {certificates.map((item) => <li>{item.org} — {item.name}</li>)}
+        </ul>
+        <p class="marker-label">Certified ↗</p>
+      </div>
+      <div class="orbit" aria-label="Drag to spin the certificates">
+        {
+          certificates.map((item) => (
+            <article class:list={["cert", item.tone]}>
+              <small>Certificate</small>
+              <strong>{item.org}</strong>
+              <em>{item.name}</em>
+              <small>Digvijay Rathore</small>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="contact" data-screen="CONTACT">
+    <div class="contact-stage">
+      {
+        contactTiles.map((tile) => (
+          <article class="tile" style={`left:${tile.left};top:${tile.top};transform:rotate(${tile.rot}deg)`}>
+            <a href={`/work/${tile.slug}`}>
+              <img src={`/work/${tile.slug}/thumb.jpg`} alt="" width="1400" height="900" />
+              <span>{tile.slug.replaceAll("-", " ")}</span>
+            </a>
+          </article>
+        ))
+      }
+      <article class="tile contact-card" style="left:18%;top:34%;">
+        <p class="eyebrow">05 — Contact</p>
+        <h2>Send a signal.</h2>
+        <button class="mail-button" type="button" data-copy={site.email}>
+          <span>{site.email}</span>
+          <span>Copy</span>
+        </button>
+        <div class="contact-actions">
+          <a href={site.linkedin} target="_blank" rel="noreferrer" title={site.linkedinNote}>LinkedIn ↗</a>
+          <a class="download" href={site.cv} download>Download CV</a>
+        </div>
+        <p class="fine">Berlin · {site.role}. The main ask is the email.</p>
+      </article>
+    </div>
+  </section>
+</Base>

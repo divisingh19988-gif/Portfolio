@@ -1,0 +1,89 @@
+---
+import "../styles/global.css";
+import { site, words } from "../data/site";
+
+interface Props {
+  title: string;
+  description?: string;
+  page?: "home" | "case";
+}
+const { title, description = site.description, page = "case" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#17171a" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/video/berlin-poster.jpg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/Anton.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Satoshi-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/PermanentMarker.woff2" as="font" type="font/woff2" crossorigin />
+    <title>{title}</title>
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) root.classList.add("reduce");
+        if (window.matchMedia("(max-width: 860px)").matches) root.classList.add("is-mobile");
+      })();
+    </script>
+  </head>
+  <body data-page={page}>
+    <a class="skip" href="#smooth-content">Skip to content</a>
+    <span class="mark tl"></span>
+    <span class="mark tr"></span>
+    <span class="mark bl"></span>
+    <span class="mark br"></span>
+    <canvas class="ruler ruler-x" data-ruler="x" aria-hidden="true"></canvas>
+    <canvas class="ruler ruler-y" data-ruler="y" aria-hidden="true"></canvas>
+    <p class="readout" aria-hidden="true">
+      X:<span data-x>0000</span> Y:<span data-y>0000</span> P:<span data-p>00</span>% S:<span data-screen-label>HERO</span>
+    </p>
+    <p id="copy-live" class="skip" aria-live="polite"></p>
+    <p data-words hidden>{words.join("|")}</p>
+    <video
+      id="ink-video"
+      class="ink-video"
+      muted
+      playsinline
+      loop
+      preload="metadata"
+      poster="/video/berlin-poster.jpg"
+      aria-hidden="true"
+    >
+      <source src="/video/berlin.webm" type="video/webm" />
+      <source src="/video/berlin.mp4" type="video/mp4" />
+    </video>
+    <canvas id="ink" aria-hidden="true"></canvas>
+    {
+      page === "home" && (
+        <div class="preloader" data-preloader>
+          <p class="preloader-kicker">Index</p>
+          <p class="preloader-num" data-count>
+            000
+          </p>
+          <p class="preloader-label">Berlin / GTM</p>
+        </div>
+      )
+    }
+    <slot name="fixed" />
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <slot />
+      </div>
+    </div>
+    <script>
+      import "../scripts/boot";
+    </script>
+    <noscript>
+      <style>
+        .preloader { display: none !important; }
+      </style>
+    </noscript>
+  </body>
+</html>

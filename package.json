@@ -1,0 +1,18 @@
+{
+  "name": "digvijay-rathore",
+  "type": "module",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18.20.0"
+  },
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4731",
+    "build": "astro build",
+    "preview": "astro preview --host 127.0.0.1 --port 4731",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.18.2",
+    "gsap": "^3.13.0"
+  }
+}
