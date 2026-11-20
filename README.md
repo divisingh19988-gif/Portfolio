@@ -20,7 +20,7 @@ npm run preview
 
 ## Replace the portrait
 
-The hero image is a monogram until the real photo is cut out. The source photo has a lime-green backdrop.
+The hero portrait is a cut-out of the lime-green studio photo. To replace it:
 
 ```bash
 python scripts/cutout-portrait.py path/to/portrait.jpg public/portrait/digvijay.png
@@ -34,7 +34,7 @@ The Download CV button points at:
 
 `public/cv/Digvijay_Rathore_CV_GTM_Engineer.pdf`
 
-The file in the repo is a stand-in. The original CV was not in the workspace when the site was built. Drop the real PDF in that exact path and keep the filename.
+That path is the CV PDF. Replace the file in place if you export a newer version, and keep the filename.
 
 ## Add a project
 

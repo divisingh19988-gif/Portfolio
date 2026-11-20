@@ -264,7 +264,7 @@ html.reduce #ink, html.no-gl #ink { display: none; }
 }
 .hero-name-row {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 18px;
 }
 .name-home { min-width: 0; flex: 1; }
@@ -291,7 +291,7 @@ html.reduce #ink, html.no-gl #ink { display: none; }
   white-space: normal;
 }
 .fly-name.is-docked .last { display: block; margin-left: 0; }
-.portrait-home { flex: none; width: clamp(96px, 11vw, 168px); margin-bottom: 0.6vw; }
+.portrait-home { flex: none; width: clamp(108px, 12vw, 188px); }
 .fly-portrait img {
   width: 100%;
   height: auto;
