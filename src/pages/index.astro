@@ -67,7 +67,7 @@ const gallery = works.filter((entry) => entry.data.featured);
   <section class="hero" id="top" data-screen="HERO">
     <header class="topbar">
       <p class="brand-lock">
-        <strong>GTM / Motion / <span data-rotate>Signal</span></strong>
+        <strong>GTM / Growth / <span data-cycle="Agents|Chaos|Pipeline|Vibes">Agents</span></strong>
         <small>Index — Berlin / 2026</small>
       </p>
       <nav class="top-nav" aria-label="Sections">
@@ -86,26 +86,28 @@ const gallery = works.filter((entry) => entry.data.featured);
       </button>
     </header>
     <div class="hero-stage">
-      <p class="hero-kicker">↙ I make growth misbehave</p>
+      <p class="hero-kicker">↙ I turn MRR into a hockey stick</p>
       <div class="hero-name-row">
         <div class="name-home">
-          <h1 class="fly-name">
-            <span class="name-mask"><span class="first">Digvijay</span></span>
-            <span class="name-mask"><span class="last">Rathore</span></span>
-          </h1>
+          <div class="name-lock">
+            <h1 class="fly-name">
+              <span class="name-mask"><span class="first">Digvijay</span></span>
+              <span class="name-mask"><span class="last">Rathore</span></span>
+            </h1>
+            <div class="portrait-home">
+              <div class="fly-portrait">
+                <img
+                  src="/portrait/digvijay.png"
+                  alt="Digvijay Rathore"
+                  width="900"
+                  height="1100"
+                />
+              </div>
+            </div>
+          </div>
           <p class="hero-role">AI-native GTM Engineer</p>
           <p class="tagline" data-tagline data-phrases={taglines.join("|")}>{taglines[0]}</p>
           <Brush class="hero-line" />
-        </div>
-        <div class="portrait-home">
-          <div class="fly-portrait">
-            <img
-              src="/portrait/digvijay.png"
-              alt="Digvijay Rathore"
-              width="900"
-              height="1100"
-            />
-          </div>
         </div>
       </div>
       <div class="hero-foot">

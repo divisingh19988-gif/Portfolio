@@ -1,566 +1,122 @@
 /**
- * Cursor-ink reveal. A compact GPU stable-fluids solver (Jos Stam, SIGGRAPH 1999)
- * written for this site. The dye field is a mask: where the cursor has stirred
- * the fluid, a muted full-screen video shows through and then dissipates.
- *
- * The method is the same family as Pavel Dobryakov's MIT-licensed WebGL Fluid
- * Simulation (https://github.com/PavelDoGreat/WebGL-Fluid-Simulation). This file
- * is an original implementation, not a copy of that repository.
+ * Hero reveal: a feathered circle punched through the dark cover.
+ * The Berlin loop plays underneath at full colour. The circle idles small,
+ * grows with pointer speed, and eases back. A short lerp keeps a light trail.
  */
 
-const VERT = `#version 300 es
-layout(location = 0) in vec2 a_pos;
-out vec2 v_uv;
-void main() {
-  v_uv = a_pos * 0.5 + 0.5;
-  gl_Position = vec4(a_pos, 0.0, 1.0);
-}`;
-
-const SPLAT_VEL = `#version 300 es
-precision highp float;
-uniform sampler2D u_target;
-uniform vec2 u_point;
-uniform vec2 u_delta;
-uniform float u_radius;
-in vec2 v_uv;
-out vec4 outColor;
-void main() {
-  vec2 vel = texture(u_target, v_uv).xy * 2.0 - 1.0;
-  vec2 p = v_uv - u_point;
-  float drop = exp(-dot(p, p) / u_radius);
-  vel += u_delta * drop;
-  vel = clamp(vel, vec2(-1.0), vec2(1.0));
-  outColor = vec4(vel * 0.5 + 0.5, 0.0, 1.0);
-}`;
-
-const SPLAT_DYE = `#version 300 es
-precision highp float;
-uniform sampler2D u_target;
-uniform vec2 u_point;
-uniform float u_radius;
-uniform float u_amount;
-in vec2 v_uv;
-out vec4 outColor;
-void main() {
-  vec4 base = texture(u_target, v_uv);
-  vec2 p = v_uv - u_point;
-  float drop = exp(-dot(p, p) / u_radius);
-  base.rgb = vec3(1.0);
-  base.a = min(1.0, base.a + drop * u_amount);
-  outColor = base;
-}`;
-
-const ADVECT = `#version 300 es
-precision highp float;
-uniform sampler2D u_vel;
-uniform sampler2D u_src;
-uniform float u_dt;
-uniform float u_dissipation;
-uniform float u_velocity;
-in vec2 v_uv;
-out vec4 outColor;
-void main() {
-  vec2 vel = texture(u_vel, v_uv).xy * 2.0 - 1.0;
-  vec2 coord = clamp(v_uv - u_dt * vel, vec2(0.0), vec2(1.0));
-  if (u_velocity > 0.5) {
-    vec2 next = texture(u_src, coord).xy * 2.0 - 1.0;
-    next *= u_dissipation;
-    outColor = vec4(next * 0.5 + 0.5, 0.0, 1.0);
-  } else {
-    vec4 dye = texture(u_src, coord);
-    dye.a *= u_dissipation;
-    outColor = dye;
-  }
-}`;
-
-const DIVERGENCE = `#version 300 es
-precision highp float;
-uniform sampler2D u_vel;
-uniform vec2 u_texel;
-in vec2 v_uv;
-out vec4 outColor;
-void main() {
-  vec2 L = texture(u_vel, v_uv - vec2(u_texel.x, 0.0)).xy * 2.0 - 1.0;
-  vec2 R = texture(u_vel, v_uv + vec2(u_texel.x, 0.0)).xy * 2.0 - 1.0;
-  vec2 B = texture(u_vel, v_uv - vec2(0.0, u_texel.y)).xy * 2.0 - 1.0;
-  vec2 T = texture(u_vel, v_uv + vec2(0.0, u_texel.y)).xy * 2.0 - 1.0;
-  float div = 0.5 * (R.x - L.x + T.y - B.y);
-  outColor = vec4(div * 0.5 + 0.5, 0.0, 0.0, 1.0);
-}`;
-
-const JACOBI = `#version 300 es
-precision highp float;
-uniform sampler2D u_p;
-uniform sampler2D u_div;
-uniform vec2 u_texel;
-in vec2 v_uv;
-out vec4 outColor;
-void main() {
-  float L = texture(u_p, v_uv - vec2(u_texel.x, 0.0)).x * 2.0 - 1.0;
-  float R = texture(u_p, v_uv + vec2(u_texel.x, 0.0)).x * 2.0 - 1.0;
-  float B = texture(u_p, v_uv - vec2(0.0, u_texel.y)).x * 2.0 - 1.0;
-  float T = texture(u_p, v_uv + vec2(0.0, u_texel.y)).x * 2.0 - 1.0;
-  float div = texture(u_div, v_uv).x * 2.0 - 1.0;
-  float p = (L + R + B + T - div) * 0.25;
-  outColor = vec4(p * 0.5 + 0.5, 0.0, 0.0, 1.0);
-}`;
-
-const GRADIENT = `#version 300 es
-precision highp float;
-uniform sampler2D u_p;
-uniform sampler2D u_vel;
-uniform vec2 u_texel;
-in vec2 v_uv;
-out vec4 outColor;
-void main() {
-  float L = texture(u_p, v_uv - vec2(u_texel.x, 0.0)).x * 2.0 - 1.0;
-  float R = texture(u_p, v_uv + vec2(u_texel.x, 0.0)).x * 2.0 - 1.0;
-  float B = texture(u_p, v_uv - vec2(0.0, u_texel.y)).x * 2.0 - 1.0;
-  float T = texture(u_p, v_uv + vec2(0.0, u_texel.y)).x * 2.0 - 1.0;
-  vec2 vel = texture(u_vel, v_uv).xy * 2.0 - 1.0;
-  vel -= vec2(R - L, T - B) * 0.5;
-  vel = clamp(vel, vec2(-1.0), vec2(1.0));
-  outColor = vec4(vel * 0.5 + 0.5, 0.0, 1.0);
-}`;
-
-const DISPLAY = `#version 300 es
-precision highp float;
-uniform sampler2D u_dye;
-uniform sampler2D u_video;
-uniform vec2 u_cover;
-in vec2 v_uv;
-out vec4 outColor;
-void main() {
-  float ink = texture(u_dye, v_uv).a;
-  vec2 uv = (v_uv - 0.5) * u_cover + 0.5;
-  vec3 vid = texture(u_video, clamp(uv, vec2(0.0), vec2(1.0))).rgb;
-  float mask = smoothstep(0.02, 0.62, ink);
-  outColor = vec4(vid * mask, mask);
-}`;
-
-type GL = WebGL2RenderingContext;
-
-type Pair = {
-  read: WebGLTexture;
-  write: WebGLTexture;
-  fboRead: WebGLFramebuffer;
-  fboWrite: WebGLFramebuffer;
-};
-
-function compile(gl: GL, source: string, type: number) {
-  const shader = gl.createShader(type);
-  if (!shader) throw new Error("shader");
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    throw new Error(gl.getShaderInfoLog(shader) || "shader compile");
-  }
-  return shader;
-}
-
-function program(gl: GL, fragment: string) {
-  const vs = compile(gl, VERT, gl.VERTEX_SHADER);
-  const fs = compile(gl, fragment, gl.FRAGMENT_SHADER);
-  const prog = gl.createProgram();
-  if (!prog) throw new Error("program");
-  gl.attachShader(prog, vs);
-  gl.attachShader(prog, fs);
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-    throw new Error(gl.getProgramInfoLog(prog) || "link");
-  }
-  return prog;
-}
-
-function texture(gl: GL, width: number, height: number) {
-  const tex = gl.createTexture();
-  if (!tex) throw new Error("texture");
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-  return tex;
-}
-
-function framebuffer(gl: GL, tex: WebGLTexture) {
-  const fbo = gl.createFramebuffer();
-  if (!fbo) throw new Error("fbo");
-  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-  return fbo;
-}
-
-function pair(gl: GL, width: number, height: number): Pair {
-  const read = texture(gl, width, height);
-  const write = texture(gl, width, height);
-  return { read, write, fboRead: framebuffer(gl, read), fboWrite: framebuffer(gl, write) };
-}
-
-function swap(target: Pair) {
-  const tex = target.read;
-  target.read = target.write;
-  target.write = tex;
-  const fbo = target.fboRead;
-  target.fboRead = target.fboWrite;
-  target.fboWrite = fbo;
-}
-
-type Spot = { x: number; y: number; born: number };
-
-function startCoverReveal(video: HTMLVideoElement) {
-  document.documentElement.classList.add("no-gl");
-  const cover = document.createElement("canvas");
-  cover.className = "ink-cover";
-  cover.setAttribute("aria-hidden", "true");
-  document.body.appendChild(cover);
-  const ctx = cover.getContext("2d");
-  if (!ctx) return;
-  const spots: Spot[] = [];
-  const coarse = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-  let drift = 0;
-  let viewW = 0;
-  let viewH = 0;
-
-  const resize = () => {
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    viewW = Math.max(1, Math.floor(cover.clientWidth * dpr));
-    viewH = Math.max(1, Math.floor(cover.clientHeight * dpr));
-    cover.width = viewW;
-    cover.height = viewH;
-  };
-  resize();
-  window.addEventListener("resize", resize);
-
-  const add = (x: number, y: number) => {
-    const last = spots[spots.length - 1];
-    if (last && (last.x - x) ** 2 + (last.y - y) ** 2 < 80) return;
-    spots.push({ x, y, born: performance.now() });
-    if (spots.length > 80) spots.shift();
-  };
-
-  window.addEventListener(
-    "pointermove",
-    (event) => {
-      const rect = cover.getBoundingClientRect();
-      const scale = viewW / Math.max(1, rect.width);
-      add((event.clientX - rect.left) * scale, (event.clientY - rect.top) * scale);
-    },
-    { passive: true },
-  );
-
-  const paint = () => {
-    requestAnimationFrame(paint);
-    if (document.hidden) return;
-    const now = performance.now();
-    if (coarse) {
-      drift += 0.008;
-      const rect = cover.getBoundingClientRect();
-      const scale = viewW / Math.max(1, rect.width);
-      add(
-        (0.5 + Math.cos(drift) * 0.28) * rect.width * scale,
-        (0.46 + Math.sin(drift * 0.73) * 0.18) * rect.height * scale,
-      );
-    }
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#17171a";
-    ctx.fillRect(0, 0, viewW, viewH);
-    ctx.globalCompositeOperation = "destination-out";
-    for (let i = spots.length - 1; i >= 0; i -= 1) {
-      const spot = spots[i];
-      const age = (now - spot.born) / 1500;
-      if (age >= 1) {
-        spots.splice(i, 1);
-        continue;
-      }
-      const alpha = 1 - age * age;
-      const radius = viewW * 0.075;
-      const grad = ctx.createRadialGradient(spot.x, spot.y, radius * 0.15, spot.x, spot.y, radius);
-      grad.addColorStop(0, `rgba(0,0,0,${alpha})`);
-      grad.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(spot.x, spot.y, radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalCompositeOperation = "source-over";
-    if (video.paused) video.play().catch(() => undefined);
-  };
-  paint();
-}
+type Circle = { x: number; y: number; r: number; alpha: number };
 
 export function startFluid() {
   const canvas = document.querySelector<HTMLCanvasElement>("#ink");
   const video = document.querySelector<HTMLVideoElement>("#ink-video");
-  if (!canvas || !video) return;
+  if (!canvas || !video || document.body.dataset.page !== "home") return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
 
-  const gl = canvas.getContext("webgl2", { alpha: true, antialias: false, premultipliedAlpha: true });
-  if (!gl) {
-    startCoverReveal(video);
-    return;
-  }
-  gl.disable(gl.BLEND);
-
-  const sim = window.matchMedia("(max-width: 860px)").matches ? 96 : 128;
-  const vel = pair(gl, sim, sim);
-  const dye = pair(gl, sim, sim);
-  const pressure = pair(gl, sim, sim);
-  const divTex = texture(gl, sim, sim);
-  const divFbo = framebuffer(gl, divTex);
-
-  const videoTex = gl.createTexture();
-  if (!videoTex) return;
-  gl.bindTexture(gl.TEXTURE_2D, videoTex);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([23, 23, 26, 255]));
-
-  const quad = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, quad);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(0);
-  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-
-  let splatVel: WebGLProgram;
-  let splatDye: WebGLProgram;
-  let advect: WebGLProgram;
-  let divergence: WebGLProgram;
-  let jacobi: WebGLProgram;
-  let gradient: WebGLProgram;
-  let display: WebGLProgram;
-  try {
-    splatVel = program(gl, SPLAT_VEL);
-    splatDye = program(gl, SPLAT_DYE);
-    advect = program(gl, ADVECT);
-    divergence = program(gl, DIVERGENCE);
-    jacobi = program(gl, JACOBI);
-    gradient = program(gl, GRADIENT);
-    display = program(gl, DISPLAY);
-  } catch (error) {
-    console.error(error);
-    startCoverReveal(video);
-    return;
-  }
-
-  const splatQueue: { x: number; y: number; dx: number; dy: number }[] = [];
-  let lastSplat = 0;
-  let lastFrame = performance.now();
-  let lastX = 0.5;
-  let lastY = 0.5;
-  let seen = false;
+  const coarse = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  const reduce = document.documentElement.classList.contains("reduce");
   let viewW = 0;
   let viewH = 0;
-  let userStamp = 0;
-  const coarse = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  let dpr = 1;
+  let pointerX = window.innerWidth * 0.6;
+  let pointerY = window.innerHeight * 0.45;
+  let x = pointerX;
+  let y = pointerY;
+  let radius = 0;
+  let seen = false;
+  let lastMove = 0;
+  let prevPointerX = pointerX;
+  let prevPointerY = pointerY;
   let drift = 0;
-
-  const onPointer = (event: PointerEvent) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width;
-    const y = 1 - (event.clientY - rect.top) / rect.height;
-    if (!seen) {
-      lastX = x;
-      lastY = y;
-      seen = true;
-      return;
-    }
-    const dx = x - lastX;
-    const dy = y - lastY;
-    lastX = x;
-    lastY = y;
-    if (dx * dx + dy * dy < 0.0000004) return;
-    const steps = Math.min(6, Math.ceil(Math.hypot(dx, dy) / 0.02));
-    userStamp = performance.now();
-    for (let i = 1; i <= steps; i += 1) {
-      const t = i / steps;
-      splatQueue.push({ x: x - dx * (1 - t), y: y - dy * (1 - t), dx, dy });
-    }
-  };
-  window.addEventListener("pointermove", onPointer, { passive: true });
+  const ghosts: { x: number; y: number }[] = [];
 
   const resize = () => {
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
-    const width = Math.max(1, Math.floor(canvas.clientWidth * dpr));
-    const height = Math.max(1, Math.floor(canvas.clientHeight * dpr));
-    if (width === viewW && height === viewH) return;
-    viewW = width;
-    viewH = height;
-    canvas.width = width;
-    canvas.height = height;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    viewW = Math.max(1, Math.floor(window.innerWidth * dpr));
+    viewH = Math.max(1, Math.floor(window.innerHeight * dpr));
+    canvas.width = viewW;
+    canvas.height = viewH;
   };
   resize();
   window.addEventListener("resize", resize);
 
-  const clearTo = (fbo: WebGLFramebuffer, r: number, g: number, b: number, a: number) => {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-    gl.viewport(0, 0, sim, sim);
-    gl.clearColor(r, g, b, a);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-  };
-  clearTo(vel.fboRead, 0.5, 0.5, 0, 1);
-  clearTo(vel.fboWrite, 0.5, 0.5, 0, 1);
-  clearTo(dye.fboRead, 0, 0, 0, 0);
-  clearTo(dye.fboWrite, 0, 0, 0, 0);
-  clearTo(pressure.fboRead, 0.5, 0, 0, 1);
-  clearTo(pressure.fboWrite, 0.5, 0, 0, 1);
-  clearTo(divFbo, 0.5, 0, 0, 1);
+  const idleRadius = () => (window.innerWidth * 0.075) / 2;
+  const maxRadius = () => (window.innerWidth * 0.3) / 2;
 
-  const texel = [1 / sim, 1 / sim];
-  const bindTarget = (fbo: WebGLFramebuffer | null, width: number, height: number) => {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-    gl.viewport(0, 0, width, height);
-  };
-  const draw = () => gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  const unit = (prog: WebGLProgram, name: string, index: number, tex: WebGLTexture) => {
-    const loc = gl.getUniformLocation(prog, name);
-    gl.activeTexture(gl.TEXTURE0 + index);
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.uniform1i(loc, index);
-  };
-
-  let frame = 0;
-  let stopped = false;
-  const loop = () => {
-    if (stopped) return;
-    frame = requestAnimationFrame(loop);
-    if (document.hidden) return;
-    resize();
-
-    if (video.readyState >= 2) {
-      gl.bindTexture(gl.TEXTURE_2D, videoTex);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      try {
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
-      } catch {
-        /* some browsers throw until the frame is paintable */
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerType === "touch") return;
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (!seen) {
+        x = pointerX;
+        y = pointerY;
+        seen = true;
       }
-    }
+      lastMove = performance.now();
+    },
+    { passive: true },
+  );
 
-    const now = performance.now();
-    const elapsed = Math.max(0.001, (now - lastFrame) / 1000);
-    const dt = Math.min(0.05, elapsed);
-    lastFrame = now;
+  let last = performance.now();
+  let speed = 0;
+
+  const paint = (now: number) => {
+    const elapsed = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
+    last = now;
+    const cssW = window.innerWidth;
+    const cssH = window.innerHeight;
     if (coarse) {
-      drift += dt * 0.45;
-      splatQueue.push({
-        x: 0.5 + Math.cos(drift) * 0.28,
-        y: 0.46 + Math.sin(drift * 0.73) * 0.18,
-        dx: -Math.sin(drift) * 0.006,
-        dy: Math.cos(drift * 0.73) * 0.004,
-      });
+      drift += elapsed * 0.35;
+      pointerX = cssW * (0.55 + Math.cos(drift) * 0.16);
+      pointerY = cssH * (0.42 + Math.sin(drift * 0.8) * 0.1);
     }
+    const follow = 1 - Math.exp(-elapsed / 0.09);
+    x += (pointerX - x) * follow;
+    y += (pointerY - y) * follow;
+    ghosts.push({ x, y });
+    if (ghosts.length > 5) ghosts.shift();
 
-    const pending = splatQueue.splice(0, 10);
-    if (userStamp) lastSplat = userStamp;
-    const idle = now - lastSplat;
-    const dyeFade = Math.exp(-elapsed / (idle > 90 ? 0.46 : 2.6));
-    const velFade = idle > 90 ? Math.exp(-dt / 0.35) : 0.992;
-    for (const splat of pending) {
-      const force = 16;
-      const swirl = 7;
-      gl.useProgram(splatVel);
-      bindTarget(vel.fboWrite, sim, sim);
-      unit(splatVel, "u_target", 0, vel.read);
-      gl.uniform2f(gl.getUniformLocation(splatVel, "u_point"), splat.x, splat.y);
-      gl.uniform2f(
-        gl.getUniformLocation(splatVel, "u_delta"),
-        splat.dx * force - splat.dy * swirl,
-        splat.dy * force + splat.dx * swirl,
-      );
-      gl.uniform1f(gl.getUniformLocation(splatVel, "u_radius"), 0.0016);
-      draw();
-      swap(vel);
+    const moving = now - lastMove < 80 && seen && !coarse;
+    const instant = Math.hypot(pointerX - prevPointerX, pointerY - prevPointerY) / elapsed;
+    prevPointerX = pointerX;
+    prevPointerY = pointerY;
+    speed += (instant - speed) * (1 - Math.exp(-elapsed / 0.12));
+    const drive = moving ? Math.min(1, speed / 1400) : 0;
+    const breath = 1 + (reduce ? 0 : 0.05 * Math.sin(now / 900));
+    const idle = idleRadius() * (moving ? 1 : breath);
+    const target = idle + (maxRadius() - idleRadius()) * drive;
+    const tau = target < radius ? 0.24 : 0.12;
+    radius += (target - radius) * (1 - Math.exp(-elapsed / tau));
 
-      gl.useProgram(splatDye);
-      bindTarget(dye.fboWrite, sim, sim);
-      unit(splatDye, "u_target", 0, dye.read);
-      gl.uniform2f(gl.getUniformLocation(splatDye, "u_point"), splat.x, splat.y);
-      gl.uniform1f(gl.getUniformLocation(splatDye, "u_radius"), 0.0036);
-      gl.uniform1f(gl.getUniformLocation(splatDye, "u_amount"), 1);
-      draw();
-      swap(dye);
+    document.documentElement.dataset.reveal = String(Math.round(radius));
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#17171a";
+    ctx.fillRect(0, 0, cssW, cssH);
+    ctx.globalCompositeOperation = "destination-out";
+    const marks: Circle[] = ghosts.map((ghost, index) => {
+      const t = (index + 1) / ghosts.length;
+      return { x: ghost.x, y: ghost.y, r: radius * (0.72 + t * 0.28), alpha: t * t * 0.45 };
+    });
+    marks.push({ x, y, r: radius, alpha: 1 });
+    for (const mark of marks) {
+      const soft = mark.r * 1.35;
+      const grad = ctx.createRadialGradient(mark.x, mark.y, soft * 0.28, mark.x, mark.y, soft);
+      grad.addColorStop(0, `rgba(0,0,0,${mark.alpha})`);
+      grad.addColorStop(0.62, `rgba(0,0,0,${mark.alpha * 0.72})`);
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(mark.x, mark.y, soft, 0, Math.PI * 2);
+      ctx.fill();
     }
-
-    gl.useProgram(advect);
-    bindTarget(vel.fboWrite, sim, sim);
-    unit(advect, "u_vel", 0, vel.read);
-    unit(advect, "u_src", 1, vel.read);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_dt"), 0.22);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_dissipation"), velFade);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_velocity"), 1);
-    draw();
-    swap(vel);
-
-    gl.useProgram(divergence);
-    bindTarget(divFbo, sim, sim);
-    unit(divergence, "u_vel", 0, vel.read);
-    gl.uniform2f(gl.getUniformLocation(divergence, "u_texel"), texel[0], texel[1]);
-    draw();
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, pressure.fboRead);
-    gl.viewport(0, 0, sim, sim);
-    gl.clearColor(0.5, 0, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, pressure.fboWrite);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    gl.useProgram(jacobi);
-    for (let i = 0; i < 16; i += 1) {
-      bindTarget(pressure.fboWrite, sim, sim);
-      unit(jacobi, "u_p", 0, pressure.read);
-      unit(jacobi, "u_div", 1, divTex);
-      gl.uniform2f(gl.getUniformLocation(jacobi, "u_texel"), texel[0], texel[1]);
-      draw();
-      swap(pressure);
-    }
-
-    gl.useProgram(gradient);
-    bindTarget(vel.fboWrite, sim, sim);
-    unit(gradient, "u_p", 0, pressure.read);
-    unit(gradient, "u_vel", 1, vel.read);
-    gl.uniform2f(gl.getUniformLocation(gradient, "u_texel"), texel[0], texel[1]);
-    draw();
-    swap(vel);
-
-    gl.useProgram(advect);
-    bindTarget(dye.fboWrite, sim, sim);
-    unit(advect, "u_vel", 0, vel.read);
-    unit(advect, "u_src", 1, dye.read);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_dt"), 0.22);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_dissipation"), dyeFade);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_velocity"), 0);
-    draw();
-    swap(dye);
-
-    const canvasAspect = viewW / Math.max(1, viewH);
-    const videoAspect = video.videoWidth && video.videoHeight ? video.videoWidth / video.videoHeight : 16 / 9;
-    const cover: [number, number] =
-      canvasAspect > videoAspect ? [1, videoAspect / canvasAspect] : [canvasAspect / videoAspect, 1];
-
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.useProgram(display);
-    bindTarget(null, viewW, viewH);
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    unit(display, "u_dye", 0, dye.read);
-    unit(display, "u_video", 1, videoTex);
-    gl.uniform2f(gl.getUniformLocation(display, "u_cover"), cover[0], cover[1]);
-    draw();
-    gl.disable(gl.BLEND);
+    ctx.globalCompositeOperation = "source-over";
+    requestAnimationFrame(paint);
   };
 
-  loop();
-
-  const onLost = (event: Event) => {
-    event.preventDefault();
-    stopped = true;
-    cancelAnimationFrame(frame);
-    startCoverReveal(video);
-  };
-  canvas.addEventListener("webglcontextlost", onLost);
+  document.documentElement.classList.add("ink-circle");
+  paint(performance.now());
 }

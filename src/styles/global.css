@@ -124,12 +124,11 @@ html.reduce body::before { animation: none; }
   z-index: 0;
   pointer-events: none;
 }
-html.no-gl .ink-bg { opacity: 1; }
-html.reduce #ink,
+html.no-gl .ink-bg,
+html.ink-circle .ink-bg { opacity: 1; }
 html.no-gl #ink,
 body[data-page="case"] #ink,
 body[data-page="case"] .ink-cover { display: none; }
-html.reduce .ink-bg,
 body[data-page="case"] .ink-bg { opacity: 0; }
 
 .mark {
@@ -326,19 +325,26 @@ body[data-page="case"] .ink-bg { opacity: 0; }
   margin-top: auto;
   padding: 0 28px 28px 52px;
 }
+@media (min-width: 861px) {
+  .hero-stage { padding-right: calc(var(--side) + 36px); }
+}
 .hero-kicker {
   font-family: var(--font-marker);
-  font-size: clamp(16px, 1.7vw, 28px);
+  font-size: clamp(16px, 1.55vw, 26px);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  margin: 0 6% 10px 28%;
+  margin: 0 0 10px auto;
+  max-width: 100%;
   text-align: right;
   transform: rotate(-2deg);
+  white-space: nowrap;
 }
-.hero-name-row {
+.hero-name-row { display: block; }
+.name-lock {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 22px;
+  width: 100%;
 }
 .hero-role {
   margin: 14px 0 0;
@@ -359,17 +365,17 @@ body[data-page="case"] .ink-bg { opacity: 0; }
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(68px, 12.4vw, 214px);
-  line-height: 0.78;
+  line-height: 1;
   letter-spacing: -0.025em;
   margin: 0;
   text-transform: uppercase;
-  text-shadow: 0 0 28px rgba(236, 231, 220, 0.14);
+  min-width: 0;
 }
 .name-mask {
   display: inline-block;
   overflow: hidden;
-  vertical-align: bottom;
-  line-height: 0.8;
+  vertical-align: top;
+  line-height: 1;
 }
 .name-mask + .name-mask { margin-left: 0.14em; }
 .name-mask > span { display: inline-block; }
@@ -386,7 +392,7 @@ body[data-page="case"] .ink-bg { opacity: 0; }
   white-space: normal;
 }
 .fly-name.is-docked .last { display: block; margin-left: 0; }
-.portrait-home { flex: none; width: clamp(128px, 13.2vw, 196px); margin: 0 0 6px; overflow: hidden; }
+.portrait-home { flex: none; width: clamp(128px, 13.2vw, 196px); overflow: hidden; }
 .fly-portrait, .fly-portrait.is-docked {
   width: 100%;
   aspect-ratio: 1;
@@ -1206,6 +1212,26 @@ body[data-page="case"] .readout { opacity: 0.28; }
   font-size: 13px;
 }
 
+.is-glitch { position: relative; text-shadow: 2px 0 #ff321d, -2px 0 #67e8f9; }
+.is-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: inherit;
+  pointer-events: none;
+  clip-path: inset(12% 0 58% 0);
+  transform: translateX(-8px);
+  animation: glitch-slice 0.16s steps(2, end);
+}
+@keyframes glitch-slice {
+  0% { clip-path: inset(6% 0 64% 0); transform: translateX(-12px); }
+  45% { clip-path: inset(38% 0 28% 0); transform: translateX(10px); }
+  100% { clip-path: inset(62% 0 8% 0); transform: translateX(-6px); }
+}
+html.reduce .is-glitch,
+html.reduce .is-glitch::after { animation: none; text-shadow: none; }
+
 [data-rotate].is-flicker { animation: flicker 0.18s steps(2); }
 @keyframes flicker {
   0% { opacity: 0.15; transform: translateX(-2px); }
@@ -1218,8 +1244,9 @@ body[data-page="case"] .readout { opacity: 0.28; }
   .topbar { padding: 22px 16px 0; align-items: center; }
   .top-nav { display: none; }
   .hero-stage { padding: 0 18px 72px; }
-  .hero-kicker { margin: 0 0 12px; text-align: center; }
-  .hero-name-row { flex-direction: column; align-items: center; }
+  .hero-kicker { margin: 0 0 12px; text-align: center; white-space: normal; }
+  .hero-name-row { display: block; }
+  .name-lock { flex-direction: column; align-items: center; gap: 12px; }
   .name-home { width: 100%; }
   .fly-name { text-align: center; font-size: clamp(46px, 12vw, 78px); }
   .portrait-home { width: 120px; margin: 12px auto 0; }

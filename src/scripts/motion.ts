@@ -11,22 +11,55 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText, Flip, Draggable, I
 
 const reduce = () => document.documentElement.classList.contains("reduce");
 
+let fittingName = false;
+
 function fitHeroName() {
+  if (fittingName) return;
   const name = document.querySelector<HTMLElement>(".fly-name");
-  const row = document.querySelector<HTMLElement>(".hero-name-row");
+  const lock = document.querySelector<HTMLElement>(".name-lock");
   const portrait = document.querySelector<HTMLElement>(".portrait-home");
-  if (!name || !row || name.classList.contains("is-docked")) return;
-  name.style.fontSize = "";
-  const styles = getComputedStyle(name);
-  let size = parseFloat(styles.fontSize);
-  const stacked = getComputedStyle(row).flexDirection === "column";
-  const gap = 18;
-  const available = row.clientWidth - (stacked ? 8 : (portrait?.offsetWidth || 0) + gap);
-  name.style.whiteSpace = "nowrap";
-  while (name.scrollWidth > available && size > 42) {
-    size -= 2;
-    name.style.fontSize = `${size}px`;
+  const sample = name?.querySelector<HTMLElement>(".first");
+  if (!name || !lock || !portrait || !sample || name.classList.contains("is-docked")) return;
+  const motion = getComputedStyle(sample).transform;
+  if (motion && motion !== "none") {
+    const values = motion.match(/-?\d+\.?\d*/g)?.map(Number) ?? [];
+    const shift = Math.abs(values[4] || 0) + Math.abs(values[5] || 0);
+    if (shift > 0.5) return;
   }
+  fittingName = true;
+  portrait.style.marginTop = "0px";
+  portrait.style.transform = "none";
+  name.style.whiteSpace = "nowrap";
+  name.style.lineHeight = "1";
+  name.style.fontSize = "100px";
+  const probe = document.createRange();
+  probe.selectNodeContents(sample);
+  const ratio = Math.max(0.5, probe.getBoundingClientRect().height / 100);
+  const stacked = getComputedStyle(lock).flexDirection === "column";
+  const gap = stacked ? 0 : 22;
+  const maxW = lock.clientWidth;
+  let lo = 36;
+  let hi = Math.min(maxW, 520);
+  let best = lo;
+  while (hi - lo > 0.5) {
+    const mid = (lo + hi) / 2;
+    name.style.fontSize = `${mid / ratio}px`;
+    const nameW = name.scrollWidth;
+    const need = stacked ? Math.max(nameW, mid) : nameW + gap + mid;
+    if (need <= maxW + 1) {
+      best = mid;
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+  }
+  name.style.fontSize = `${best / ratio}px`;
+  const glyph = probe.getBoundingClientRect();
+  const h1 = name.getBoundingClientRect();
+  portrait.style.width = `${glyph.height}px`;
+  portrait.style.height = `${glyph.height}px`;
+  portrait.style.transform = `translateY(${glyph.top - h1.top}px)`;
+  fittingName = false;
 }
 
 function setupPosters() {
@@ -105,7 +138,11 @@ export function playHeroEntrance() {
   }
   const tl = gsap.timeline({
     defaults: { ease: "power3.out" },
-    onComplete: () => document.body.classList.add("is-in"),
+    onComplete: () => {
+      document.body.classList.add("is-in");
+      gsap.set(".name-mask > span", { clearProps: "transform" });
+      fitHeroName();
+    },
   });
   tl.to(".topbar", { y: 0, duration: 0.72 }, 0);
   tl.to(".name-mask > span", { yPercent: 0, duration: 0.86, stagger: 0.1 }, 0.04);
@@ -432,7 +469,11 @@ export function startExperience() {
       ScrollTrigger.refresh();
     };
     window.addEventListener("resize", onResize);
+    const lock = document.querySelector(".name-lock");
+    const nameObserver = new ResizeObserver(() => fitHeroName());
+    if (lock) nameObserver.observe(lock);
     return () => {
+      nameObserver.disconnect();
       window.removeEventListener("resize", onResize);
       stopGallery?.();
       stopFlight?.();
@@ -451,7 +492,13 @@ export function startExperience() {
     setupSpy();
     const onResize = () => fitHeroName();
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const lock = document.querySelector(".name-lock");
+    const nameObserver = new ResizeObserver(() => fitHeroName());
+    if (lock) nameObserver.observe(lock);
+    return () => {
+      nameObserver.disconnect();
+      window.removeEventListener("resize", onResize);
+    };
   });
 
   mm.add("(prefers-reduced-motion: reduce)", () => {

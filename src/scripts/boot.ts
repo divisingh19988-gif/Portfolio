@@ -19,7 +19,8 @@ function startChrome() {
   const rulers = [...document.querySelectorAll<HTMLCanvasElement>("[data-ruler]")];
   const readoutX = document.querySelector<HTMLElement>("[data-x]");
   const readoutY = document.querySelector<HTMLElement>("[data-y]");
-  const readoutP = document.querySelector<HTMLElement>("[data-p]");
+  const readoutR = document.querySelector<HTMLElement>("[data-r]");
+  const readoutS = document.querySelector<HTMLElement>("[data-s]");
   let pointerX = window.innerWidth * 0.5;
   let pointerY = window.innerHeight * 0.4;
   let frame = 0;
@@ -79,9 +80,8 @@ function startChrome() {
     rulers.forEach(draw);
     if (readoutX) readoutX.textContent = pad(pointerX);
     if (readoutY) readoutY.textContent = pad(pointerY);
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = max > 0 ? Math.min(99, Math.round((window.scrollY / max) * 100)) : 0;
-    if (readoutP) readoutP.textContent = pad(progress, 2);
+    if (readoutR) readoutR.textContent = pad(Number(document.documentElement.dataset.reveal || 0));
+    if (readoutS) readoutS.textContent = pad(window.scrollY);
     const posters = document.querySelectorAll(".poster");
     let posterOpen = false;
     posters.forEach((el) => {
@@ -103,6 +103,7 @@ function startChrome() {
   window.addEventListener("scroll", requestPaint, { passive: true });
   window.addEventListener("resize", requestPaint);
   paint();
+  window.setInterval(requestPaint, 200);
 
   const nodes = [...document.querySelectorAll<HTMLElement>("[data-rotate]")];
   const words = (document.querySelector("[data-words]")?.textContent || "Signal")
@@ -402,7 +403,70 @@ async function runPreloader() {
 }
 
 primeHero();
+function startLabelCycle() {
+  const node = document.querySelector<HTMLElement>("[data-cycle]");
+  if (!node || reduce) return;
+  const words = (node.dataset.cycle || "").split("|").map((word) => word.trim()).filter(Boolean);
+  if (words.length < 2) return;
+  let index = 0;
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const swap = () => {
+    index = (index + 1) % words.length;
+    const next = words[index].toUpperCase();
+    let frame = 0;
+    const steps = 8;
+    const timer = window.setInterval(() => {
+      frame += 1;
+      const cut = Math.floor((frame / steps) * next.length);
+      let shown = next.slice(0, cut);
+      for (let i = cut; i < next.length; i += 1) {
+        shown += alphabet[Math.floor(Math.random() * alphabet.length)];
+      }
+      node.textContent = frame >= steps ? next : shown;
+      if (frame >= steps) window.clearInterval(timer);
+    }, 28);
+  };
+  window.setInterval(swap, 2500);
+}
+
+function startGlitch() {
+  if (reduce) return;
+  const nameBits = [...document.querySelectorAll<HTMLElement>(".fly-name .first, .fly-name .last")];
+  const extras = [...document.querySelectorAll<HTMLElement>(".top-nav a, .brand-lock, .hero-role")];
+  const pool = [...nameBits, ...extras];
+  if (!pool.length) return;
+  pool.forEach((node) => {
+    node.dataset.text = node.textContent || "";
+  });
+  const glyphs = "█▓▒#@%$?";
+  const burst = () => {
+    const preferName = Math.random() < 0.72;
+    const group = preferName && nameBits.length ? nameBits : pool;
+    const target = group[Math.floor(Math.random() * group.length)];
+    const original = target.dataset.text || target.textContent || "";
+    if (Math.random() < 0.6 && original.length > 2) {
+      const chars = original.split("");
+      const swaps = 1 + Math.floor(Math.random() * 2);
+      for (let n = 0; n < swaps; n += 1) {
+        const at = Math.floor(Math.random() * chars.length);
+        if (chars[at] !== " ") chars[at] = glyphs[Math.floor(Math.random() * glyphs.length)];
+      }
+      target.textContent = chars.join("");
+    }
+    target.classList.add("is-glitch");
+    const ms = 80 + Math.random() * 120;
+    window.setTimeout(() => {
+      target.classList.remove("is-glitch");
+      if (target.dataset.text) target.textContent = target.dataset.text;
+    }, ms);
+    window.setTimeout(burst, 2500 + Math.random() * 3500);
+  };
+  window.setTimeout(burst, 1800 + Math.random() * 1200);
+}
+
 startChrome();
+startLabelCycle();
+startGlitch();
 runPreloader().then(async () => {
   playHeroEntrance();
   armHeroVideo();

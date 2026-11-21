@@ -42,7 +42,7 @@ const { title, description = site.description, page = "case" } = Astro.props;
     <canvas class="ruler ruler-x" data-ruler="x" aria-hidden="true"></canvas>
     <canvas class="ruler ruler-y" data-ruler="y" aria-hidden="true"></canvas>
     <p class="readout" aria-hidden="true">
-      X:<span data-x>0000</span> Y:<span data-y>0000</span> P:<span data-p>00</span>% S:<span data-screen-label>HERO</span>
+      X<span data-x>0000</span> Y<span data-y>0000</span> R<span data-r>0000</span> S<span data-s>0000</span>
     </p>
     <p id="copy-live" class="skip" aria-live="polite"></p>
     <p data-words hidden>{words.join("|")}</p>
