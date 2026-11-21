@@ -116,10 +116,20 @@ html.reduce body::before { animation: none; }
   opacity: 1;
   background: #17171a;
 }
-body.is-in .ink-bg,
+.ink-cover {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+html.no-gl .ink-bg { opacity: 1; }
+html.reduce #ink,
+html.no-gl #ink,
+body[data-page="case"] #ink,
+body[data-page="case"] .ink-cover { display: none; }
 html.reduce .ink-bg,
-html.no-gl .ink-bg { opacity: 0.42; }
-html.reduce #ink, html.no-gl #ink, body[data-page="case"] #ink { display: none; }
 body[data-page="case"] .ink-bg { opacity: 0; }
 
 .mark {

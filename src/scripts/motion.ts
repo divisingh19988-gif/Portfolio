@@ -93,16 +93,13 @@ export function primeHero() {
   gsap.set(".topbar", { y: -140 });
   gsap.set(".fly-portrait", { yPercent: 120 });
   gsap.set([".hero-kicker", ".hero-role", ".tagline", ".hero-foot"], { y: 22, opacity: 0 });
-  gsap.set(".ink-bg", { opacity: 0 });
 }
 
 export function playHeroEntrance() {
   if (document.body.dataset.page !== "home") return;
-  const video = document.querySelector<HTMLElement>(".ink-bg");
   const bits = [".hero-kicker", ".hero-role", ".tagline", ".hero-foot"];
   if (reduce()) {
     document.body.classList.add("is-in");
-    if (video) gsap.set(video, { opacity: 0.42 });
     gsap.set([".name-mask > span", ".topbar", ".fly-portrait", ...bits], { clearProps: "all" });
     return;
   }
@@ -110,7 +107,6 @@ export function playHeroEntrance() {
     defaults: { ease: "power3.out" },
     onComplete: () => document.body.classList.add("is-in"),
   });
-  tl.to(video, { opacity: 0.42, duration: 1.05, ease: "power2.out" }, 0);
   tl.to(".topbar", { y: 0, duration: 0.72 }, 0);
   tl.to(".name-mask > span", { yPercent: 0, duration: 0.86, stagger: 0.1 }, 0.04);
   tl.to(".fly-portrait", { yPercent: 0, duration: 0.9 }, 0.1);

@@ -134,7 +134,7 @@ void main() {
   float ink = texture(u_dye, v_uv).a;
   vec2 uv = (v_uv - 0.5) * u_cover + 0.5;
   vec3 vid = texture(u_video, clamp(uv, vec2(0.0), vec2(1.0))).rgb;
-  float mask = smoothstep(0.06, 0.42, ink);
+  float mask = smoothstep(0.02, 0.62, ink);
   outColor = vec4(vid * mask, mask);
 }`;
 
@@ -207,6 +207,90 @@ function swap(target: Pair) {
   target.fboWrite = fbo;
 }
 
+type Spot = { x: number; y: number; born: number };
+
+function startCoverReveal(video: HTMLVideoElement) {
+  document.documentElement.classList.add("no-gl");
+  const cover = document.createElement("canvas");
+  cover.className = "ink-cover";
+  cover.setAttribute("aria-hidden", "true");
+  document.body.appendChild(cover);
+  const ctx = cover.getContext("2d");
+  if (!ctx) return;
+  const spots: Spot[] = [];
+  const coarse = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  let drift = 0;
+  let viewW = 0;
+  let viewH = 0;
+
+  const resize = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    viewW = Math.max(1, Math.floor(cover.clientWidth * dpr));
+    viewH = Math.max(1, Math.floor(cover.clientHeight * dpr));
+    cover.width = viewW;
+    cover.height = viewH;
+  };
+  resize();
+  window.addEventListener("resize", resize);
+
+  const add = (x: number, y: number) => {
+    const last = spots[spots.length - 1];
+    if (last && (last.x - x) ** 2 + (last.y - y) ** 2 < 80) return;
+    spots.push({ x, y, born: performance.now() });
+    if (spots.length > 80) spots.shift();
+  };
+
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      const rect = cover.getBoundingClientRect();
+      const scale = viewW / Math.max(1, rect.width);
+      add((event.clientX - rect.left) * scale, (event.clientY - rect.top) * scale);
+    },
+    { passive: true },
+  );
+
+  const paint = () => {
+    requestAnimationFrame(paint);
+    if (document.hidden) return;
+    const now = performance.now();
+    if (coarse) {
+      drift += 0.008;
+      const rect = cover.getBoundingClientRect();
+      const scale = viewW / Math.max(1, rect.width);
+      add(
+        (0.5 + Math.cos(drift) * 0.28) * rect.width * scale,
+        (0.46 + Math.sin(drift * 0.73) * 0.18) * rect.height * scale,
+      );
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#17171a";
+    ctx.fillRect(0, 0, viewW, viewH);
+    ctx.globalCompositeOperation = "destination-out";
+    for (let i = spots.length - 1; i >= 0; i -= 1) {
+      const spot = spots[i];
+      const age = (now - spot.born) / 1500;
+      if (age >= 1) {
+        spots.splice(i, 1);
+        continue;
+      }
+      const alpha = 1 - age * age;
+      const radius = viewW * 0.075;
+      const grad = ctx.createRadialGradient(spot.x, spot.y, radius * 0.15, spot.x, spot.y, radius);
+      grad.addColorStop(0, `rgba(0,0,0,${alpha})`);
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(spot.x, spot.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalCompositeOperation = "source-over";
+    if (video.paused) video.play().catch(() => undefined);
+  };
+  paint();
+}
+
 export function startFluid() {
   const canvas = document.querySelector<HTMLCanvasElement>("#ink");
   const video = document.querySelector<HTMLVideoElement>("#ink-video");
@@ -214,11 +298,10 @@ export function startFluid() {
 
   const gl = canvas.getContext("webgl2", { alpha: true, antialias: false, premultipliedAlpha: true });
   if (!gl) {
-    document.documentElement.classList.add("no-gl");
+    startCoverReveal(video);
     return;
   }
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  gl.disable(gl.BLEND);
 
   const sim = window.matchMedia("(max-width: 860px)").matches ? 96 : 128;
   const vel = pair(gl, sim, sim);
@@ -259,7 +342,7 @@ export function startFluid() {
     display = program(gl, DISPLAY);
   } catch (error) {
     console.error(error);
-    document.documentElement.classList.add("no-gl");
+    startCoverReveal(video);
     return;
   }
 
@@ -271,6 +354,9 @@ export function startFluid() {
   let seen = false;
   let viewW = 0;
   let viewH = 0;
+  let userStamp = 0;
+  const coarse = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  let drift = 0;
 
   const onPointer = (event: PointerEvent) => {
     const rect = canvas.getBoundingClientRect();
@@ -288,6 +374,7 @@ export function startFluid() {
     lastY = y;
     if (dx * dx + dy * dy < 0.0000004) return;
     const steps = Math.min(6, Math.ceil(Math.hypot(dx, dy) / 0.02));
+    userStamp = performance.now();
     for (let i = 1; i <= steps; i += 1) {
       const t = i / steps;
       splatQueue.push({ x: x - dx * (1 - t), y: y - dy * (1 - t), dx, dy });
@@ -353,14 +440,25 @@ export function startFluid() {
       }
     }
 
-    const pending = splatQueue.splice(0, 10);
     const now = performance.now();
-    const dt = Math.min(0.05, Math.max(0.001, (now - lastFrame) / 1000));
+    const elapsed = Math.max(0.001, (now - lastFrame) / 1000);
+    const dt = Math.min(0.05, elapsed);
     lastFrame = now;
-    if (pending.length) lastSplat = now;
+    if (coarse) {
+      drift += dt * 0.45;
+      splatQueue.push({
+        x: 0.5 + Math.cos(drift) * 0.28,
+        y: 0.46 + Math.sin(drift * 0.73) * 0.18,
+        dx: -Math.sin(drift) * 0.006,
+        dy: Math.cos(drift * 0.73) * 0.004,
+      });
+    }
+
+    const pending = splatQueue.splice(0, 10);
+    if (userStamp) lastSplat = userStamp;
     const idle = now - lastSplat;
-    const dyeFade = idle > 1450 ? 0 : Math.exp(-dt / (idle > 120 ? 0.42 : 1.8));
-    const velFade = idle > 120 ? Math.exp(-dt / 0.3) : 0.992;
+    const dyeFade = Math.exp(-elapsed / (idle > 90 ? 0.46 : 2.6));
+    const velFade = idle > 90 ? Math.exp(-dt / 0.35) : 0.992;
     for (const splat of pending) {
       const force = 16;
       const swirl = 7;
@@ -381,7 +479,7 @@ export function startFluid() {
       bindTarget(dye.fboWrite, sim, sim);
       unit(splatDye, "u_target", 0, dye.read);
       gl.uniform2f(gl.getUniformLocation(splatDye, "u_point"), splat.x, splat.y);
-      gl.uniform1f(gl.getUniformLocation(splatDye, "u_radius"), 0.011);
+      gl.uniform1f(gl.getUniformLocation(splatDye, "u_radius"), 0.0036);
       gl.uniform1f(gl.getUniformLocation(splatDye, "u_amount"), 1);
       draw();
       swap(dye);
@@ -443,6 +541,8 @@ export function startFluid() {
     const cover: [number, number] =
       canvasAspect > videoAspect ? [1, videoAspect / canvasAspect] : [canvasAspect / videoAspect, 1];
 
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.useProgram(display);
     bindTarget(null, viewW, viewH);
     gl.clearColor(0, 0, 0, 0);
@@ -451,6 +551,7 @@ export function startFluid() {
     unit(display, "u_video", 1, videoTex);
     gl.uniform2f(gl.getUniformLocation(display, "u_cover"), cover[0], cover[1]);
     draw();
+    gl.disable(gl.BLEND);
   };
 
   loop();
@@ -459,7 +560,7 @@ export function startFluid() {
     event.preventDefault();
     stopped = true;
     cancelAnimationFrame(frame);
-    document.documentElement.classList.add("no-gl");
+    startCoverReveal(video);
   };
   canvas.addEventListener("webglcontextlost", onLost);
 }
