@@ -21,6 +21,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-First cohort size. [TODO: number]

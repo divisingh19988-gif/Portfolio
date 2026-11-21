@@ -32,6 +32,3 @@ featured: true
 anonymous: true
 ---
 
-## What I'd do next
-
-Measure how many briefs changed a spend decision. [TODO: number]

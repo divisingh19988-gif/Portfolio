@@ -22,6 +22,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-How many agents, and what each one owns. [TODO: number]

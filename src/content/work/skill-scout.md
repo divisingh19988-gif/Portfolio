@@ -27,6 +27,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-Publish how many skills were rejected. [TODO: number]

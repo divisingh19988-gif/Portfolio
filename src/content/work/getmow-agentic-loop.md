@@ -32,6 +32,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-Put [TODO: number] buyer questions on the daily tracker and publish the weekly score without a human in the middle.

@@ -24,6 +24,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-Stars and installs are not in the CV. [TODO: number]

@@ -33,6 +33,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-Close the loop from the poller back into the next brief automatically. [TODO: number] hours saved per week is not in the CV.

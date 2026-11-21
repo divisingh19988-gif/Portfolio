@@ -138,22 +138,24 @@ function setupGallery(auto: boolean) {
   if (!stage) return () => undefined;
   const cards = [...stage.querySelectorAll<HTMLElement>(".gcard")];
   if (!cards.length) return () => undefined;
-  let offset = 0;
+  let offset = 36;
   let suppress = false;
-  const spacing = 430;
+  const spacing = 214;
 
   const layout = () => {
     const width = stage.clientWidth;
     const loop = cards.length * spacing;
+    const phase = ((offset % loop) + loop) % loop;
     cards.forEach((card, index) => {
-      let x = ((index * spacing - offset) % loop + loop) % loop - spacing * 0.35;
-      const center = width * 0.46;
-      const nx = (x - center) / (width * 0.62);
-      const y = 24 + nx * nx * 130;
-      const rot = nx * 18;
-      const scale = 1 - Math.min(Math.abs(nx), 1.15) * 0.1;
+      let x = index * spacing - phase;
+      if (x < -spacing * 1.15) x += loop;
+      const mid = x + 120;
+      const nx = Math.max(-1.35, Math.min(1.35, (mid - width * 0.46) / (width * 0.5)));
+      const y = 36 + nx * nx * 64;
+      const rot = nx * 12;
+      const scale = 1 - Math.min(Math.abs(nx), 1.2) * 0.08;
       card.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${scale})`;
-      card.style.zIndex = String(100 - Math.round(Math.abs(nx) * 30));
+      card.style.zIndex = String(100 - Math.round(Math.abs(nx) * 40));
     });
   };
 

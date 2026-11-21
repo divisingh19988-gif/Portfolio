@@ -28,6 +28,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-The CV does not say how many of those leads became meetings. [TODO: number]

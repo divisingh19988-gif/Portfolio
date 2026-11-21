@@ -124,14 +124,22 @@ function startChrome() {
 
   const tagline = document.querySelector<HTMLElement>("[data-tagline]");
   const phrases = (tagline?.dataset.phrases || "").split("|").map((line) => line.trim()).filter(Boolean);
-  if (!reduce && tagline && phrases.length > 1) {
+  if (!reduce && tagline && phrases.length > 1 && tagline.dataset.bound !== "1") {
+    tagline.dataset.bound = "1";
     let phrase = 0;
     const alphabet = "abcdefghijklmnopqrstuvwxyz";
-    window.setInterval(() => {
+    const holdMs = 2800;
+    const stepMs = 28;
+    const steps = 18;
+    const settle = (text: string) => {
+      tagline.textContent = text;
+      tagline.dataset.settled = "1";
+    };
+    const scramble = () => {
       phrase = (phrase + 1) % phrases.length;
       const next = phrases[phrase];
+      tagline.dataset.settled = "0";
       let frame = 0;
-      const steps = 14;
       const timer = window.setInterval(() => {
         frame += 1;
         const cut = Math.floor((frame / steps) * next.length);
@@ -139,10 +147,17 @@ function startChrome() {
         for (let i = cut; i < next.length; i += 1) {
           shown += next[i] === " " ? " " : alphabet[Math.floor(Math.random() * alphabet.length)];
         }
-        tagline.textContent = frame >= steps ? next : shown;
-        if (frame >= steps) window.clearInterval(timer);
-      }, 32);
-    }, 3400);
+        if (frame >= steps) {
+          window.clearInterval(timer);
+          settle(next);
+          window.setTimeout(scramble, holdMs);
+        } else {
+          tagline.textContent = shown;
+        }
+      }, stepMs);
+    };
+    settle(phrases[0]);
+    window.setTimeout(scramble, holdMs);
   }
 
   const sound = document.querySelector<HTMLButtonElement>(".sound-toggle");

@@ -137,11 +137,11 @@ void main() {
   float luma = dot(vid, vec3(0.299, 0.587, 0.114));
   vid = mix(vec3(luma), vid, 0.42);
   vid *= vec3(0.72, 0.7, 0.68);
-  float mask = smoothstep(0.03, 0.42, ink);
+  float mask = smoothstep(0.08, 0.48, ink);
   vec3 bg = vec3(0.0902, 0.0902, 0.1020);
   vec3 col = mix(bg, vid, mask);
-  float edge = smoothstep(0.02, 0.14, ink) * (1.0 - smoothstep(0.2, 0.5, ink));
-  col += vec3(0.62, 0.09, 0.05) * edge * 0.55;
+  float edge = smoothstep(0.12, 0.28, ink) * (1.0 - smoothstep(0.34, 0.62, ink));
+  col += vec3(0.28, 0.04, 0.02) * edge * ink;
   outColor = vec4(col, 1.0);
 }`;
 
@@ -271,6 +271,8 @@ export function startFluid() {
   }
 
   const splatQueue: { x: number; y: number; dx: number; dy: number }[] = [];
+  let lastSplat = 0;
+  let lastFrame = performance.now();
   let lastX = 0.5;
   let lastY = 0.5;
   let seen = false;
@@ -359,6 +361,13 @@ export function startFluid() {
     }
 
     const pending = splatQueue.splice(0, 10);
+    const now = performance.now();
+    const dt = Math.min(0.05, Math.max(0.001, (now - lastFrame) / 1000));
+    lastFrame = now;
+    if (pending.length) lastSplat = now;
+    const idle = now - lastSplat;
+    const dyeFade = idle > 1450 ? 0 : Math.exp(-dt / (idle > 120 ? 0.42 : 1.8));
+    const velFade = idle > 120 ? Math.exp(-dt / 0.3) : 0.992;
     for (const splat of pending) {
       const force = 16;
       const swirl = 7;
@@ -379,7 +388,7 @@ export function startFluid() {
       bindTarget(dye.fboWrite, sim, sim);
       unit(splatDye, "u_target", 0, dye.read);
       gl.uniform2f(gl.getUniformLocation(splatDye, "u_point"), splat.x, splat.y);
-      gl.uniform1f(gl.getUniformLocation(splatDye, "u_radius"), 0.016);
+      gl.uniform1f(gl.getUniformLocation(splatDye, "u_radius"), 0.011);
       gl.uniform1f(gl.getUniformLocation(splatDye, "u_amount"), 1);
       draw();
       swap(dye);
@@ -390,7 +399,7 @@ export function startFluid() {
     unit(advect, "u_vel", 0, vel.read);
     unit(advect, "u_src", 1, vel.read);
     gl.uniform1f(gl.getUniformLocation(advect, "u_dt"), 0.22);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_dissipation"), 0.992);
+    gl.uniform1f(gl.getUniformLocation(advect, "u_dissipation"), velFade);
     gl.uniform1f(gl.getUniformLocation(advect, "u_velocity"), 1);
     draw();
     swap(vel);
@@ -431,7 +440,7 @@ export function startFluid() {
     unit(advect, "u_vel", 0, vel.read);
     unit(advect, "u_src", 1, dye.read);
     gl.uniform1f(gl.getUniformLocation(advect, "u_dt"), 0.22);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_dissipation"), 0.993);
+    gl.uniform1f(gl.getUniformLocation(advect, "u_dissipation"), dyeFade);
     gl.uniform1f(gl.getUniformLocation(advect, "u_velocity"), 0);
     draw();
     swap(dye);

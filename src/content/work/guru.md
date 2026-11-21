@@ -21,6 +21,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-One sentence on what Guru does, then a number. [TODO: number]

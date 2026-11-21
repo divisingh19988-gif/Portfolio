@@ -26,6 +26,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-Ship the number of notes captured and the share rate. Both are [TODO: number].

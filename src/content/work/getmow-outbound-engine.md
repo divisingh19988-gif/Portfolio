@@ -34,6 +34,3 @@ featured: true
 anonymous: false
 ---
 
-## What I'd do next
-
-The CV does not state a positive-reply rate. [TODO: number] goes here once it is measured.
