@@ -19,6 +19,11 @@ metrics:
 thumbnail: /work/getmow-agentic-loop/poster-1.jpg
 loop: /work/getmow-agentic-loop/loop-1.mp4
 loopWebm: /work/getmow-agentic-loop/loop-1.webm
+cardLoop: /work/getmow-agentic-loop/explainer-loop.mp4
+explainer: /work/getmow-agentic-loop/explainer.mp4
+explainerPoster: /work/getmow-agentic-loop/explainer-poster.webp
+planImage: /work/getmow-agentic-loop/whiteboard.webp
+planCaption: "How I'd plan it. Size the demand, pick where to win, then stack P1 to P4 until the model says your name."
 screenshots:
   - /work/getmow-agentic-loop/poster-1.jpg
   - /work/getmow-agentic-loop/poster-2.jpg

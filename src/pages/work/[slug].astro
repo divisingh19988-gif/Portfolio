@@ -75,6 +75,37 @@ const line2 = words.slice(mid).join(" ") || "FILE";
         </div>
       </section>
     </div>
+    {
+      data.explainer && (
+        <figure class="feature-film">
+          <video
+            controls
+            muted
+            playsinline
+            preload="none"
+            poster={data.explainerPoster || data.thumbnail}
+            width="1600"
+            height="900"
+            aria-label={`${data.title} explainer`}
+          >
+            <source data-src={data.explainer} type="video/mp4" />
+          </video>
+          <button class="play-cover" type="button" data-play-film>
+            <span>Play</span>
+            <small>Sound off until you turn it up</small>
+          </button>
+          <figcaption>Buyer asks. Competitors get named. Then the work. Then you are the name.</figcaption>
+        </figure>
+      )
+    }
+    {
+      data.planImage && (
+        <figure class="plan-shot">
+          <img src={data.planImage} alt="Hand-drawn GEO plan: demand, architecture, prompt pyramid, and the P1 to P4 stack." width="804" height="1068" loading="lazy" />
+          {data.planCaption && <figcaption>{data.planCaption}</figcaption>}
+        </figure>
+      )
+    }
     <div class="shots">
       {
         data.screenshots.map((src, index) => (
@@ -123,4 +154,20 @@ const line2 = words.slice(mid).join(" ") || "FILE";
     }
     </div>
   </article>
+  <script>
+    document.querySelectorAll<HTMLButtonElement>("[data-play-film]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const film = button.parentElement?.querySelector("video");
+        const source = film?.querySelector("source");
+        if (!film || !source) return;
+        if (source.dataset.src && !source.getAttribute("src")) {
+          source.src = source.dataset.src;
+          film.load();
+        }
+        film.muted = true;
+        film.play().catch(() => undefined);
+        button.hidden = true;
+      });
+    });
+  </script>
 </Base>

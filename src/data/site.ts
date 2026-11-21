@@ -18,8 +18,40 @@ export const nav = [
   { id: "introduce", n: "01", label: "Introduce" },
   { id: "skills", n: "02", label: "Skills" },
   { id: "works", n: "03", label: "Works" },
-  { id: "awards", n: "04", label: "Awards" },
-  { id: "contact", n: "05", label: "Contact" },
+  { id: "playbooks", n: "04", label: "Playbooks" },
+  { id: "awards", n: "05", label: "Awards" },
+  { id: "contact", n: "06", label: "Contact" },
+];
+
+export const playbooks = [
+  {
+    title: "The math behind GTM",
+    hook: "20,000 emails + 100,000 impressions = 7 clients.",
+    image: "/playbooks/gtm-math.webp",
+    width: 1038,
+    height: 1188,
+  },
+  {
+    title: "Creator-led SaaS",
+    hook: "Four ways a SaaS grows when the creator is the channel.",
+    image: "/playbooks/creator-led-saas.webp",
+    width: 1040,
+    height: 1148,
+  },
+  {
+    title: "Viral LinkedIn posts",
+    hook: "First make them curious. Then bring the value.",
+    image: "/playbooks/linkedin-psychology.webp",
+    width: 1058,
+    height: 1146,
+  },
+  {
+    title: "CITE, in the wild",
+    hook: "My CITE framework, reshared by AI For Search to 1.7M followers.",
+    image: "/playbooks/cite-framework-post.webp",
+    width: 746,
+    height: 1434,
+  },
 ];
 
 export const words = ["Growth", "Agents", "Claude", "Bots", "Berlin"];

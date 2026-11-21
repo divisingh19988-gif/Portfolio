@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Brush from "../components/Brush.astro";
 import Poster from "../components/Poster.astro";
-import { brandStats, certificates, contactTiles, nav, showcase, site, skills, stats, taglines, timeline } from "../data/site";
+import { brandStats, certificates, contactTiles, nav, playbooks, showcase, site, skills, stats, taglines, timeline } from "../data/site";
 
 const works = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
 const gallery = works.filter((entry) => entry.data.featured);
@@ -185,10 +185,10 @@ const gallery = works.filter((entry) => entry.data.featured);
           gallery.map((entry) => (
             <a class="gcard" href={`/work/${entry.id}`} style={`--shot:url(${entry.data.thumbnail})`}>
               <span class="gcard-visual">
-                {entry.data.loop ? (
+                {entry.data.cardLoop || entry.data.loop ? (
                   <video class="gcard-video" data-lazy muted loop playsinline preload="none" poster={entry.data.thumbnail}>
-                    {entry.data.loopWebm && <source data-src={entry.data.loopWebm} type="video/webm" />}
-                    <source data-src={entry.data.loop} type="video/mp4" />
+                    {!entry.data.cardLoop && entry.data.loopWebm && <source data-src={entry.data.loopWebm} type="video/webm" />}
+                    <source data-src={entry.data.cardLoop || entry.data.loop} type="video/mp4" />
                   </video>
                 ) : (
                   <img src={entry.data.thumbnail} alt="" width="1400" height="900" />
@@ -265,6 +265,71 @@ const gallery = works.filter((entry) => entry.data.featured);
       </ol>
     </section>
   </div>
+
+  <section class="sheet playbooks" id="playbooks" data-screen="PLAYBOOKS">
+    <div class="works-head">
+      <h2 class="display">
+        <span class="line" data-split>Playbooks.</span>
+        <span class="line hot" data-split>Not vibes.</span>
+      </h2>
+      <Brush />
+    </div>
+    <p class="play-lede">Four frames. Drag the strip. Tap one open.</p>
+    <div class="play-strip" tabindex="0" aria-label="Playbooks">
+      {
+        playbooks.map((item) => (
+          <button class="play-card" type="button" data-playbook={item.image} data-hook={item.hook} data-title={item.title}>
+            <img src={item.image} alt="" width={item.width} height={item.height} loading="lazy" />
+            <span>
+              <strong>{item.title}</strong>
+              <em>{item.hook}</em>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+    <dialog class="lightbox" id="play-light">
+      <button class="lightbox-close" type="button" data-close-light>Close</button>
+      <img alt="" width="1038" height="1188" />
+      <p></p>
+    </dialog>
+    <script>
+      const strip = document.querySelector<HTMLElement>(".play-strip");
+      const dialog = document.querySelector<HTMLDialogElement>("#play-light");
+      const shot = dialog?.querySelector("img");
+      const line = dialog?.querySelector("p");
+      if (strip && dialog && shot && line) {
+        let dragX = 0;
+        let dragged = false;
+        strip.addEventListener("pointerdown", (event) => {
+          dragX = event.clientX;
+          dragged = false;
+          strip.setPointerCapture(event.pointerId);
+        });
+        strip.addEventListener("pointermove", (event) => {
+          if (!strip.hasPointerCapture(event.pointerId)) return;
+          const delta = event.clientX - dragX;
+          if (Math.abs(delta) > 4) dragged = true;
+          strip.scrollLeft -= delta;
+          dragX = event.clientX;
+        });
+        strip.querySelectorAll<HTMLButtonElement>("[data-playbook]").forEach((card) => {
+          card.addEventListener("click", () => {
+            if (dragged) return;
+            shot.src = card.dataset.playbook || "";
+            shot.alt = card.dataset.title || "";
+            line.textContent = card.dataset.hook || "";
+            if (dialog.parentElement !== document.body) document.body.appendChild(dialog);
+            dialog.showModal();
+          });
+        });
+        dialog.querySelector("[data-close-light]")?.addEventListener("click", () => dialog.close());
+        dialog.addEventListener("click", (event) => {
+          if (event.target === dialog) dialog.close();
+        });
+      }
+    </script>
+  </section>
 
   <section class="sheet" id="awards" data-screen="AWARDS">
     <Poster
