@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { startFluid } from "./fluid";
-import { startExperience } from "./motion";
+import { playHeroEntrance, primeHero, startExperience } from "./motion";
 
 gsap.registerPlugin(ScrollSmoother);
 
@@ -268,42 +268,144 @@ function startChrome() {
   }
 }
 
-async function waitForAssets() {
+let videoArmed = false;
+
+function armHeroVideo() {
   const video = document.querySelector<HTMLVideoElement>("#ink-video");
-  const videoReady = new Promise((resolve) => {
-    if (!video || video.readyState >= 2) {
-      resolve(true);
-      return;
-    }
-    const done = () => resolve(true);
-    video.addEventListener("loadeddata", done, { once: true });
-    video.addEventListener("error", done, { once: true });
-    window.setTimeout(done, 4000);
+  if (!video) return;
+  if (!videoArmed) {
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "true");
+    video.loop = false;
+    video.addEventListener("ended", () => {
+      video.currentTime = 0;
+      video.play().catch(() => undefined);
+    });
+    videoArmed = true;
+  }
+  if (!video.paused && video.readyState >= 2) return;
+  const gesture = () => {
+    video.play().catch(() => undefined);
+  };
+  const pending = video.play();
+  if (!pending) return;
+  pending.catch(() => {
+    window.addEventListener("pointerdown", gesture, { once: true });
+    window.addEventListener("keydown", gesture, { once: true });
   });
-  await Promise.race([Promise.all([document.fonts.ready, videoReady]), sleep(4500)]);
+}
+
+function scrambleName(shell: HTMLElement) {
+  const node = shell.querySelector<HTMLElement>("[data-pre-name]");
+  if (!node || reduce) return;
+  const finalName = "DIGVIJAY RATHORE";
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let frame = 0;
+  const steps = 12;
+  const timer = window.setInterval(() => {
+    frame += 1;
+    const cut = Math.floor((frame / steps) * finalName.length);
+    let shown = finalName.slice(0, cut);
+    for (let i = cut; i < finalName.length; i += 1) {
+      shown += finalName[i] === " " ? " " : alphabet[Math.floor(Math.random() * alphabet.length)];
+    }
+    node.textContent = frame >= steps ? finalName : shown;
+    if (frame >= steps) window.clearInterval(timer);
+  }, 40);
+}
+
+function flipPolaroids(shell: HTMLElement) {
+  const frames = [...shell.querySelectorAll<HTMLImageElement>("[data-pre-stack] img")];
+  if (frames.length < 2 || reduce) return () => undefined;
+  frames.forEach((frame, index) => {
+    frame.style.opacity = index < 3 ? "1" : "0";
+  });
+  let cursor = 0;
+  const timer = window.setInterval(() => {
+    cursor = (cursor + 1) % frames.length;
+    frames.forEach((frame, index) => {
+      const slot = (index - cursor + frames.length) % frames.length;
+      const front = slot === 0;
+      frame.style.opacity = slot < 3 ? "1" : "0";
+      frame.style.zIndex = front ? "4" : String(3 - slot);
+      frame.style.transform = `rotate(${front ? -2 : slot === 1 ? 6 : -8}deg) translate(${slot * 3}px, ${slot * 4}px)`;
+    });
+  }, 90);
+  return () => window.clearInterval(timer);
 }
 
 async function runPreloader() {
   const shell = document.querySelector<HTMLElement>("[data-preloader]");
   const num = document.querySelector<HTMLElement>("[data-count]");
+  const bar = document.querySelector<HTMLElement>("[data-pre-bar]");
+  armHeroVideo();
   if (!shell || !num) return;
-  const state = { n: 0 };
-  const tween = gsap.to(state, {
-    n: 100,
-    duration: reduce ? 0.2 : 1.5,
-    ease: "power1.inOut",
-    onUpdate: () => {
-      num.textContent = String(Math.round(state.n)).padStart(3, "0");
-    },
+  const stopFlip = flipPolaroids(shell);
+  scrambleName(shell);
+  const images = [...shell.querySelectorAll("img")];
+  let loaded = 0;
+  const total = images.length + 2;
+  const bump = () => {
+    loaded += 1;
+  };
+  images.forEach((img) => {
+    if (img.complete) bump();
+    else {
+      img.addEventListener("load", bump, { once: true });
+      img.addEventListener("error", bump, { once: true });
+    }
   });
-  await Promise.all([waitForAssets(), tween]);
-  num.textContent = "100";
-  shell.classList.add("is-done");
-  window.setTimeout(() => shell.setAttribute("hidden", ""), 900);
+  document.fonts.ready.then(bump).catch(bump);
+  const video = document.querySelector<HTMLVideoElement>("#ink-video");
+  let videoReady = !video || video.readyState >= 3;
+  if (video && !videoReady) {
+    const mark = () => {
+      videoReady = true;
+      bump();
+    };
+    video.addEventListener("canplay", mark, { once: true });
+    video.addEventListener("error", mark, { once: true });
+  } else bump();
+
+  const started = performance.now();
+  await new Promise<void>((resolve) => {
+    const tick = () => {
+      const elapsed = performance.now() - started;
+      const limit = reduce ? 200 : videoReady ? 1600 : 2500;
+      const asset = loaded / total;
+      const shown = Math.min(1, asset >= 1 ? Math.max(elapsed / limit, elapsed / 1100) : elapsed / limit);
+      num.textContent = String(Math.round(shown * 100)).padStart(3, "0");
+      if (bar) bar.style.left = `${shown * 100}%`;
+      if (shown >= 1) {
+        resolve();
+        return;
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
+  stopFlip();
+  if (reduce) {
+    shell.remove();
+    return;
+  }
+  await gsap.to(shell, {
+    clipPath: "inset(0 0 100% 0)",
+    opacity: 0,
+    duration: 0.42,
+    ease: "power2.inOut",
+  });
+  shell.remove();
 }
 
+primeHero();
 startChrome();
-runPreloader().then(() => {
-  if (!reduce) startFluid();
+runPreloader().then(async () => {
+  playHeroEntrance();
+  armHeroVideo();
+  if (!reduce && document.body.dataset.page === "home") startFluid();
   startExperience();
 });

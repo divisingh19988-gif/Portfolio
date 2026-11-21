@@ -134,15 +134,8 @@ void main() {
   float ink = texture(u_dye, v_uv).a;
   vec2 uv = (v_uv - 0.5) * u_cover + 0.5;
   vec3 vid = texture(u_video, clamp(uv, vec2(0.0), vec2(1.0))).rgb;
-  float luma = dot(vid, vec3(0.299, 0.587, 0.114));
-  vid = mix(vec3(luma), vid, 0.42);
-  vid *= vec3(0.72, 0.7, 0.68);
-  float mask = smoothstep(0.08, 0.48, ink);
-  vec3 bg = vec3(0.0902, 0.0902, 0.1020);
-  vec3 col = mix(bg, vid, mask);
-  float edge = smoothstep(0.12, 0.28, ink) * (1.0 - smoothstep(0.34, 0.62, ink));
-  col += vec3(0.28, 0.04, 0.02) * edge * ink;
-  outColor = vec4(col, 1.0);
+  float mask = smoothstep(0.06, 0.42, ink);
+  outColor = vec4(vid * mask, mask);
 }`;
 
 type GL = WebGL2RenderingContext;
@@ -219,12 +212,13 @@ export function startFluid() {
   const video = document.querySelector<HTMLVideoElement>("#ink-video");
   if (!canvas || !video) return;
 
-  const gl = canvas.getContext("webgl2", { alpha: false, antialias: false, premultipliedAlpha: false });
+  const gl = canvas.getContext("webgl2", { alpha: true, antialias: false, premultipliedAlpha: true });
   if (!gl) {
     document.documentElement.classList.add("no-gl");
-    video.play().catch(() => undefined);
     return;
   }
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
   const sim = window.matchMedia("(max-width: 860px)").matches ? 96 : 128;
   const vel = pair(gl, sim, sim);
@@ -266,7 +260,6 @@ export function startFluid() {
   } catch (error) {
     console.error(error);
     document.documentElement.classList.add("no-gl");
-    video.play().catch(() => undefined);
     return;
   }
 
@@ -452,13 +445,14 @@ export function startFluid() {
 
     gl.useProgram(display);
     bindTarget(null, viewW, viewH);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
     unit(display, "u_dye", 0, dye.read);
     unit(display, "u_video", 1, videoTex);
     gl.uniform2f(gl.getUniformLocation(display, "u_cover"), cover[0], cover[1]);
     draw();
   };
 
-  video.play().catch(() => undefined);
   loop();
 
   const onLost = (event: Event) => {

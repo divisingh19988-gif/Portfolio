@@ -46,19 +46,21 @@ const { title, description = site.description, page = "case" } = Astro.props;
     </p>
     <p id="copy-live" class="skip" aria-live="polite"></p>
     <p data-words hidden>{words.join("|")}</p>
-    <video
-      id="ink-video"
-      class="ink-video"
-      muted
-      playsinline
-      loop
-      preload="metadata"
-      poster="/hero/berlin-hero-poster.jpg"
-      aria-hidden="true"
-    >
-      <source src="/hero/berlin-hero.webm" type="video/webm" />
-      <source src="/hero/berlin-hero.mp4" type="video/mp4" />
-    </video>
+    <div class="ink-bg">
+      <video
+        id="ink-video"
+        class="ink-video"
+        muted
+        playsinline
+        autoplay
+        preload="auto"
+        poster="/hero/berlin-hero-poster.jpg"
+        aria-hidden="true"
+      >
+        <source src="/hero/berlin-hero.mp4" type="video/mp4" />
+        <source src="/hero/berlin-hero.webm" type="video/webm" />
+      </video>
+    </div>
     <button class="sound-toggle" type="button" aria-pressed="false" aria-label="Sound is off. Turn on a quiet drone.">
       Sound
     </button>
@@ -66,11 +68,22 @@ const { title, description = site.description, page = "case" } = Astro.props;
     {
       page === "home" && (
         <div class="preloader" data-preloader>
-          <p class="preloader-kicker">Index</p>
-          <p class="preloader-num" data-count>
-            000
+          <p class="pre-name">
+            <span data-pre-name>DIGVIJAY RATHORE</span>
+            <i class="pre-sq" aria-hidden="true"></i>
           </p>
-          <p class="preloader-label">Berlin / GTM</p>
+          <div class="pre-polaroids" data-pre-stack aria-hidden="true">
+            <img src="/hero/berlin-hero-poster.jpg" alt="" width="240" height="300" />
+            <img src="/work/getmow-agentic-loop/poster-1.jpg" alt="" width="240" height="300" />
+            <img src="/work/intel-hub/poster-2.jpg" alt="" width="240" height="300" />
+            <img src="/work/workshop/poster-1.jpg" alt="" width="240" height="300" />
+            <img src="/work/leadbot/poster-1.jpg" alt="" width="240" height="300" />
+            <img src="/work/sage-notetaker/poster-1.jpg" alt="" width="240" height="300" />
+            <img src="/work/skill-scout/poster-1.jpg" alt="" width="240" height="300" />
+            <img src="/work/getmow-agentic-loop/poster-2.jpg" alt="" width="240" height="300" />
+          </div>
+          <p class="preloader-num" data-count>000</p>
+          <div class="pre-track" aria-hidden="true"><span data-pre-bar></span></div>
         </div>
       )
     }

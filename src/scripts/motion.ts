@@ -87,6 +87,64 @@ function setupSpy() {
   });
 }
 
+export function primeHero() {
+  if (reduce() || document.body.dataset.page !== "home") return;
+  gsap.set(".name-mask > span", { yPercent: 115 });
+  gsap.set(".topbar", { y: -140 });
+  gsap.set(".fly-portrait", { yPercent: 120 });
+  gsap.set([".hero-kicker", ".hero-role", ".tagline", ".hero-foot"], { y: 22, opacity: 0 });
+  gsap.set(".ink-bg", { opacity: 0 });
+}
+
+export function playHeroEntrance() {
+  if (document.body.dataset.page !== "home") return;
+  const video = document.querySelector<HTMLElement>(".ink-bg");
+  const bits = [".hero-kicker", ".hero-role", ".tagline", ".hero-foot"];
+  if (reduce()) {
+    document.body.classList.add("is-in");
+    if (video) gsap.set(video, { opacity: 0.42 });
+    gsap.set([".name-mask > span", ".topbar", ".fly-portrait", ...bits], { clearProps: "all" });
+    return;
+  }
+  const tl = gsap.timeline({
+    defaults: { ease: "power3.out" },
+    onComplete: () => document.body.classList.add("is-in"),
+  });
+  tl.to(video, { opacity: 0.42, duration: 1.05, ease: "power2.out" }, 0);
+  tl.to(".topbar", { y: 0, duration: 0.72 }, 0);
+  tl.to(".name-mask > span", { yPercent: 0, duration: 0.86, stagger: 0.1 }, 0.04);
+  tl.to(".fly-portrait", { yPercent: 0, duration: 0.9 }, 0.1);
+  tl.to(bits, { y: 0, opacity: 1, duration: 0.55, stagger: 0.05, ease: "power2.out" }, 0.26);
+  tl.set(".fly-portrait", { clearProps: "transform" });
+  tl.set(".topbar", { clearProps: "transform" });
+}
+
+function setupHeadingRise() {
+  if (reduce()) return;
+  document.querySelectorAll<HTMLElement>(".display .line").forEach((line) => {
+    gsap.from(line, {
+      y: 48,
+      opacity: 0,
+      duration: 0.75,
+      ease: "power3.out",
+      scrollTrigger: { trigger: line, start: "top 88%" },
+    });
+  });
+  document.querySelectorAll<HTMLElement>(".contact-card h2").forEach((head) => {
+    if (head.querySelector(".rise-in")) return;
+    const inner = document.createElement("span");
+    inner.className = "rise-in";
+    while (head.firstChild) inner.appendChild(head.firstChild);
+    head.appendChild(inner);
+    gsap.from(inner, {
+      yPercent: 120,
+      duration: 0.85,
+      ease: "power3.out",
+      scrollTrigger: { trigger: head, start: "top 88%" },
+    });
+  });
+}
+
 function setupSkills() {
   if (reduce()) {
     document.querySelector(".stats")?.classList.add("is-in");
@@ -366,6 +424,7 @@ export function startExperience() {
     const stopGallery = setupGallery(true);
     const stopFlight = setupFlight();
     setupSkills();
+    setupHeadingRise();
     setupPosters();
     setupShowcase();
     const stopAwards = setupAwards();
@@ -391,6 +450,7 @@ export function startExperience() {
   mm.add("(max-width: 860px) and (prefers-reduced-motion: no-preference)", () => {
     fitHeroName();
     setupSkills();
+    setupHeadingRise();
     setupPosters();
     setupSpy();
     const onResize = () => fitHeroName();
