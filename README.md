@@ -13,6 +13,8 @@ npm run dev
 
 Dev server: http://127.0.0.1:4731
 
+Live: https://digvijay-rathore-portfolio.vercel.app
+
 ```bash
 npm run build
 npm run preview
