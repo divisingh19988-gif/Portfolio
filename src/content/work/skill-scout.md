@@ -1,28 +1,32 @@
 ---
 title: "skill-scout"
-hook: "A side project."
-role: "TODO — role title from the CV"
-dates: "TODO — dates from the CV"
+hook: "A skill does not enter the workflow until another agent has argued with it."
+role: "Side project"
+dates: "Not stated in the CV"
 tools:
-  - "TODO — tools from the CV"
-problem: "TODO — one-line description from the CV."
-built: "Side project: skill-scout."
-result: "TODO — result from the CV."
+  - "Claude"
+  - "multi-agent review"
+problem: "Agent skills were getting installed on vibes. Bad ones burn tokens before anyone notices."
+built: "A multi-agent system that splits review across specialised agents and vets a skill before it is allowed into a workflow."
+result: "The CV describes the system. It does not give a count."
+next: "Publish how many skills were rejected. [TODO: number]"
 metrics:
-  - label: "Kind"
-    value: "Side project"
-thumbnail: /work/skill-scout/thumb.jpg
-loop: /work/skill-scout/loop.mp4
+  - label: "Skills rejected"
+    value: "[TODO: number]"
+thumbnail: /work/skill-scout/poster-2.jpg
+loop: /work/skill-scout/loop-2.mp4
+loopWebm: /work/skill-scout/loop-2.webm
 screenshots:
-  - /work/skill-scout/shot-1.jpg
-  - /work/skill-scout/shot-2.jpg
-clips:
-  - /work/skill-scout/clip.mp4
-order: 9
+  - /work/skill-scout/poster-2.jpg
+  - /work/skill-scout/poster-1.jpg
+demos:
+  - /work/skill-scout/demo-2.mp4
+  - /work/skill-scout/demo-1.mp4
+order: 7
 featured: true
 anonymous: false
 ---
 
-skill-scout is a side project.
+## What I'd do next
 
-TODO: replace this with the description from the CV.
+Publish how many skills were rejected. [TODO: number]

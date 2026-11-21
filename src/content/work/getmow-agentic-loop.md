@@ -1,30 +1,37 @@
 ---
 title: "GetMOW Agentic Loop"
-hook: "A 7-layer GEO and SEO system."
-role: "TODO — role title from the CV"
-dates: "TODO — dates from the CV"
+hook: "ChatGPT names your competitor. I built the system that changes the answer."
+role: "Co-Founder, GetMOW"
+dates: "Aug 2026 – Nov 2026"
 tools:
-  - "TODO — tools from the CV"
-problem: "TODO — the CV notes name the system, not the problem statement. Add the client or company problem here."
-built: "A 7-layer GEO and SEO system for GetMOW."
-result: "TODO — outcome figures from the CV, if any exist beyond the system itself."
+  - "Claude"
+  - "DataForSEO"
+  - "Next.js"
+problem: "Buyers ask an AI and get one answer. If the company is not in it, the call never comes."
+built: "An agentic GEO and SEO loop: a visibility dashboard, an operating view, and the agent pipeline that feeds both. Research, scoring and drafts run as code."
+result: "8,445 automated Claude runs for research, scoring and drafting. Data spend is audited so the loop stays cheap enough to run every day."
+next: "Put [TODO: number] buyer questions on the daily tracker and publish the weekly score without a human in the middle."
 metrics:
-  - label: "Layers"
-    value: "7"
-  - label: "Discipline"
-    value: "GEO & SEO"
-thumbnail: /work/getmow-agentic-loop/thumb.jpg
-loop: /work/getmow-agentic-loop/loop.mp4
+  - label: "Claude runs"
+    value: "8,445"
+  - label: "Layer count"
+    value: "[TODO: number]"
+thumbnail: /work/getmow-agentic-loop/poster-1.jpg
+loop: /work/getmow-agentic-loop/loop-1.mp4
+loopWebm: /work/getmow-agentic-loop/loop-1.webm
 screenshots:
-  - /work/getmow-agentic-loop/shot-1.jpg
-  - /work/getmow-agentic-loop/shot-2.jpg
-clips:
-  - /work/getmow-agentic-loop/clip.mp4
+  - /work/getmow-agentic-loop/poster-1.jpg
+  - /work/getmow-agentic-loop/poster-2.jpg
+  - /work/getmow-agentic-loop/poster-3.jpg
+demos:
+  - /work/getmow-agentic-loop/demo-1.mp4
+  - /work/getmow-agentic-loop/demo-2.mp4
+  - /work/getmow-agentic-loop/demo-3.mp4
 order: 1
 featured: true
 anonymous: false
 ---
 
-GetMOW Agentic Loop is a 7-layer GEO and SEO system.
+## What I'd do next
 
-TODO: add the layer-by-layer breakdown, the role on the project, and any before/after numbers from the CV. Do not invent metrics.
+Put [TODO: number] buyer questions on the daily tracker and publish the weekly score without a human in the middle.

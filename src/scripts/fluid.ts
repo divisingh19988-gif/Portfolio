@@ -379,7 +379,7 @@ export function startFluid() {
       bindTarget(dye.fboWrite, sim, sim);
       unit(splatDye, "u_target", 0, dye.read);
       gl.uniform2f(gl.getUniformLocation(splatDye, "u_point"), splat.x, splat.y);
-      gl.uniform1f(gl.getUniformLocation(splatDye, "u_radius"), 0.0075);
+      gl.uniform1f(gl.getUniformLocation(splatDye, "u_radius"), 0.016);
       gl.uniform1f(gl.getUniformLocation(splatDye, "u_amount"), 1);
       draw();
       swap(dye);
@@ -431,7 +431,7 @@ export function startFluid() {
     unit(advect, "u_vel", 0, vel.read);
     unit(advect, "u_src", 1, dye.read);
     gl.uniform1f(gl.getUniformLocation(advect, "u_dt"), 0.22);
-    gl.uniform1f(gl.getUniformLocation(advect, "u_dissipation"), 0.978);
+    gl.uniform1f(gl.getUniformLocation(advect, "u_dissipation"), 0.993);
     gl.uniform1f(gl.getUniformLocation(advect, "u_velocity"), 0);
     draw();
     swap(dye);

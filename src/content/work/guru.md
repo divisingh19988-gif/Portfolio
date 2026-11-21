@@ -1,28 +1,26 @@
 ---
 title: "Guru"
-hook: "A side project."
-role: "TODO — role title from the CV"
-dates: "TODO — dates from the CV"
+hook: "A side project. The CV does not describe it yet."
+role: "Not stated in the CV"
+dates: "Not stated in the CV"
 tools:
-  - "TODO — tools from the CV"
-problem: "TODO — one-line description from the CV."
-built: "Side project: Guru."
-result: "TODO — result from the CV."
+  - "Not stated in the CV"
+problem: "The name is on the list. The description is not in the CV, so this page does not invent one."
+built: "Named, not specified."
+result: "No result is in the CV."
+next: "One sentence on what Guru does, then a number. [TODO: number]"
 metrics:
-  - label: "Kind"
-    value: "Side project"
-thumbnail: /work/guru/thumb.jpg
-loop: /work/guru/loop.mp4
+  - label: "Outcome"
+    value: "[TODO: number]"
+thumbnail: /work/guru/poster-1.jpg
 screenshots:
-  - /work/guru/shot-1.jpg
-  - /work/guru/shot-2.jpg
-clips:
-  - /work/guru/clip.mp4
-order: 11
+  - /work/guru/poster-1.jpg
+demos: []
+order: 10
 featured: true
 anonymous: false
 ---
 
-Guru is a side project.
+## What I'd do next
 
-TODO: replace this with the description from the CV.
+One sentence on what Guru does, then a number. [TODO: number]

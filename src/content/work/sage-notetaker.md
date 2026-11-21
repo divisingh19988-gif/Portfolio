@@ -1,28 +1,31 @@
 ---
 title: "Sage Notetaker"
-hook: "A notetaker app."
-role: "TODO — role title from the CV"
-dates: "TODO — dates from the CV"
+hook: "A notetaker that keeps the meeting after everyone leaves."
+role: "Product, Cloud Studios"
+dates: "Not stated in the CV"
 tools:
-  - "TODO — tools from the CV"
-problem: "TODO — problem statement from the CV."
-built: "Sage, a notetaker app."
-result: "TODO — result from the CV."
+  - "Not stated in the CV"
+problem: "Notes died in the call. The next person started from zero."
+built: "Sage, a notetaker app. The CV does not spell out the capture flow, so this page stays with what is actually known: it exists, and the recording is the product."
+result: "No outcome figure is in the CV."
+next: "Ship the number of notes captured and the share rate. Both are [TODO: number]."
 metrics:
-  - label: "Kind"
-    value: "Notetaker"
-thumbnail: /work/sage-notetaker/thumb.jpg
-loop: /work/sage-notetaker/loop.mp4
+  - label: "Notes captured"
+    value: "[TODO: number]"
+  - label: "Share rate"
+    value: "[TODO: number]"
+thumbnail: /work/sage-notetaker/poster-1.jpg
+loop: /work/sage-notetaker/loop-1.mp4
+loopWebm: /work/sage-notetaker/loop-1.webm
 screenshots:
-  - /work/sage-notetaker/shot-1.jpg
-  - /work/sage-notetaker/shot-2.jpg
-clips:
-  - /work/sage-notetaker/clip.mp4
+  - /work/sage-notetaker/poster-1.jpg
+demos:
+  - /work/sage-notetaker/demo-1.mp4
 order: 6
 featured: true
 anonymous: false
 ---
 
-Sage is a notetaker app.
+## What I'd do next
 
-TODO: add the capture flow, the platform, and any result from the CV.
+Ship the number of notes captured and the share rate. Both are [TODO: number].

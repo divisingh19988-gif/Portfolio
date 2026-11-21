@@ -53,12 +53,15 @@ const { title, description = site.description, page = "case" } = Astro.props;
       playsinline
       loop
       preload="metadata"
-      poster="/video/berlin-poster.jpg"
+      poster="/hero/berlin-hero-poster.jpg"
       aria-hidden="true"
     >
-      <source src="/video/berlin.webm" type="video/webm" />
-      <source src="/video/berlin.mp4" type="video/mp4" />
+      <source src="/hero/berlin-hero.webm" type="video/webm" />
+      <source src="/hero/berlin-hero.mp4" type="video/mp4" />
     </video>
+    <button class="sound-toggle" type="button" aria-pressed="false" aria-label="Sound is off. Turn on a quiet drone.">
+      Sound
+    </button>
     <canvas id="ink" aria-hidden="true"></canvas>
     {
       page === "home" && (

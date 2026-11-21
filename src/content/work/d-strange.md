@@ -1,28 +1,29 @@
 ---
 title: "d-strange"
-hook: "A side project."
-role: "TODO — role title from the CV"
-dates: "TODO — dates from the CV"
+hook: "Stop burning tokens on trial and error. v0.1.0 is public."
+role: "Open source"
+dates: "v0.1.0"
 tools:
-  - "TODO — tools from the CV"
-problem: "TODO — one-line description from the CV."
-built: "Side project: d-strange."
-result: "TODO — result from the CV."
+  - "Claude Code"
+problem: "Agents guess, retry, and spend the context window on the wrong path."
+built: "A decision skill suite. The workflows are packaged as reusable skills so the agent names the path, says what is impossible, and stress-tests it before anyone builds."
+result: "Public v0.1.0."
+next: "Stars and installs are not in the CV. [TODO: number]"
 metrics:
-  - label: "Kind"
-    value: "Side project"
-thumbnail: /work/d-strange/thumb.jpg
-loop: /work/d-strange/loop.mp4
+  - label: "Release"
+    value: "v0.1.0"
+  - label: "Installs"
+    value: "[TODO: number]"
+link: "https://github.com/divisingh19988-gif/d-strange"
+thumbnail: /work/d-strange/readme.jpg
 screenshots:
-  - /work/d-strange/shot-1.jpg
-  - /work/d-strange/shot-2.jpg
-clips:
-  - /work/d-strange/clip.mp4
+  - /work/d-strange/readme.jpg
+demos: []
 order: 8
 featured: true
 anonymous: false
 ---
 
-d-strange is a side project.
+## What I'd do next
 
-TODO: replace this with the description from the CV.
+Stars and installs are not in the CV. [TODO: number]

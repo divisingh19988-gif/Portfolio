@@ -1,14 +1,17 @@
 export const site = {
   name: "Digvijay Rathore",
-  role: "GTM Engineer",
+  role: "AI-native GTM Engineer",
   place: "Berlin",
-  line: "Growth, AI agents, SEO / GEO",
+  line: "Outbound, enrichment, and Claude workflows",
   email: "digvijay.rathore.de@gmail.com",
-  linkedin: "https://www.linkedin.com/",
-  linkedinNote: "Placeholder. Replace with the profile URL.",
+  mailto:
+    "mailto:digvijay.rathore.de@gmail.com?subject=Loved%20your%20portfolio&body=Hey%20Digvijay%2C%20Loved%20your%20portfolio%2C%20let%27s%20get%20in%20touch.",
+  linkedin: "https://www.linkedin.com/in/digvijay-udawat/",
+  github: "https://github.com/divisingh19988-gif",
+  cal: "https://cal.com/digvijay-rathore-84nil7/15min",
   cv: "/cv/Digvijay_Rathore_CV_GTM_Engineer.pdf",
   description:
-    "Digvijay Rathore is a GTM engineer in Berlin. Growth systems, AI agents, and SEO / GEO.",
+    "Digvijay Rathore is an AI-native GTM engineer in Berlin. He builds the pipeline: sourcing, enrichment, sequencing, and the agents that run it.",
 };
 
 export const nav = [
@@ -19,38 +22,48 @@ export const nav = [
   { id: "contact", n: "05", label: "Contact" },
 ];
 
-export const words = ["Signal", "Agents", "Geo", "Berlin", "Scale"];
+export const words = ["Growth", "Agents", "Claude", "Bots", "Berlin"];
+
+export const taglines = [
+  "ships growth loops, not slide decks",
+  "founder's associate energy, operator receipts",
+  "my agents have agents",
+  "claude code till the tokens run out",
+  "the pipeline runs while the coffee cools",
+  "grok bots on the night shift",
+  "one brief in, a fleet back",
+];
 
 export const stats = [
-  { value: "300", label: "Signal emails", note: "per day" },
-  { value: "7", label: "Demos booked", note: "in 6 weeks" },
-  { value: "4%+", label: "Positive replies", note: "outbound engine" },
+  { value: "4,764", label: "Companies qualified", note: "one outbound list" },
+  { value: "8,445", label: "Claude runs", note: "research, scoring, drafts" },
+  { value: "8", label: "Warmed mailboxes", note: "5-email sequence" },
 ];
 
 export const skills = [
   {
     n: "01",
     title: "Prospecting & enrichment",
-    copy: "Finding the accounts worth a conversation, and the signal that makes the note specific.",
-    chips: ["Clay", "TODO — remaining tools from the CV"],
+    copy: "The list is the product. Sourcing, ICP filters, and enrichment land in one pipeline.",
+    chips: ["Clay", "FullEnrich", "SmartProspect"],
   },
   {
     n: "02",
     title: "CRM & RevOps",
-    copy: "The system of record that keeps follow-up from falling through. Tool names are not in the notes used to build this page.",
-    chips: ["TODO — CRM from the CV", "TODO — RevOps from the CV"],
+    copy: "HubSpot catches the demo. Zoho ran partner ops for 500+ retail brands.",
+    chips: ["HubSpot", "Zoho CRM", "Cal.com"],
   },
   {
     n: "03",
     title: "Outbound",
-    copy: "Signal-led cold email, LinkedIn, and Looms. The GetMOW engine runs 300 emails, 40 LinkedIn touches, and 50 Looms a day.",
-    chips: ["Cold email", "LinkedIn", "Loom"],
+    copy: "Sequencing, warmup, and subject-line tests. Replies come back to a human only for the yes.",
+    chips: ["Smartlead", "Warmup", "A/B tests"],
   },
   {
     n: "04",
     title: "AI & Automations",
-    copy: "Agents and model workflows that keep the motion moving. Certified across Claude, Google AI, AWS generative AI, and Semrush AI.",
-    chips: ["Claude API", "Agents", "Semrush AI"],
+    copy: "Claude and OpenAI on webhooks. Slack digests. The stack is code, not a tab farm.",
+    chips: ["Claude", "OpenAI", "Next.js", "Supabase"],
   },
 ];
 
@@ -59,68 +72,68 @@ export const showcase = [
     n: "01",
     kicker: "GetMOW",
     title: "Agentic Loop",
-    copy: "A 7-layer GEO and SEO system.",
+    copy: "8,445 Claude runs. The answer changes because the work runs every day.",
     href: "/work/getmow-agentic-loop",
-    image: "/work/getmow-agentic-loop/thumb.jpg",
+    image: "/work/getmow-agentic-loop/poster-1.jpg",
   },
   {
     n: "02",
     kicker: "GetMOW",
     title: "Outbound Engine",
-    copy: "300 signal emails a day, 40 LinkedIn, 50 Looms. 7 demos in 6 weeks.",
-    href: "/work/getmow-outbound",
-    image: "/work/getmow-outbound/thumb.jpg",
+    copy: "4,764 companies. 8 mailboxes. A first demo booked.",
+    href: "/work/getmow-outbound-engine",
+    image: "/work/getmow-outbound-engine/gtm-workflow.jpg",
   },
   {
     n: "03",
     kicker: "Client",
-    title: "Competitive Intel",
-    copy: "A competitive intel platform for a consumer app client. The client stays unnamed.",
-    href: "/work/competitive-intel-platform",
-    image: "/work/competitive-intel-platform/thumb.jpg",
+    title: "Intel Hub",
+    copy: "Four pipelines and a weekly brief for a consumer audio startup.",
+    href: "/work/intel-hub",
+    image: "/work/intel-hub/poster-2.jpg",
   },
   {
     n: "04",
-    kicker: "Products",
-    title: "Studio Builds",
-    copy: "Workshop, Lead Studio, and Sage. An autopilot content studio, a lead bot, and a notetaker.",
+    kicker: "Cloud Studios",
+    title: "Workshop",
+    copy: "7 channels. About 40% less cost per creative.",
     href: "/work/workshop",
-    image: "/work/workshop/thumb.jpg",
+    image: "/work/workshop/poster-1.jpg",
   },
   {
     n: "05",
-    kicker: "Agents",
-    title: "Fleet & Side Projects",
-    copy: "Grok Bot, plus d-strange, skill-scout, GetMeHired, and Guru.",
-    href: "/work/grok-bot",
-    image: "/work/grok-bot/thumb.jpg",
+    kicker: "Cloud Studios",
+    title: "Leadbot",
+    copy: "Buyer-intent feed. 241 automated tests.",
+    href: "/work/leadbot",
+    image: "/work/leadbot/poster-1.jpg",
   },
 ];
 
 export const timeline = [
   {
-    when: "TODO — dates",
+    when: "Aug 2026 – Nov 2026",
     title: "GetMOW",
-    role: "GTM / AI visibility",
-    detail: "Agentic loop and the outbound engine.",
+    role: "Co-Founder",
+    detail: "GEO, the agentic loop, and the outbound engine. Berlin.",
   },
   {
-    when: "TODO — dates",
-    title: "Client systems",
-    role: "Consumer app",
-    detail: "Competitive intel platform. Client unnamed.",
+    when: "May 2026 – Nov 2026",
+    title: "Cloud Studios",
+    role: "Founder's Associate",
+    detail: "Leadbot, the intel hub, Workshop, and the client systems.",
   },
   {
-    when: "TODO — dates",
-    title: "Products",
-    role: "TODO — title from the CV",
-    detail: "Workshop, Lead Studio, and Sage.",
+    when: "May 2023 – May 2024",
+    title: "Fantail",
+    role: "Founder's Office",
+    detail: "Zoho CRM for 500+ partners. 40% less reconciliation time.",
   },
   {
-    when: "TODO — dates",
-    title: "Experiments",
-    role: "Agents and side projects",
-    detail: "Grok Bot, d-strange, skill-scout, GetMeHired, Guru.",
+    when: "Nov 2020 – Dec 2022",
+    title: "BYJU'S",
+    role: "Business Development Manager",
+    detail: "KPI dashboards for 30+ sales associates.",
   },
 ];
 
@@ -128,23 +141,23 @@ export const certificates = [
   { org: "Clay", name: "Automated Outbound", tone: "cream" },
   { org: "Anthropic", name: "Building with the Claude API", tone: "red" },
   { org: "Google", name: "AI Professional Certificate", tone: "ink" },
-  { org: "AWS", name: "Generative AI Applications Professional Certificate", tone: "paper" },
-  { org: "Semrush", name: "AI", tone: "ember" },
+  { org: "AWS", name: "Generative AI Applications", tone: "paper" },
+  { org: "Semrush", name: "AI certification", tone: "ember" },
 ];
 
 export const brandStats = [
-  { value: "7", label: "GEO / SEO layers" },
-  { value: "40", label: "LinkedIn / day" },
-  { value: "50", label: "Looms / day" },
+  { value: "4,764", label: "Companies in the engine" },
+  { value: "8,445", label: "Claude runs" },
+  { value: "241", label: "Tests on Leadbot" },
 ];
 
 export const contactTiles = [
-  { slug: "getmow-agentic-loop", left: "8%", top: "14%", rot: -7 },
-  { slug: "getmow-outbound", left: "58%", top: "10%", rot: 6 },
-  { slug: "competitive-intel-platform", left: "22%", top: "58%", rot: 4 },
-  { slug: "workshop", left: "70%", top: "48%", rot: -5 },
-  { slug: "lead-studio", left: "40%", top: "28%", rot: 3 },
-  { slug: "sage-notetaker", left: "6%", top: "38%", rot: -3 },
-  { slug: "grok-bot", left: "48%", top: "68%", rot: 8 },
-  { slug: "d-strange", left: "78%", top: "72%", rot: -6 },
+  { slug: "getmow-agentic-loop", image: "/work/getmow-agentic-loop/poster-1.jpg", title: "Agentic Loop", left: "4%", top: "8%", rot: -8 },
+  { slug: "getmow-outbound-engine", image: "/work/getmow-outbound-engine/gtm-workflow.jpg", title: "Outbound engine", left: "62%", top: "6%", rot: 6 },
+  { slug: "intel-hub", image: "/work/intel-hub/poster-2.jpg", title: "Intel hub", left: "28%", top: "58%", rot: -4 },
+  { slug: "workshop", image: "/work/workshop/poster-1.jpg", title: "Workshop", left: "72%", top: "42%", rot: 5 },
+  { slug: "leadbot", image: "/work/leadbot/poster-1.jpg", title: "Leadbot", left: "8%", top: "36%", rot: 3 },
+  { slug: "sage-notetaker", image: "/work/sage-notetaker/poster-1.jpg", title: "Sage", left: "48%", top: "70%", rot: -7 },
+  { slug: "skill-scout", image: "/work/skill-scout/poster-2.jpg", title: "skill-scout", left: "78%", top: "68%", rot: 4 },
+  { slug: "d-strange", image: "/work/d-strange/readme.jpg", title: "d-strange", left: "18%", top: "72%", rot: -3 },
 ];

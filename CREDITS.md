@@ -4,12 +4,21 @@ Original code, copy, and graphics. The interaction model is a reimplementation, 
 
 ## Background video
 
-- **Title:** Bustling Evening at Potsdamer Platz, Berlin
-- **Author:** Ivan Chumak
-- **Source:** https://www.pexels.com/video/bustling-evening-at-potsdamer-platz-berlin-40194924/
-- **License:** [Pexels License](https://www.pexels.com/license/) — free to use, including commercially. Attribution is not required; it is included here anyway.
-- **File:** `public/video/berlin.mp4` and `public/video/berlin.webm`
-- **Edit:** trimmed to a 10 second loop, scaled to 1920×1080, 24 fps, graded darker and less saturated for the ink reveal. Poster frame: `public/video/berlin-poster.jpg`.
+The hero ink reveals `public/hero/berlin-hero.webm` and `public/hero/berlin-hero.mp4`, a 9 second seamless loop of the Siegessäule in Berlin at dusk.
+
+- **Source:** Pexels, supplied with this project
+- **License:** [Pexels License](https://www.pexels.com/license/)
+- **Poster:** `public/hero/berlin-hero-poster.jpg`
+
+An earlier Potsdamer Platz clip from Pexels (Ivan Chumak, video 40194924) is no longer used as the hero.
+
+## Sound
+
+The sound button starts a two-oscillator drone generated in the browser with the Web Audio API. Nothing is downloaded, and nothing plays until the button is pressed.
+
+## Generated card art
+
+GetMeHired, Guru, and Grok Bot have no footage. Their gallery cards are original abstract frames drawn for this site, in `public/work/<slug>/poster-1.jpg`.
 
 ## Fonts
 

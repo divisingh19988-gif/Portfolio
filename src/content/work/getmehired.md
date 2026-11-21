@@ -1,28 +1,26 @@
 ---
 title: "GetMeHired"
-hook: "A side project."
-role: "TODO — role title from the CV"
-dates: "TODO — dates from the CV"
+hook: "Role discovery and application prep, without the Sunday-night spreadsheet."
+role: "Side project, in progress"
+dates: "In progress. Dates not in the CV"
 tools:
-  - "TODO — tools from the CV"
-problem: "TODO — one-line description from the CV."
-built: "Side project: GetMeHired."
-result: "TODO — result from the CV."
+  - "Not stated in the CV"
+problem: "The search is a second job. The CV says the product automates role discovery and application prep. It does not say it has shipped a number yet."
+built: "A job-search product in build. It finds roles and prepares the application."
+result: "No shipped outcome is in the CV."
+next: "First cohort size. [TODO: number]"
 metrics:
-  - label: "Kind"
-    value: "Side project"
-thumbnail: /work/getmehired/thumb.jpg
-loop: /work/getmehired/loop.mp4
+  - label: "Roles prepared"
+    value: "[TODO: number]"
+thumbnail: /work/getmehired/poster-1.jpg
 screenshots:
-  - /work/getmehired/shot-1.jpg
-  - /work/getmehired/shot-2.jpg
-clips:
-  - /work/getmehired/clip.mp4
-order: 10
+  - /work/getmehired/poster-1.jpg
+demos: []
+order: 9
 featured: true
 anonymous: false
 ---
 
-GetMeHired is a side project.
+## What I'd do next
 
-TODO: replace this with the description from the CV.
+First cohort size. [TODO: number]
