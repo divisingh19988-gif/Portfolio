@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import Poster from "../../components/Poster.astro";
 import { site } from "../../data/site";
 
 export async function getStaticPaths() {
@@ -14,15 +15,29 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const data = entry.data;
+const words = data.title.toUpperCase().split(" ");
+const mid = Math.max(1, Math.ceil(words.length / 2));
+const line1 = words.slice(0, mid).join(" ");
+const line2 = words.slice(mid).join(" ") || "FILE";
 ---
 
 <Base title={`${data.title} — ${site.name}`} description={data.hook} page="case">
   <article class="case" data-screen="CASE">
+    <Poster
+      label={data.title}
+      line1={line1}
+      line2={line2}
+      lead={data.hook}
+      body={data.problem}
+      stamp={`21.11.26 / Case file / Vol.${data.order}`}
+      image={data.thumbnail}
+      video={data.loop}
+      webm={data.loopWebm}
+    />
+    <div class="case-body">
     <a class="back" href="/#works">← Index</a>
-    <p class="eyebrow">{String(data.order).padStart(2, "0")} — Case</p>
-    <h1>{data.title}</h1>
-    <p class="hook">{data.hook}</p>
-    {data.anonymous && <p class="anon">The client stays anonymous. Do not add a company or product name to this page.</p>}
+    <p class="eyebrow">{String(data.order).padStart(2, "0")} — Case file</p>
+    {data.anonymous && <p class="anon">Built for a consumer audio startup. The name stays off this page.</p>}
     <div class="meta">
       <div>
         <span>Role</span>
@@ -42,7 +57,7 @@ const data = entry.data;
         data.metrics.map((metric) => (
           <div>
             <span>{metric.label}</span>
-            <strong>{metric.value}</strong>
+            <strong class:list={[{ todo: metric.value.includes("[TODO") }]}>{metric.value}</strong>
           </div>
         ))
       }
@@ -50,16 +65,41 @@ const data = entry.data;
     <div class="story">
       <section>
         <h2>Problem</h2>
-        <p class:list={[{ todo: data.problem.startsWith("TODO") }]}>{data.problem}</p>
+        <p>{data.problem}</p>
       </section>
       <section>
-        <h2>Built</h2>
+        <h2>What I built</h2>
         <p>{data.built}</p>
+        <div class="chips">
+          {data.tools.map((tool) => <span class="chip">{tool}</span>)}
+        </div>
       </section>
+    </div>
+    <div class="shots">
+      {
+        data.screenshots.map((src, index) => (
+          <img src={src} alt={`${data.title}, frame ${index + 1}`} width="1600" height="1000" loading="lazy" />
+        ))
+      }
+    </div>
+    {
+      data.demos.map((src, index) => (
+        <video data-lazy controls playsinline preload="none" poster={data.thumbnail} width="1280" height="720" aria-label={`${data.title} walkthrough ${index + 1}`}>
+          <source data-src={src} type="video/mp4" />
+        </video>
+      ))
+    }
+    <div class="story">
       <section>
         <h2>Result</h2>
-        <p class:list={[{ todo: data.result.startsWith("TODO") }]}>{data.result}</p>
+        <p class:list={[{ todo: data.result.includes("[TODO: number]") }]}>{data.result}</p>
       </section>
+      {data.next && (
+        <section>
+          <h2>What I'd do next</h2>
+          <p class:list={[{ todo: data.next.includes("[TODO: number]") }]}>{data.next}</p>
+        </section>
+      )}
     </div>
     <div class="prose">
       <Content />
@@ -73,26 +113,14 @@ const data = entry.data;
         </p>
       )
     }
-    <div class="shots">
-      {
-        data.screenshots.map((src, index) => (
-          <img src={src} alt={`Placeholder screenshot ${index + 1} for ${data.title}`} width="1600" height="1000" loading="lazy" />
-        ))
-      }
-    </div>
     {
       data.loop && (
-        <video data-lazy muted loop playsinline preload="none" poster={data.thumbnail} width="1280" height="720" aria-label={`Placeholder loop for ${data.title}`}>
+        <video data-lazy muted loop playsinline preload="none" poster={data.thumbnail} width="1280" height="720" aria-label={`${data.title} loop`}>
+          {data.loopWebm && <source data-src={data.loopWebm} type="video/webm" />}
           <source data-src={data.loop} type="video/mp4" />
         </video>
       )
     }
-    {
-      data.clips.map((src) => (
-        <video data-lazy muted loop playsinline preload="none" poster={data.thumbnail} width="1280" height="720" aria-label={`Placeholder clip for ${data.title}`}>
-          <source data-src={src} type="video/mp4" />
-        </video>
-      ))
-    }
+    </div>
   </article>
 </Base>

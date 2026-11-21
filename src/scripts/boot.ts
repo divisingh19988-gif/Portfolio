@@ -82,6 +82,13 @@ function startChrome() {
     const max = document.documentElement.scrollHeight - window.innerHeight;
     const progress = max > 0 ? Math.min(99, Math.round((window.scrollY / max) * 100)) : 0;
     if (readoutP) readoutP.textContent = pad(progress, 2);
+    const posters = document.querySelectorAll(".poster");
+    let posterOpen = false;
+    posters.forEach((el) => {
+      const box = el.getBoundingClientRect();
+      if (box.top < window.innerHeight * 0.72 && box.bottom > window.innerHeight * 0.22) posterOpen = true;
+    });
+    document.body.classList.toggle("poster-open", posterOpen);
   };
   const requestPaint = () => {
     if (frame) return;
@@ -113,6 +120,65 @@ function startChrome() {
         node.classList.add("is-flicker");
       });
     }, 2400);
+  }
+
+  const tagline = document.querySelector<HTMLElement>("[data-tagline]");
+  const phrases = (tagline?.dataset.phrases || "").split("|").map((line) => line.trim()).filter(Boolean);
+  if (!reduce && tagline && phrases.length > 1) {
+    let phrase = 0;
+    const alphabet = "abcdefghijklmnopqrstuvwxyz";
+    window.setInterval(() => {
+      phrase = (phrase + 1) % phrases.length;
+      const next = phrases[phrase];
+      let frame = 0;
+      const steps = 14;
+      const timer = window.setInterval(() => {
+        frame += 1;
+        const cut = Math.floor((frame / steps) * next.length);
+        let shown = next.slice(0, cut);
+        for (let i = cut; i < next.length; i += 1) {
+          shown += next[i] === " " ? " " : alphabet[Math.floor(Math.random() * alphabet.length)];
+        }
+        tagline.textContent = frame >= steps ? next : shown;
+        if (frame >= steps) window.clearInterval(timer);
+      }, 32);
+    }, 3400);
+  }
+
+  const sound = document.querySelector<HTMLButtonElement>(".sound-toggle");
+  if (sound) {
+    let audio: AudioContext | null = null;
+    let master: GainNode | null = null;
+    let playing = false;
+    sound.addEventListener("click", async () => {
+      if (!audio) {
+        const Context = window.AudioContext;
+        audio = new Context();
+        const low = audio.createOscillator();
+        const high = audio.createOscillator();
+        low.type = "sine";
+        high.type = "triangle";
+        low.frequency.value = 55;
+        high.frequency.value = 82.4;
+        const filter = audio.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = 220;
+        master = audio.createGain();
+        master.gain.value = 0;
+        low.connect(filter);
+        high.connect(filter);
+        filter.connect(master);
+        master.connect(audio.destination);
+        low.start();
+        high.start();
+      }
+      if (audio.state === "suspended") await audio.resume();
+      playing = !playing;
+      master?.gain.linearRampToValueAtTime(playing ? 0.028 : 0, audio.currentTime + 0.35);
+      sound.setAttribute("aria-pressed", playing ? "true" : "false");
+      sound.textContent = playing ? "Sound on" : "Sound";
+      sound.setAttribute("aria-label", playing ? "Sound is on. Turn it off." : "Sound is off. Turn on a quiet drone.");
+    });
   }
 
   document.querySelectorAll<HTMLElement>("[data-copy]").forEach((button) => {

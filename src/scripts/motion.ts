@@ -29,6 +29,42 @@ function fitHeroName() {
   }
 }
 
+function setupPosters() {
+  const posters = gsap.utils.toArray<HTMLElement>(".poster");
+  if (!posters.length || reduce()) return;
+  if (document.body.dataset.page === "case") {
+    gsap.fromTo(
+      posters,
+      { clipPath: "inset(100% 0 0 0)" },
+      { clipPath: "inset(0% 0 0 0)", duration: 1.05, ease: "power3.inOut", delay: 0.08 },
+    );
+    return;
+  }
+  posters.forEach((poster) => {
+    gsap.fromTo(
+      poster,
+      { clipPath: "inset(100% 0 0 0)" },
+      {
+        clipPath: "inset(0% 0 0 0)",
+        ease: "none",
+        scrollTrigger: {
+          trigger: poster,
+          start: "top 92%",
+          end: "top 42%",
+          scrub: 0.45,
+          onToggle: () => {
+            const open = posters.some((el) => {
+              const box = el.getBoundingClientRect();
+              return box.top < window.innerHeight * 0.62 && box.bottom > window.innerHeight * 0.28;
+            });
+            document.body.classList.toggle("poster-open", open);
+          },
+        },
+      },
+    );
+  });
+}
+
 function setupSpy() {
   document.querySelectorAll<HTMLElement>("[data-screen]").forEach((section) => {
     ScrollTrigger.create({
@@ -104,7 +140,7 @@ function setupGallery(auto: boolean) {
   if (!cards.length) return () => undefined;
   let offset = 0;
   let suppress = false;
-  const spacing = 340;
+  const spacing = 430;
 
   const layout = () => {
     const width = stage.clientWidth;
@@ -328,6 +364,7 @@ export function startExperience() {
     const stopGallery = setupGallery(true);
     const stopFlight = setupFlight();
     setupSkills();
+    setupPosters();
     setupShowcase();
     const stopAwards = setupAwards();
     const stopContact = setupContact();
@@ -352,6 +389,7 @@ export function startExperience() {
   mm.add("(max-width: 860px) and (prefers-reduced-motion: no-preference)", () => {
     fitHeroName();
     setupSkills();
+    setupPosters();
     setupSpy();
     const onResize = () => fitHeroName();
     window.addEventListener("resize", onResize);
@@ -361,6 +399,7 @@ export function startExperience() {
   mm.add("(prefers-reduced-motion: reduce)", () => {
     document.body.classList.add("docked");
     document.querySelector(".stats")?.classList.add("is-in");
+    document.querySelectorAll(".poster").forEach((poster) => poster.classList.add("is-shown"));
     setupSpy();
   });
 }

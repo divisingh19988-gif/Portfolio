@@ -2,7 +2,8 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Brush from "../components/Brush.astro";
-import { brandStats, certificates, contactTiles, nav, showcase, site, skills, stats, timeline } from "../data/site";
+import Poster from "../components/Poster.astro";
+import { brandStats, certificates, contactTiles, nav, showcase, site, skills, stats, taglines, timeline } from "../data/site";
 
 const works = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
 const gallery = works.filter((entry) => entry.data.featured);
@@ -21,8 +22,10 @@ const gallery = works.filter((entry) => entry.data.featured);
         <p class="role">{site.role} · {site.place}</p>
         <p class="role-sub">{site.line}</p>
         <div class="side-socials">
-          <a href={site.linkedin} target="_blank" rel="noreferrer" title={site.linkedinNote}>LinkedIn ↗</a>
-          <button class="textlink" type="button" data-copy={site.email}>Email</button>
+          <a href={site.mailto}>Email</a>
+          <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
+          <button class="textlink" type="button" data-copy={site.email}>Copy</button>
         </div>
         <nav class="side-nav" aria-label="Sections">
           {
@@ -42,10 +45,10 @@ const gallery = works.filter((entry) => entry.data.featured);
             ))
           }
         </div>
-        <button class="side-mail" type="button" data-copy={site.email}>
+        <a class="side-mail" href={site.mailto}>
           <span>{site.email}</span>
-          <span data-copy-label>Copy</span>
-        </button>
+          <span>Email</span>
+        </a>
       </div>
     </aside>
     <div class="mobile-menu" id="menu">
@@ -56,7 +59,8 @@ const gallery = works.filter((entry) => entry.data.featured);
           </a>
         ))
       }
-      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <a href={site.mailto}>{site.email}</a>
+      <a href={site.cal} target="_blank" rel="noreferrer">Book a call</a>
     </div>
   </div>
 
@@ -88,6 +92,8 @@ const gallery = works.filter((entry) => entry.data.featured);
           <h1 class="fly-name">
             <span class="first">Digvijay</span> <span class="last">Rathore</span>
           </h1>
+          <p class="hero-role">AI-native GTM Engineer</p>
+          <p class="tagline" data-tagline data-phrases={taglines.join("|")}>{taglines[0]}</p>
           <Brush class="hero-line" />
         </div>
         <div class="portrait-home">
@@ -104,9 +110,10 @@ const gallery = works.filter((entry) => entry.data.featured);
       <div class="hero-foot">
         <a class="keep" href="#introduce">↙ Go deeper</a>
         <div class="hero-socials">
-          <a href={site.linkedin} target="_blank" rel="noreferrer" title={site.linkedinNote}>LinkedIn ↗</a>
-          <button class="textlink" type="button" data-copy={site.email}>Email ↗</button>
-          <a href={site.cv} download>CV ↗</a>
+          <a href={site.mailto}>Email ↗</a>
+          <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
+          <a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a>
+          <button class="textlink" type="button" data-copy={site.email}>Copy</button>
         </div>
       </div>
     </div>
@@ -153,6 +160,17 @@ const gallery = works.filter((entry) => entry.data.featured);
   </section>
 
   <div id="works" data-screen="WORKS">
+    <Poster
+      label="Works break"
+      line1="Ships out,"
+      line2="leads in"
+      lead="Some people bring a deck. He brought the pipeline."
+      body="The list, the sequence, and the reply used to live in different tabs. Now they run. Qualified companies in, a first demo on the calendar, agents doing the boring middle. Comfortable? Debatable. Useful? Without question."
+      stamp="21.11.26 / Works / Vol.1"
+      image="/work/getmow-agentic-loop/poster-1.jpg"
+      video="/work/getmow-agentic-loop/loop-1.mp4"
+      webm="/work/getmow-agentic-loop/loop-1.webm"
+    />
     <section class="sheet">
       <div class="works-head">
         <h2 class="display">
@@ -166,6 +184,14 @@ const gallery = works.filter((entry) => entry.data.featured);
           gallery.map((entry) => (
             <a class="gcard" href={`/work/${entry.id}`} style={`--shot:url(${entry.data.thumbnail})`}>
               <span class="gcard-visual">
+                {entry.data.loop ? (
+                  <video class="gcard-video" data-lazy muted loop playsinline preload="none" poster={entry.data.thumbnail}>
+                    {entry.data.loopWebm && <source data-src={entry.data.loopWebm} type="video/webm" />}
+                    <source data-src={entry.data.loop} type="video/mp4" />
+                  </video>
+                ) : (
+                  <img src={entry.data.thumbnail} alt="" width="1400" height="900" />
+                )}
                 <i></i>
                 <i></i>
                 <i></i>
@@ -180,7 +206,7 @@ const gallery = works.filter((entry) => entry.data.featured);
       </div>
       <div class="works-foot">
         <p>Scoped. Built. Shipped.</p>
-        <p class="hot">7 demos / 6 weeks</p>
+        <p class="hot">4,764 companies</p>
       </div>
     </section>
 
@@ -240,6 +266,17 @@ const gallery = works.filter((entry) => entry.data.featured);
   </div>
 
   <section class="sheet" id="awards" data-screen="AWARDS">
+    <Poster
+      label="Awards break"
+      line1="Agents on,"
+      line2="tokens burning"
+      lead="Certificates are just receipts with better paper."
+      body="Clay, Claude, Google, AWS, Semrush. The paper is the easy part. The interesting part is what the agents did with the afternoon. Proof, not a promise. The orbit spins if you drag it."
+      stamp="21.11.26 / Awards / Vol.1"
+      image="/work/skill-scout/poster-2.jpg"
+      video="/work/skill-scout/loop-2.mp4"
+      webm="/work/skill-scout/loop-2.webm"
+    />
     <div class="award-layout">
       <div>
         <p class="eyebrow">Selected certificates</p>
@@ -264,13 +301,24 @@ const gallery = works.filter((entry) => entry.data.featured);
   </section>
 
   <section class="sheet" id="contact" data-screen="CONTACT">
+    <Poster
+      label="Contact break"
+      line1="Hey."
+      line2="Write back."
+      lead="The main ask is still the email."
+      body="No funnel. No calendar hostage situation, unless you want the 15 minutes. Send the note. He reads them. Berlin, late, probably still in the pipeline."
+      stamp="21.11.26 / Contact / Vol.1"
+      image="/work/workshop/content-machine.jpg"
+      video="/work/workshop/loop-1.mp4"
+      webm="/work/workshop/loop-1.webm"
+    />
     <div class="contact-stage">
       {
         contactTiles.map((tile) => (
           <article class="tile" style={`left:${tile.left};top:${tile.top};transform:rotate(${tile.rot}deg)`}>
             <a href={`/work/${tile.slug}`}>
-              <img src={`/work/${tile.slug}/thumb.jpg`} alt="" width="1400" height="900" />
-              <span>{tile.slug.replaceAll("-", " ")}</span>
+              <img src={tile.image} alt="" width="1400" height="900" />
+              <span>{tile.title}</span>
             </a>
           </article>
         ))
@@ -278,12 +326,15 @@ const gallery = works.filter((entry) => entry.data.featured);
       <article class="tile contact-card" style="left:18%;top:34%;">
         <p class="eyebrow">05 — Contact</p>
         <h2>Send a signal.</h2>
-        <button class="mail-button" type="button" data-copy={site.email}>
+        <a class="mail-button" href={site.mailto}>
           <span>{site.email}</span>
-          <span>Copy</span>
-        </button>
+          <span>Email</span>
+        </a>
         <div class="contact-actions">
-          <a href={site.linkedin} target="_blank" rel="noreferrer" title={site.linkedinNote}>LinkedIn ↗</a>
+          <button class="textlink copy-btn" type="button" data-copy={site.email}>Copy email</button>
+          <a href={site.cal} target="_blank" rel="noreferrer">Book a call</a>
+          <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
           <a class="download" href={site.cv} download>Download CV</a>
         </div>
         <p class="fine">Berlin · {site.role}. The main ask is the email.</p>
