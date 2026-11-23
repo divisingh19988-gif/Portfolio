@@ -8,6 +8,10 @@ interface Props {
   page?: "home" | "case";
 }
 const { title, description = site.description, page = "case" } = Astro.props;
+// Link previews need full addresses, so the banner and page URL are built on the live domain.
+const siteUrl = "https://digvijay.online";
+const pageUrl = new URL(Astro.url.pathname, siteUrl).href;
+const bannerUrl = `${siteUrl}/og.jpg`;
 
 // Loader line, one span per letter so the stylesheet can type it out in order.
 const preRows = ["I MAKE MY", "OWN LUCK"];
@@ -34,9 +38,20 @@ preRows.forEach((row, r) => {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#17171a" />
+    <link rel="canonical" href={pageUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Digvijay Rathore" />
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content="/video/berlin-poster.jpg" />
+    <meta property="og:image" content={bannerUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Digvijay Rathore, GTM Engineer in Berlin" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={bannerUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" href="/fonts/Anton.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Satoshi-700.woff2" as="font" type="font/woff2" crossorigin />
