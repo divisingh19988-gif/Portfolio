@@ -42,10 +42,10 @@ That path is the CV PDF. Replace the file in place if you export a newer version
 
 1. Create `src/content/work/your-slug.md`. Copy an existing file and edit the frontmatter.
 2. Drop media in `public/work/your-slug/`:
-   - `thumb.jpg` — gallery card and showcase still
-   - `shot-1.jpg`, `shot-2.jpg` — case-study frames
-   - `loop.mp4` — short muted loop
-   - `clip.mp4` — optional extra clip
+   - `thumb.jpg`: gallery card and showcase still
+   - `shot-1.jpg`, `shot-2.jpg`: case-study frames
+   - `loop.mp4`: short muted loop
+   - `clip.mp4`: optional extra clip
 3. Point the frontmatter paths at those files.
 
 ```yaml
@@ -53,7 +53,7 @@ That path is the CV PDF. Replace the file in place if you export a newer version
 title: "Project name"
 hook: "One sentence."
 role: "What you did"
-dates: "2025 — 2026"
+dates: "2025 to 2026"
 tools:
   - "Clay"
 problem: "What was broken."
@@ -92,7 +92,7 @@ Placeholder frames and loops are labeled **PLACEHOLDER** on purpose. Swap the fi
 
 ## Where the CV still needs filling in
 
-Anything the build did not have a source for is marked `TODO` in the case studies, the skill chips, and the timeline. Do not invent dates, titles, or tool lists — paste them from the CV into the frontmatter.
+Case studies show only sourced facts. Empty fields are hidden on the page. Do not invent dates, titles, or tool lists: paste them from the CV into the frontmatter. Set `hidden: true` to keep a case file out of the build.
 
 ## Motion and mobile
 

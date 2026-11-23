@@ -332,9 +332,9 @@ function flipPolaroids(shell: HTMLElement) {
       const front = slot === 0;
       frame.style.opacity = slot < 3 ? "1" : "0";
       frame.style.zIndex = front ? "4" : String(3 - slot);
-      frame.style.transform = `rotate(${front ? -2 : slot === 1 ? 6 : -8}deg) translate(${slot * 3}px, ${slot * 4}px)`;
+      frame.style.transform = `rotate(${front ? -2 : slot === 1 ? 6 : -8}deg) translate(${slot * 5}px, ${slot * 6}px)`;
     });
-  }, 90);
+  }, 375);
   return () => window.clearInterval(timer);
 }
 
@@ -375,9 +375,10 @@ async function runPreloader() {
   await new Promise<void>((resolve) => {
     const tick = () => {
       const elapsed = performance.now() - started;
-      const limit = reduce ? 200 : videoReady ? 1600 : 2500;
-      const asset = loaded / total;
-      const shown = Math.min(1, asset >= 1 ? Math.max(elapsed / limit, elapsed / 1100) : elapsed / limit);
+      // The count runs a fixed three seconds. If assets are still loading it holds at 99, for at most three more.
+      const limit = reduce ? 200 : 3000;
+      const ready = reduce || (loaded >= total && videoReady) || elapsed > limit + 3000;
+      const shown = Math.min(ready ? 1 : 0.99, elapsed / limit);
       num.textContent = String(Math.round(shown * 100)).padStart(3, "0");
       if (bar) bar.style.left = `${shown * 100}%`;
       if (shown >= 1) {
@@ -432,7 +433,7 @@ function startLabelCycle() {
 function startGlitch() {
   if (reduce) return;
   const nameBits = [...document.querySelectorAll<HTMLElement>(".fly-name .first, .fly-name .last")];
-  const extras = [...document.querySelectorAll<HTMLElement>(".top-nav a, .brand-lock, .hero-role")];
+  const extras = [...document.querySelectorAll<HTMLElement>(".top-nav a .label, .brand-lock small")];
   const pool = [...nameBits, ...extras];
   if (!pool.length) return;
   pool.forEach((node) => {

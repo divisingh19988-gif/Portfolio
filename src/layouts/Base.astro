@@ -8,6 +8,23 @@ interface Props {
   page?: "home" | "case";
 }
 const { title, description = site.description, page = "case" } = Astro.props;
+
+// Loader line, one span per letter so the stylesheet can type it out in order.
+const preRows = ["I MAKE MY", "OWN LUCK"];
+const preTotal = preRows.join(" ").length;
+let preIndex = 0;
+const preCh = (ch: string, extra = "") => {
+  const last = preIndex === preTotal - 1 ? " pre-last" : "";
+  return `<span class="pre-ch${extra}${last}" style="--i:${preIndex++}">${ch}</span>`;
+};
+let preLineHtml = "";
+preRows.forEach((row, r) => {
+  row.split(" ").forEach((word, w) => {
+    if (w > 0) preLineHtml += preCh("&nbsp;", " pre-sp");
+    preLineHtml += `<span class="pre-word">${[...word].map((ch) => preCh(ch)).join("")}</span>`;
+  });
+  if (r < preRows.length - 1) preLineHtml += preCh("&nbsp;", " pre-sp pre-sp-br") + '<br class="pre-br" />';
+});
 ---
 
 <!doctype html>
@@ -60,6 +77,7 @@ const { title, description = site.description, page = "case" } = Astro.props;
         <source src="/hero/berlin-hero.mp4" type="video/mp4" />
         <source src="/hero/berlin-hero.webm" type="video/webm" />
       </video>
+      <div class="ink-dots"></div>
     </div>
     <button class="sound-toggle" type="button" aria-pressed="false" aria-label="Sound is off. Turn on a quiet drone.">
       Sound
@@ -73,16 +91,20 @@ const { title, description = site.description, page = "case" } = Astro.props;
             <i class="pre-sq" aria-hidden="true"></i>
           </p>
           <div class="pre-polaroids" data-pre-stack aria-hidden="true">
-            <img src="/hero/berlin-hero-poster.jpg" alt="" width="240" height="300" />
-            <img src="/work/getmow-agentic-loop/poster-1.jpg" alt="" width="240" height="300" />
-            <img src="/work/intel-hub/poster-2.jpg" alt="" width="240" height="300" />
-            <img src="/work/workshop/poster-1.jpg" alt="" width="240" height="300" />
-            <img src="/work/leadbot/poster-1.jpg" alt="" width="240" height="300" />
-            <img src="/work/sage-notetaker/poster-1.jpg" alt="" width="240" height="300" />
-            <img src="/work/skill-scout/poster-1.jpg" alt="" width="240" height="300" />
-            <img src="/work/getmow-agentic-loop/poster-2.jpg" alt="" width="240" height="300" />
+            <img src="/loader/card-1.jpg" alt="" width="420" height="462" />
+            <img src="/loader/card-2.jpg" alt="" width="420" height="462" />
+            <img src="/loader/card-3.jpg" alt="" width="420" height="462" />
+            <img src="/loader/card-4.jpg" alt="" width="420" height="462" />
+            <img src="/loader/card-5.jpg" alt="" width="420" height="462" />
+            <img src="/loader/card-6.jpg" alt="" width="420" height="462" />
+            <img src="/loader/card-7.jpg" alt="" width="420" height="462" />
+            <img src="/loader/card-9.jpg" alt="" width="420" height="462" />
           </div>
+          <p class="pre-line" role="img" aria-label="I make my own luck" set:html={preLineHtml} />
           <p class="preloader-num" data-count>000</p>
+          <div class="pre-scale" aria-hidden="true">
+            {Array.from({ length: 11 }, (_, i) => <i style={`left:${i * 10}%`}>{String(i * 10).padStart(3, "0")}</i>)}
+          </div>
           <div class="pre-track" aria-hidden="true"><span data-pre-bar></span></div>
         </div>
       )

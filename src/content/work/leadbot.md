@@ -1,29 +1,43 @@
 ---
 title: "Leadbot"
-hook: "Buyer intent, scored, with 241 tests behind the feed."
+hook: "Buyer intent, scored, with 772 tests behind the feed."
 role: "Founder's Associate, Cloud Studios"
-dates: "May 2026 – Nov 2026"
+dates: "May 2026 to Nov 2026"
 tools:
   - "Chrome extension"
+  - "Claude API"
+  - "Slack"
+  - "Telegram"
+  - "Discord"
+  - "WhatsApp"
+  - "Webhooks"
   - "Next.js"
   - "Supabase"
-problem: "The good conversations were starting on HN, Bluesky and Reddit. The CRM never saw them."
+  - "Vitest"
+  - "Claude Code"
+problem: "Buyer conversations were starting on LinkedIn, X, Reddit, Facebook and WhatsApp groups, Bluesky and 10+ social platforms. The CRM never saw them."
 built: "Lead Studio, also called Leadbot, plus a Chrome extension. It pulls buyer-intent posts, scores them against the ICP, and lands them in one feed."
-result: "241 automated tests on the extension and the feed."
-next: "The CV does not say how many of those leads became meetings. [TODO: number]"
+situation: "Buyer conversations were starting on LinkedIn, X, Reddit, Facebook and WhatsApp groups, Bluesky and 10+ social platforms. The CRM never saw them."
+task: "Catch buyer-intent posts where they happen, score them against the ICP, and deliver them as one feed a seller can work from."
+action:
+  - "Built Lead Studio, also called Leadbot, on Next.js and Supabase."
+  - "Built and shipped my own Chrome extension, Leadbot by Getmow.ai, which pulls buyer-intent posts from the communities."
+  - "Scored each post against the ICP and landed it in one feed."
+  - "Sent each match to Slack in real time, with a link to the thread."
+  - "Wrote 772 automated tests across the extension and the feed."
+result: "Booked 70+ meetings for a client from the buyer-intent feed, backed by 772 automated tests on the extension and the feed."
+next: ""
 metrics:
+  - label: "Meetings booked"
+    value: "70+"
   - label: "Automated tests"
-    value: "241"
-  - label: "Meetings from the feed"
-    value: "[TODO: number]"
-thumbnail: /work/leadbot/poster-1.jpg
-loop: /work/leadbot/loop-1.mp4
-loopWebm: /work/leadbot/loop-1.webm
-screenshots:
-  - /work/leadbot/poster-1.jpg
-demos:
-  - /work/leadbot/demo-1.mp4
-order: 5
+    value: "772"
+thumbnail: /work/leadbot/leadbot.jpg
+cardLoop: /work/leadbot/explainer-loop.mp4
+explainer: /work/leadbot/explainer.mp4
+explainerPoster: /work/leadbot/explainer-poster.jpg
+explainerSilent: true
+order: 6
 featured: true
 anonymous: false
 ---

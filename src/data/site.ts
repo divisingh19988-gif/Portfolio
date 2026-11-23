@@ -9,9 +9,10 @@ export const site = {
   linkedin: "https://www.linkedin.com/in/digvijay-udawat/",
   github: "https://github.com/divisingh19988-gif",
   cal: "https://cal.com/digvijay-rathore-84nil7/15min",
+  getmow: "https://www.getmow.ai/",
   cv: "/cv/Digvijay_Rathore_CV_GTM_Engineer.pdf",
   description:
-    "Digvijay Rathore is an AI-native GTM engineer in Berlin. He builds the pipeline: sourcing, enrichment, sequencing, and the agents that run it.",
+    "I'm Digvijay Rathore, an AI-native GTM engineer in Berlin. I build the pipeline: sourcing, enrichment, sequencing, and the agents that run it.",
 };
 
 export const nav = [
@@ -19,11 +20,11 @@ export const nav = [
   { id: "skills", n: "02", label: "Skills" },
   { id: "works", n: "03", label: "Works" },
   { id: "playbooks", n: "04", label: "Playbooks" },
-  { id: "awards", n: "05", label: "Awards" },
+  { id: "certifications", n: "05", label: "Certifications" },
   { id: "contact", n: "06", label: "Contact" },
 ];
 
-export const playbooks = [
+export const playbooks: { title: string; hook: string; image: string; width: number; height: number; pos?: string }[] = [
   {
     title: "The math behind GTM",
     hook: "20,000 emails + 100,000 impressions = 7 clients.",
@@ -52,6 +53,49 @@ export const playbooks = [
     width: 746,
     height: 1434,
   },
+  {
+    title: "AI search converts",
+    hook: "ChatGPT referrals convert at 11.4%, organic search at 5.3%. Similarweb, 2025.",
+    image: "/playbooks/chatgpt-conversion.jpg",
+    width: 922,
+    height: 1146,
+  },
+  {
+    title: "Outreach that does not scale",
+    hook: "We could have sent a LinkedIn message. We drove over with donuts.",
+    image: "/playbooks/least-scalable-outreach.jpg",
+    width: 1026,
+    height: 1422,
+  },
+  {
+    title: "Organic clicks, 28 days",
+    hook: "10.1K clicks against 7.22K in the previous 28 days. Search Console.",
+    image: "/playbooks/gsc-clicks.jpg",
+    width: 948,
+    height: 386,
+    pos: "left center",
+  },
+  {
+    title: "30 days of AEO",
+    hook: "If we had 30 days to improve a German B2B company's AEO, we would start here.",
+    image: "/playbooks/aeo-30-days-whiteboard.jpg",
+    width: 942,
+    height: 1260,
+  },
+  {
+    title: "The CITE framework",
+    hook: "Stop chasing #1. Start being cited. Core, Intent, Take, Entity.",
+    image: "/playbooks/cite-whiteboard.jpg",
+    width: 722,
+    height: 1264,
+  },
+  {
+    title: "d-strange",
+    hook: "Dr. Strange looked into 14,000,605 futures. My naive AI agent picks the first one it sees.",
+    image: "/playbooks/dr-strange-post.jpg",
+    width: 944,
+    height: 1408,
+  },
 ];
 
 export const words = ["Growth", "Agents", "Claude", "Bots", "Berlin"];
@@ -67,105 +111,102 @@ export const taglines = [
 ];
 
 export const stats = [
-  { value: "4,764", label: "Companies qualified", note: "one outbound list" },
-  { value: "8,445", label: "Claude runs", note: "research, scoring, drafts" },
-  { value: "8", label: "Warmed mailboxes", note: "5-email sequence" },
+  { value: "€500K+", label: "In revenue", note: "closed across sales and growth roles" },
+  { value: "1,000+", label: "Demos done", note: "in front of real buyers" },
+  { value: "100K+", label: "Cold emails sent", note: "sourced, sequenced, shipped" },
 ];
 
-export const skills = [
+export const skills: { n: string; title: string; tags: string[]; note?: string }[] = [
   {
     n: "01",
-    title: "Prospecting & enrichment",
-    copy: "The list is the product. Sourcing, ICP filters, and enrichment land in one pipeline.",
-    chips: ["Clay", "FullEnrich", "SmartProspect"],
+    title: "GTM & Outbound",
+    tags: ["Clay", "Smartlead", "FullEnrich", "LinkedIn Sales Navigator", "Grok Bot agents"],
   },
   {
     n: "02",
-    title: "CRM & RevOps",
-    copy: "HubSpot catches the demo. Zoho ran partner ops for 500+ retail brands.",
-    chips: ["HubSpot", "Zoho CRM", "Cal.com"],
+    title: "SEO, GEO & AEO Organic Growth",
+    tags: ["DataForSEO", "Ahrefs", "Screaming Frog", "GSC", "OpenSEO", "My Claude skills"],
   },
   {
     n: "03",
-    title: "Outbound",
-    copy: "Sequencing, warmup, and subject-line tests. Replies come back to a human only for the yes.",
-    chips: ["Smartlead", "Warmup", "A/B tests"],
+    title: "Growth & RevOps",
+    tags: ["HubSpot", "Attio", "Gong", "Fireflies", "Attribution", "A/B testing"],
   },
   {
     n: "04",
-    title: "AI & Automations",
-    copy: "Claude and OpenAI on webhooks. Slack digests. The stack is code, not a tab farm.",
-    chips: ["Claude", "OpenAI", "Next.js", "Supabase"],
+    title: "AI & Automation",
+    tags: ["Claude Code", "Custom agents", "Zapier", "ElevenLabs", "PostHog", "REST APIs"],
+    note: "My unfair advantage",
   },
 ];
 
-export const showcase = [
+export const story = [
   {
     n: "01",
-    kicker: "GetMOW",
-    title: "Agentic Loop",
-    copy: "8,445 Claude runs. The answer changes because the work runs every day.",
-    href: "/work/getmow-agentic-loop",
-    image: "/work/getmow-agentic-loop/poster-1.jpg",
+    when: "2019",
+    title: "EY",
+    role: "Tax Consultant Summer Intern · Bangalore",
+    copy: "It started at a Big Four desk: GST and income tax filings, and audit preparation for corporate clients. I learned how companies keep their numbers honest.",
+    stat: "Big Four",
+    statLabel: "First desk",
   },
   {
     n: "02",
-    kicker: "GetMOW",
-    title: "Outbound Engine",
-    copy: "4,764 companies. 8 mailboxes. A first demo booked.",
-    href: "/work/getmow-outbound-engine",
-    image: "/work/getmow-outbound-engine/gtm-workflow.jpg",
+    when: "2020 to 2022",
+    title: "BYJU'S",
+    role: "BDM, Sales Strategy and Revenue Growth · Bangalore",
+    copy: "Then I learned to sell. At India's largest edtech company I delivered EUR 70,000 in monthly team revenue, ranked in the national top 50 and was promoted to manager within a year, leading 8+ SDRs.",
+    stat: "€70K",
+    statLabel: "Monthly team revenue",
   },
   {
     n: "03",
-    kicker: "Client",
-    title: "Intel Hub",
-    copy: "Four pipelines and a weekly brief for a consumer audio startup.",
-    href: "/work/intel-hub",
-    image: "/work/intel-hub/poster-2.jpg",
+    when: "2023",
+    title: "Blingg Labs",
+    role: "Growth Head, Acquisition · Mumbai",
+    copy: "From selling to growth. In one quarter I grew MRR 5x for a D2C discovery platform by reworking acquisition funnels for 35+ brands: conversion up 30%, CAC down 25%. A pivot from subscription to prepaid took trial-to-purchase from 9% to 40% and tripled repeat purchases.",
+    stat: "5x",
+    statLabel: "MRR in one quarter",
   },
   {
     n: "04",
-    kicker: "Cloud Studios",
-    title: "Workshop",
-    copy: "7 channels. About 40% less cost per creative.",
-    href: "/work/workshop",
-    image: "/work/workshop/poster-1.jpg",
+    when: "2023 to 2024",
+    title: "Fantail",
+    role: "Founder's Office: Growth, GTM and Partnerships · Bangalore",
+    copy: "My first founder's office, at a supply chain tech company for textiles. I onboarded 35 enterprise and 450 SMB retail brands and scaled recurring revenue to EUR 50,000 through a partner network, with no stores of our own.",
+    stat: "€50K",
+    statLabel: "Recurring revenue",
   },
   {
     n: "05",
-    kicker: "Cloud Studios",
-    title: "Leadbot",
-    copy: "Buyer-intent feed. 241 automated tests.",
-    href: "/work/leadbot",
-    image: "/work/leadbot/poster-1.jpg",
-  },
-];
-
-export const timeline = [
-  {
-    when: "Aug 2026 – Nov 2026",
-    title: "GetMOW",
-    role: "Co-Founder",
-    detail: "GEO, the agentic loop, and the outbound engine. Berlin.",
+    when: "2025 to 2026",
+    title: "Berlin",
+    role: "MBA · Gisma University of Applied Sciences",
+    copy: "I moved to Berlin for an MBA at Gisma. The city became home base for everything that came next.",
+    stat: "MBA",
+    statLabel: "Gisma University",
   },
   {
-    when: "May 2026 – Nov 2026",
+    n: "06",
+    when: "2026",
     title: "Cloud Studios",
-    role: "Founder's Associate",
-    detail: "Leadbot, the intel hub, Workshop, and the client systems.",
+    role: "Founder's Office, GTM Engineer · First employee · Berlin",
+    copy: "First employee at a Berlin app studio, and the point where I stopped waiting for tools and started building them. Listn Intel tracks 15+ competitors and automated about 80% of the manual research. Workshop turns that intel into on-brand content for 7 channels at 40% less AI spend per creative. Leadbot pulls buyer intent from 15+ channels.",
+    stat: "80%",
+    statLabel: "Manual research automated",
+    href: "/work/intel-hub",
+    hrefLabel: "See the systems",
   },
   {
-    when: "May 2023 – May 2024",
-    title: "Fantail",
-    role: "Founder's Office",
-    detail: "Zoho CRM for 500+ partners. 40% less reconciliation time.",
-  },
-  {
-    when: "Nov 2020 – Dec 2022",
-    title: "BYJU'S",
-    role: "Business Development Manager",
-    detail: "KPI dashboards for 30+ sales associates.",
+    n: "07",
+    when: "2026",
+    title: "GetMOW",
+    role: "Co-Founder · Berlin",
+    copy: "Then my own venture: a GEO agency that gets B2B SaaS brands named in AI answers. I built the Agentic Loop, the product behind it, and a multichannel outbound engine that booked 7 demos in 6 weeks on autopilot.",
+    stat: "7 demos",
+    statLabel: "In 6 weeks",
+    href: "/work/getmow-agentic-loop",
+    hrefLabel: "Open the case",
   },
 ];
 
@@ -178,18 +219,18 @@ export const certificates = [
 ];
 
 export const brandStats = [
-  { value: "4,764", label: "Companies in the engine" },
+  { value: "18,000+", label: "Leads in the engine" },
   { value: "8,445", label: "Claude runs" },
-  { value: "241", label: "Tests on Leadbot" },
+  { value: "772", label: "Tests on Leadbot" },
 ];
 
 export const contactTiles = [
-  { slug: "getmow-agentic-loop", image: "/work/getmow-agentic-loop/poster-1.jpg", title: "Agentic Loop", left: "4%", top: "8%", rot: -8 },
-  { slug: "getmow-outbound-engine", image: "/work/getmow-outbound-engine/gtm-workflow.jpg", title: "Outbound engine", left: "62%", top: "6%", rot: 6 },
-  { slug: "intel-hub", image: "/work/intel-hub/poster-2.jpg", title: "Intel hub", left: "28%", top: "58%", rot: -4 },
-  { slug: "workshop", image: "/work/workshop/poster-1.jpg", title: "Workshop", left: "72%", top: "42%", rot: 5 },
-  { slug: "leadbot", image: "/work/leadbot/poster-1.jpg", title: "Leadbot", left: "8%", top: "36%", rot: 3 },
-  { slug: "sage-notetaker", image: "/work/sage-notetaker/poster-1.jpg", title: "Sage", left: "48%", top: "70%", rot: -7 },
-  { slug: "skill-scout", image: "/work/skill-scout/poster-2.jpg", title: "skill-scout", left: "78%", top: "68%", rot: 4 },
-  { slug: "d-strange", image: "/work/d-strange/readme.jpg", title: "d-strange", left: "18%", top: "72%", rot: -3 },
+  { slug: "getmow-agentic-loop", image: "/work/getmow-agentic-loop/poster-1.jpg", title: "Agentic Loop", left: "4%", top: "6%", rot: -6 },
+  { slug: "getmow-outbound-engine", image: "/work/getmow-outbound-engine/gtm-workflow.jpg", title: "Outbound engine", left: "38%", top: "3%", rot: 3 },
+  { slug: "intel-hub", image: "/work/intel-hub/hub.jpg", title: "Intel hub", left: "72%", top: "7%", rot: 5 },
+  { slug: "workshop", image: "/work/workshop/poster-1.jpg", title: "Workshop", left: "76%", top: "40%", rot: -4 },
+  { slug: "leadbot", image: "/work/leadbot/poster-1.jpg", title: "Leadbot", left: "2%", top: "38%", rot: 4 },
+  { slug: "sage-notetaker", image: "/work/sage-notetaker/sage.jpg", title: "Sage", left: "39%", top: "76%", rot: -3 },
+  { slug: "skill-scout", image: "/work/skill-scout/poster-2.jpg", title: "skill-scout", left: "72%", top: "71%", rot: 4 },
+  { slug: "d-strange", image: "/work/d-strange/readme.jpg", title: "d-strange", left: "6%", top: "72%", rot: -5 },
 ];

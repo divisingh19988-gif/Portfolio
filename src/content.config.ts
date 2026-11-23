@@ -11,7 +11,11 @@ const work = defineCollection({
     tools: z.array(z.string()),
     problem: z.string(),
     built: z.string(),
+    situation: z.string().default(""),
+    task: z.string().default(""),
+    action: z.array(z.string()).default([]),
     result: z.string(),
+    results: z.array(z.string()).default([]),
     metrics: z.array(z.object({ label: z.string(), value: z.string() })),
     link: z.string().optional(),
     thumbnail: z.string(),
@@ -20,6 +24,8 @@ const work = defineCollection({
     cardLoop: z.string().optional(),
     explainer: z.string().optional(),
     explainerPoster: z.string().optional(),
+    explainerCaption: z.string().optional(),
+    explainerSilent: z.boolean().default(false),
     planImage: z.string().optional(),
     planCaption: z.string().optional(),
     screenshots: z.array(z.string()).default([]),
@@ -29,6 +35,7 @@ const work = defineCollection({
     order: z.number(),
     featured: z.boolean().default(true),
     anonymous: z.boolean().default(false),
+    hidden: z.boolean().default(false),
   }),
 });
 

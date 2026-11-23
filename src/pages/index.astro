@@ -2,14 +2,31 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Brush from "../components/Brush.astro";
-import Poster from "../components/Poster.astro";
-import { brandStats, certificates, contactTiles, nav, playbooks, showcase, site, skills, stats, taglines, timeline } from "../data/site";
+import { certificates, nav, playbooks, site, skills, stats, story } from "../data/site";
 
 const works = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
-const gallery = works.filter((entry) => entry.data.featured);
+const gallery = works.filter((entry) => entry.data.featured && !entry.data.hidden);
+const reelTotal = String(story.length).padStart(2, "0");
+
+const wallNew = Array.from({ length: 15 }, (_, i) => `/wall/w-${String(i + 1).padStart(2, "0")}.jpg`);
+const wallOld = [1, 2, 3, 4, 5, 6, 7, 9].map((n) => `/loader/card-${n}.jpg`);
+const wallImages: string[] = [];
+for (let i = 0; i < wallNew.length; i++) {
+  wallImages.push(wallNew[i]);
+  if (i % 2 === 1 && wallOld[(i - 1) / 2]) wallImages.push(wallOld[(i - 1) / 2]);
+}
+if (wallOld[7]) wallImages.push(wallOld[7]);
+const WALL_COLS = 12;
+const WALL_ROWS = 8;
+const wallTiles = Array.from({ length: WALL_COLS * WALL_ROWS }, (_, i) => {
+  const row = Math.floor(i / WALL_COLS);
+  const col = i % WALL_COLS;
+  return wallImages[(col + row * 5) % wallImages.length];
+});
+const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
 ---
 
-<Base title={`${site.name} — ${site.role}`} page="home">
+<Base title={`${site.name} | ${site.role}`} page="home">
   <div slot="fixed">
     <aside class="sidebar" aria-label="Identity">
       <div class="side-name-slot">
@@ -40,7 +57,7 @@ const gallery = works.filter((entry) => entry.data.featured);
           {
             gallery.slice(0, 8).map((entry) => (
               <a href={`/work/${entry.id}`}>
-                <img src={entry.data.thumbnail} alt="" width="320" height="180" />
+                <img src={entry.data.thumbnail} alt={entry.data.title} width="320" height="180" />
               </a>
             ))
           }
@@ -68,13 +85,14 @@ const gallery = works.filter((entry) => entry.data.featured);
     <header class="topbar">
       <p class="brand-lock">
         <strong>GTM / Growth / <span data-cycle="Agents|Chaos|Pipeline|Vibes">Agents</span></strong>
-        <small>Index — Berlin / 2026</small>
+        <small>{site.role} / Berlin / 2026</small>
       </p>
       <nav class="top-nav" aria-label="Sections">
         {
           nav.map((item) => (
             <a href={`#${item.id}`} data-nav={item.id}>
-              {item.n} {item.label}
+              <span class="n">{item.n}</span>
+              <span class="label">{item.label}</span>
             </a>
           ))
         }
@@ -87,36 +105,32 @@ const gallery = works.filter((entry) => entry.data.featured);
     </header>
     <div class="hero-stage">
       <p class="hero-kicker">↙ I turn MRR into a hockey stick</p>
-      <div class="hero-name-row">
+      <div class="name-lock">
         <div class="name-home">
-          <div class="name-lock">
-            <h1 class="fly-name">
-              <span class="name-mask"><span class="first">Digvijay</span></span>
-              <span class="name-mask"><span class="last">Rathore</span></span>
-            </h1>
-            <div class="portrait-home">
-              <div class="fly-portrait">
-                <img
-                  src="/portrait/digvijay.png"
-                  alt="Digvijay Rathore"
-                  width="900"
-                  height="1100"
-                />
-              </div>
-            </div>
+          <h1 class="fly-name">
+            <span class="name-mask"><span class="first">Digvijay</span></span>
+            <span class="name-mask"><span class="last">Rathore</span></span>
+          </h1>
+        </div>
+        <div class="portrait-home">
+          <div class="fly-portrait">
+            <img
+              src="/portrait/digvijay.png"
+              alt="Digvijay Rathore"
+              width="900"
+              height="1100"
+            />
           </div>
-          <p class="hero-role">AI-native GTM Engineer</p>
-          <p class="tagline" data-tagline data-phrases={taglines.join("|")}>{taglines[0]}</p>
-          <Brush class="hero-line" />
         </div>
       </div>
       <div class="hero-foot">
         <a class="keep" href="#introduce">↙ Go deeper</a>
+        <Brush class="hero-line" />
         <div class="hero-socials">
-          <a href={site.mailto}>Email ↗</a>
           <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
+          <a href={site.getmow} target="_blank" rel="noreferrer">GetMOW ↗</a>
           <a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a>
-          <button class="textlink" type="button" data-copy={site.email}>Copy</button>
+          <a href={site.cal} target="_blank" rel="noreferrer">Cal ↗</a>
         </div>
       </div>
     </div>
@@ -124,11 +138,16 @@ const gallery = works.filter((entry) => entry.data.featured);
 
   <section class="sheet" id="introduce" data-screen="INTRODUCE">
     <h2 class="display">
-      <span class="line" data-split>Find the signal,</span>
-      <span class="line hot" data-split>then make it scale...</span>
+      <span class="line" data-split>Hey, I'm Diggi!</span>
+      <span class="line hot" data-split>I turn ideas into ventures.</span>
     </h2>
     <Brush class="hot" />
-    <p class="lede">GTM systems for prospecting, outbound, and AI visibility. Based in Berlin.</p>
+    <div class="intro-copy">
+      <p>Currently building in the world of AI visibility, helping SaaS companies get discovered, cited and recommended by AI.</p>
+      <p>Background: 5 years across growth, business development and early stage startups. I enjoy taking ideas from scratch, finding the right distribution strategy and building systems that drive measurable outcomes.</p>
+      <p class="intro-punch">Salesman at heart. Strategist by practice. Operator by necessity. And an MBA because Mom asked.</p>
+      <p>Based in Berlin. Always happy to connect with people building interesting things in AI, SaaS and growth.</p>
+    </div>
     <div class="stats">
       {
         stats.map((stat) => (
@@ -143,19 +162,28 @@ const gallery = works.filter((entry) => entry.data.featured);
   </section>
 
   <section class="sheet" id="skills" data-screen="SKILLS">
-    <p class="eyebrow">02 — Skills</p>
-    <div class="skill-grid">
+    <div class="skill-cats">
       {
-        skills.map((skill) => (
-          <article class="skill">
-            <span class="index-no">{skill.n}</span>
-            <h3>{skill.title}</h3>
-            <p>{skill.copy}</p>
-            <div class="chips">
-              {skill.chips.map((chip) => (
-                <span class:list={["chip", { todo: chip.startsWith("TODO") }]}>{chip}</span>
-              ))}
+        skills.map((skill, i) => (
+          <article class={`skill-cat skill-cat--${i + 1}`}>
+            {skill.note && (
+              <p class="skill-cat-note" aria-hidden="true">
+                <span>{skill.note}</span>
+                <svg viewBox="0 0 64 28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 17c9-7 19 6 29-1s15-7 27-3" />
+                  <path d="M49 4l11 9-13 7" />
+                </svg>
+              </p>
+            )}
+            <div class="skill-cat-head">
+              <span class="skill-cat-index">{skill.n}</span>
+              <h3 class="skill-cat-title">{skill.title}</h3>
             </div>
+            <ul class="skill-cat-tags">
+              {skill.tags.map((tag) => (
+                <li>{tag}</li>
+              ))}
+            </ul>
           </article>
         ))
       }
@@ -163,108 +191,88 @@ const gallery = works.filter((entry) => entry.data.featured);
   </section>
 
   <div id="works" data-screen="WORKS">
-    <Poster
-      label="Works break"
-      line1="Ships out,"
-      line2="leads in"
-      lead="Some people bring a deck. He brought the pipeline."
-      body="The list, the sequence, and the reply used to live in different tabs. Now they run. Qualified companies in, a first demo on the calendar, agents doing the boring middle. Comfortable? Debatable. Useful? Without question."
-      stamp="21.11.26 / Works / Vol.1"
-      image="/work/getmow-agentic-loop/poster-1.jpg"
-      video="/work/getmow-agentic-loop/loop-1.mp4"
-      webm="/work/getmow-agentic-loop/loop-1.webm"
-    />
     <section class="sheet">
       <div class="works-head">
-        <h2 class="display">
-          <span class="line" data-split>Shipped some.</span>
-          <span class="line hot" data-split>Rewired some...</span>
+        <h2 class="display works-title">
+          <span class="line" data-split>Made some workflows,</span>
+          <span class="works-hotwrap">
+            <span class="line hot" data-split>Burnt millions of tokens...</span>
+            <Brush />
+          </span>
         </h2>
-        <Brush />
       </div>
       <div class="curve" aria-label="Project gallery">
         {
           gallery.map((entry) => (
-            <a class="gcard" href={`/work/${entry.id}`} style={`--shot:url(${entry.data.thumbnail})`}>
+            <a class="gcard" href={`/work/${entry.id}`} draggable="false" style={`--shot:url(${entry.data.thumbnail})`}>
               <span class="gcard-visual">
                 {entry.data.cardLoop || entry.data.loop ? (
-                  <video class="gcard-video" data-lazy muted loop playsinline preload="none" poster={entry.data.thumbnail}>
+                  <video class="gcard-video" draggable="false" data-lazy muted loop playsinline preload="none" poster={entry.data.thumbnail}>
                     {!entry.data.cardLoop && entry.data.loopWebm && <source data-src={entry.data.loopWebm} type="video/webm" />}
                     <source data-src={entry.data.cardLoop || entry.data.loop} type="video/mp4" />
                   </video>
                 ) : (
-                  <img src={entry.data.thumbnail} alt="" width="1400" height="900" />
+                  <img src={entry.data.thumbnail} alt="" width="1400" height="900" draggable="false" />
                 )}
                 <i></i>
                 <i></i>
                 <i></i>
               </span>
-              <span class="gcard-meta">
-                <em>{String(entry.data.order).padStart(2, "0")}</em>
-                <strong>{entry.data.title}</strong>
+              <span class="gcard-tag">
+                <b></b>
+                <span class="gcard-tag-name">{entry.data.title}</span>
+                <span>/ {String(entry.data.order).padStart(2, "0")}</span>
               </span>
             </a>
           ))
         }
       </div>
       <div class="works-foot">
-        <p class="works-punch">And somehow, <span>4,764</span> companies sourced</p>
-        <p class="works-sign">Listed. Sequenced. Shipped. By me.</p>
-      </div>
-    </section>
-
-    <section class="sheet brand">
-      <p class="exp">GTM / Berlin → <span class="now hot">Now</span></p>
-      <h2 class="giant">Digvijay</h2>
-      <Brush class="hot" />
-      <p class="faint">The work got specific.</p>
-      <a class="enter" href="/work/getmow-agentic-loop">Enter the work ↗</a>
-      <div class="mini-stats">
-        {
-          brandStats.map((stat) => (
-            <div>
-              <b>{stat.value}</b>
-              <span>{stat.label}</span>
-            </div>
-          ))
-        }
+        <p class="works-note" aria-hidden="true">
+          <span>Drag me</span>
+          <svg viewBox="0 0 64 28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 17c9-7 19 6 29-1s15-7 27-3"></path>
+            <path d="M49 4l11 9-13 7"></path>
+          </svg>
+        </p>
+        <p class="works-punch">
+          <span class="works-punch-light">And somehow</span>
+          <span class="works-punch-hot">
+            mastered AI for growth
+            <Brush />
+          </span>
+        </p>
+        <p class="works-sign">Designed. Coded. Shipped. By me.</p>
       </div>
     </section>
 
     <section class="sheet showcase">
       <div class="showcase-head">
-        <p class="counter"><span data-counter>01</span><span> / 05</span></p>
+        <p class="counter"><span data-counter>01</span><span> / {reelTotal}</span></p>
+        <p class="story-line">A salesman at heart, strategist by practice, operator by necessity.</p>
         <p class="scroll-hint">Scroll →</p>
       </div>
       <div class="showcase-viewport">
         <div class="showcase-track">
           {
-            showcase.map((panel) => (
-              <article class="panel">
+            story.map((chapter) => (
+              <article class="panel chapter">
                 <div>
-                  <span class="index-no">{panel.n} — {panel.kicker}</span>
-                  <h3>{panel.title}</h3>
-                  <p>{panel.copy}</p>
-                  <a href={panel.href}>Open the case →</a>
+                  <span class="index-no">{chapter.n} / {chapter.when}</span>
+                  <h3>{chapter.title}</h3>
+                  <p class="chapter-role">{chapter.role}</p>
+                  <p>{chapter.copy}</p>
+                  {chapter.href && <a href={chapter.href}>{chapter.hrefLabel} →</a>}
                 </div>
-                <img src={panel.image} alt="" width="1400" height="900" />
+                <div class="chapter-stat">
+                  <b>{chapter.stat}</b>
+                  <span>{chapter.statLabel}</span>
+                </div>
               </article>
             ))
           }
         </div>
       </div>
-      <ol class="timeline">
-        {
-          timeline.map((item) => (
-            <li>
-              <span>{item.when}</span>
-              <strong>{item.title}</strong>
-              <em>{item.role}</em>
-              <small>{item.detail}</small>
-            </li>
-          ))
-        }
-      </ol>
     </section>
   </div>
 
@@ -276,12 +284,12 @@ const gallery = works.filter((entry) => entry.data.featured);
       </h2>
       <Brush />
     </div>
-    <p class="play-lede">Four frames. Drag the strip. Tap one open.</p>
+    <p class="play-lede">{playbooks.length} frames. Drag the strip. Tap one open.</p>
     <div class="play-strip" tabindex="0" aria-label="Playbooks">
       {
         playbooks.map((item) => (
           <button class="play-card" type="button" data-playbook={item.image} data-hook={item.hook} data-title={item.title}>
-            <img src={item.image} alt="" width={item.width} height={item.height} loading="lazy" />
+            <img src={item.image} alt="" width={item.width} height={item.height} loading="lazy" style={item.pos ? `object-position: ${item.pos}` : undefined} />
             <span>
               <strong>{item.title}</strong>
               <em>{item.hook}</em>
@@ -333,27 +341,16 @@ const gallery = works.filter((entry) => entry.data.featured);
     </script>
   </section>
 
-  <section class="sheet" id="awards" data-screen="AWARDS">
-    <Poster
-      label="Awards break"
-      line1="Agents on,"
-      line2="tokens burning"
-      lead="Certificates are just receipts with better paper."
-      body="Clay, Claude, Google, AWS, Semrush. The paper is the easy part. The interesting part is what the agents did with the afternoon. Proof, not a promise. The orbit spins if you drag it."
-      stamp="21.11.26 / Awards / Vol.1"
-      image="/work/skill-scout/poster-2.jpg"
-      video="/work/skill-scout/loop-2.mp4"
-      webm="/work/skill-scout/loop-2.webm"
-    />
+  <section class="sheet" id="certifications" data-screen="CERTIFICATIONS">
     <div class="award-layout">
       <div>
         <p class="eyebrow">Selected certificates</p>
         <ul class="cert-list">
-          {certificates.map((item) => <li>{item.org} — {item.name}</li>)}
+          {certificates.map((item) => <li>{item.org} · {item.name}</li>)}
         </ul>
         <p class="marker-label">Certified ↗</p>
       </div>
-      <div class="orbit" aria-label="Drag to spin the certificates">
+      <div class="orbit" aria-label="Certificates. Drag to fan through them.">
         {
           certificates.map((item) => (
             <article class:list={["cert", item.tone]}>
@@ -369,44 +366,84 @@ const gallery = works.filter((entry) => entry.data.featured);
   </section>
 
   <section class="sheet" id="contact" data-screen="CONTACT">
-    <Poster
-      label="Contact break"
-      line1="Hey."
-      line2="Write back."
-      lead="The main ask is still the email."
-      body="No funnel. No calendar hostage situation, unless you want the 15 minutes. Send the note. He reads them. Berlin, late, probably still in the pipeline."
-      stamp="21.11.26 / Contact / Vol.1"
-      image="/work/workshop/content-machine.jpg"
-      video="/work/workshop/loop-1.mp4"
-      webm="/work/workshop/loop-1.webm"
-    />
-    <div class="contact-stage">
-      {
-        contactTiles.map((tile) => (
-          <article class="tile" style={`left:${tile.left};top:${tile.top};transform:rotate(${tile.rot}deg)`}>
-            <a href={`/work/${tile.slug}`}>
-              <img src={tile.image} alt="" width="1400" height="900" />
-              <span>{tile.title}</span>
-            </a>
-          </article>
-        ))
-      }
-      <article class="tile contact-card" style="left:18%;top:34%;">
-        <p class="eyebrow">05 — Contact</p>
-        <h2>Send a signal.</h2>
-        <a class="mail-button" href={site.mailto}>
-          <span>{site.email}</span>
-          <span>Email</span>
-        </a>
-        <div class="contact-actions">
-          <button class="textlink copy-btn" type="button" data-copy={site.email}>Copy email</button>
-          <a href={site.cal} target="_blank" rel="noreferrer">Book a call</a>
-          <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
-          <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
-          <a class="download" href={site.cv} download>Download CV</a>
+    <div class="wall-scene">
+      <div class="wall" data-cols={WALL_COLS} aria-hidden="true">
+        <div class="wall-plane">
+          {
+            wallTiles.map((src) => (
+              <div class="wall-tile">
+                <img src={src} alt="" width="440" height="440" loading="lazy" draggable="false" />
+              </div>
+            ))
+          }
         </div>
-        <p class="fine">Berlin · {site.role}. The main ask is the email.</p>
-      </article>
+      </div>
+      <div class="wall-shade" aria-hidden="true"></div>
+      <p class="wall-ask" aria-hidden="true">
+        <span>Good work needs good taste.</span>
+        <span class="hot">Here is mine.</span>
+      </p>
+      <div class="phone-drop" aria-hidden="true">
+        <svg class="phone-svg" viewBox="0 130 220 490" width="220" height="490">
+          <defs>
+            <linearGradient id="ph-cord" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="#0c0c0e" />
+              <stop offset="0.42" stop-color="#3a3a40" />
+              <stop offset="0.6" stop-color="#8b8b94" />
+              <stop offset="0.78" stop-color="#2c2c31" />
+              <stop offset="1" stop-color="#0c0c0e" />
+            </linearGradient>
+            <filter id="ph-grain" x="-20%" y="-5%" width="140%" height="110%">
+              <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="11" result="noise" />
+              <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 -0.14" result="speck" />
+              <feComposite in="speck" in2="SourceAlpha" operator="in" result="grain" />
+              <feMerge>
+                <feMergeNode in="SourceGraphic" />
+                <feMergeNode in="grain" />
+              </feMerge>
+            </filter>
+          </defs>
+          <g fill="none" stroke="url(#ph-cord)" stroke-width="4.4" stroke-linecap="round" filter="url(#ph-grain)">
+            {cordLoops.map((cy) => <ellipse cx="110" cy={cy} rx="12.5" ry="6.4" transform={`rotate(-14 110 ${cy})`} />)}
+          </g>
+          <image href="/wall/handset.png" x="52" y="248" width="114" height="373.4" transform="rotate(-8 110 256)" />
+        </svg>
+      </div>
+      <div class="call-card">
+        <p class="eyebrow">06 / Contact</p>
+        <h2 class="call-heading"><span class="call-hot">Pick up.</span> It's for you.</h2>
+        <div class="call-actions">
+          <a class="call-btn call-btn--main" href={site.cal} target="_blank" rel="noreferrer">Book a call</a>
+          <a class="call-btn" href={site.linkedin} target="_blank" rel="noreferrer">Say hi on LinkedIn</a>
+        </div>
+        <p class="call-fine">
+          <a href={site.mailto}>{site.email}</a>
+          <span>·</span>
+          <a href={site.cv} download>Download CV</a>
+        </p>
+      </div>
+      <p class="wall-drag">
+        <span class="wall-drag-line">Apart from building cool stuff, I've got great taste.</span>
+        <span class="wall-drag-cta">Drag me ↗</span>
+      </p>
+      <button class="wall-top" type="button" data-wall-top>Scroll to top</button>
     </div>
+    <script>
+      const scene = document.querySelector<HTMLElement>(".wall-scene");
+      if (scene) {
+        scene.querySelector("[data-wall-top]")?.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+        if ("IntersectionObserver" in window) {
+          const seen = new IntersectionObserver(
+            (entries) => entries.forEach((entry) => scene.classList.toggle("is-in", entry.isIntersecting)),
+            { threshold: 0.35 },
+          );
+          seen.observe(scene);
+        } else {
+          scene.classList.add("is-in");
+        }
+      }
+    </script>
   </section>
 </Base>

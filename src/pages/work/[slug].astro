@@ -1,11 +1,10 @@
 ---
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
-import Poster from "../../components/Poster.astro";
 import { site } from "../../data/site";
 
 export async function getStaticPaths() {
-  const works = await getCollection("work");
+  const works = (await getCollection("work")).filter((entry) => !entry.data.hidden);
   return works.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },
@@ -15,65 +14,56 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const data = entry.data;
-const words = data.title.toUpperCase().split(" ");
-const mid = Math.max(1, Math.ceil(words.length / 2));
-const line1 = words.slice(0, mid).join(" ");
-const line2 = words.slice(mid).join(" ") || "FILE";
+const num = String(data.order).padStart(2, "0");
+
+// Every piece of media appears once. demo-N.mp4 uses poster-N.jpg as its still,
+// so that still is never shown again as a separate screenshot.
+const posterFor = (src: string) => {
+  const match = src.match(/^(.*)\/demo-(\d+)\.mp4$/);
+  const candidate = match ? `${match[1]}/poster-${match[2]}.jpg` : "";
+  return candidate && data.screenshots.includes(candidate) ? candidate : data.thumbnail;
+};
+const demos = data.demos.map((src) => ({ src, poster: posterFor(src) }));
+const usedPosters = new Set(demos.map((demo) => demo.poster));
+const stills = data.screenshots.filter((src) => !usedPosters.has(src));
+
+const heroDemo = !data.explainer ? demos[0] : undefined;
+const heroStill = !data.explainer && !heroDemo ? stills[0] : undefined;
+const moreDemos = heroDemo ? demos.slice(1) : demos;
+const moreStills = heroStill ? stills.slice(1) : stills;
+
+const situation = data.situation || data.problem;
+const actions = data.action.length > 0 ? data.action : data.built ? [data.built] : [];
 ---
 
-<Base title={`${data.title} — ${site.name}`} description={data.hook} page="case">
+<Base title={`${data.title} | ${site.name}`} description={data.hook} page="case">
   <article class="case" data-screen="CASE">
-    <Poster
-      label={data.title}
-      line1={line1}
-      line2={line2}
-      lead={data.hook}
-      body={data.problem}
-      stamp={`21.11.26 / Case file / Vol.${data.order}`}
-      image={data.thumbnail}
-      video={data.loop}
-      webm={data.loopWebm}
-    />
-    <div class="case-body">
     <a class="back" href="/#works">← Index</a>
-    <p class="eyebrow">{String(data.order).padStart(2, "0")} — Case file</p>
-    {data.anonymous && <p class="anon">Built for a consumer audio startup. The name stays off this page.</p>}
+    <header class="case-head">
+      <p class="eyebrow">{num} / Case file</p>
+      <h1>{data.title}</h1>
+      <p class="hook">{data.hook}</p>
+      {data.anonymous && <p class="anon">Built for an in-house Cloud Studios app. The name stays off this page.</p>}
+    </header>
     <div class="meta">
-      <div>
-        <span>Role</span>
-        <p class:list={[{ todo: data.role.startsWith("TODO") }]}>{data.role}</p>
-      </div>
-      <div>
-        <span>Dates</span>
-        <p class:list={[{ todo: data.dates.startsWith("TODO") }]}>{data.dates}</p>
-      </div>
-      <div>
-        <span>Tools</span>
-        <p>{data.tools.join(" · ")}</p>
-      </div>
-    </div>
-    <div class="metric-row">
-      {
-        data.metrics.map((metric) => (
-          <div>
-            <span>{metric.label}</span>
-            <strong class:list={[{ todo: metric.value.includes("[TODO") }]}>{metric.value}</strong>
-          </div>
-        ))
-      }
-    </div>
-    <div class="story">
-      <section>
-        <h2>Problem</h2>
-        <p>{data.problem}</p>
-      </section>
-      <section>
-        <h2>What I built</h2>
-        <p>{data.built}</p>
-        <div class="chips">
-          {data.tools.map((tool) => <span class="chip">{tool}</span>)}
+      {data.role && (
+        <div>
+          <span>Role</span>
+          <p>{data.role}</p>
         </div>
-      </section>
+      )}
+      {data.dates && (
+        <div>
+          <span>Dates</span>
+          <p>{data.dates}</p>
+        </div>
+      )}
+      {data.tools.length > 0 && (
+        <div>
+          <span>Tools</span>
+          <p>{data.tools.join(" · ")}</p>
+        </div>
+      )}
     </div>
     {
       data.explainer && (
@@ -92,10 +82,109 @@ const line2 = words.slice(mid).join(" ") || "FILE";
           </video>
           <button class="play-cover" type="button" data-play-film>
             <span>Play</span>
-            <small>Sound off until you turn it up</small>
+            {!data.explainerSilent && <small>Sound off until you turn it up</small>}
           </button>
-          <figcaption>Buyer asks. Competitors get named. Then the work. Then you are the name.</figcaption>
+          {data.explainerCaption && <figcaption>{data.explainerCaption}</figcaption>}
         </figure>
+      )
+    }
+    {
+      heroDemo && (
+        <figure class="case-shot">
+          <video data-lazy muted loop controls playsinline preload="none" poster={heroDemo.poster} width="1600" height="900" aria-label={`${data.title} walkthrough`}>
+            <source data-src={heroDemo.src} type="video/mp4" />
+          </video>
+        </figure>
+      )
+    }
+    {
+      heroStill && (
+        <figure class="case-shot">
+          <img src={heroStill} alt={`${data.title} screenshot`} loading="eager" />
+        </figure>
+      )
+    }
+    <div class="star">
+      {situation && (
+        <section class="star-row">
+          <header class="star-label">
+            <span>01</span>
+            <h2>Situation</h2>
+          </header>
+          <div class="star-text">
+            <p>{situation}</p>
+          </div>
+        </section>
+      )}
+      {data.task && (
+        <section class="star-row">
+          <header class="star-label">
+            <span>02</span>
+            <h2>Task</h2>
+          </header>
+          <div class="star-text">
+            <p>{data.task}</p>
+          </div>
+        </section>
+      )}
+      {actions.length > 0 && (
+        <section class="star-row">
+          <header class="star-label">
+            <span>03</span>
+            <h2>Action</h2>
+          </header>
+          <div class="star-text">
+            <ul>
+              {actions.map((step) => <li>{step}</li>)}
+            </ul>
+          </div>
+        </section>
+      )}
+      {(data.result || data.results.length > 0 || data.metrics.length > 0) && (
+        <section class="star-row">
+          <header class="star-label">
+            <span>04</span>
+            <h2>Result</h2>
+          </header>
+          <div class="star-text">
+            {data.results.length > 0 ? (
+              <ul>
+                {data.results.map((line) => <li>{line}</li>)}
+              </ul>
+            ) : (
+              data.result && <p>{data.result}</p>
+            )}
+            {data.metrics.length > 0 && (
+              <dl class="star-metrics">
+                {data.metrics.map((metric) => (
+                  <div>
+                    <dt>{metric.label}</dt>
+                    <dd>{metric.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </div>
+        </section>
+      )}
+    </div>
+    {
+      (moreDemos.length > 0 || moreStills.length > 0) && (
+        <section class="case-media">
+          <p class="eyebrow">Walkthrough</p>
+          {moreDemos.map((demo, index) => (
+            <figure class="case-shot">
+              <video data-lazy muted loop controls playsinline preload="none" poster={demo.poster} width="1600" height="900" aria-label={`${data.title} walkthrough ${index + 2}`}>
+                <source data-src={demo.src} type="video/mp4" />
+              </video>
+            </figure>
+          ))}
+          {moreStills.map((src) => (
+            <figure class="case-shot">
+              <img src={src} alt={`${data.title} screenshot`} loading="lazy" />
+            </figure>
+          ))}
+        </section>
       )
     }
     {
@@ -106,53 +195,26 @@ const line2 = words.slice(mid).join(" ") || "FILE";
         </figure>
       )
     }
-    <div class="shots">
-      {
-        data.screenshots.map((src, index) => (
-          <img src={src} alt={`${data.title}, frame ${index + 1}`} width="1600" height="1000" loading="lazy" />
-        ))
-      }
-    </div>
     {
-      data.demos.map((src, index) => (
-        <video data-lazy controls playsinline preload="none" poster={data.thumbnail} width="1280" height="720" aria-label={`${data.title} walkthrough ${index + 1}`}>
-          <source data-src={src} type="video/mp4" />
-        </video>
-      ))
-    }
-    <div class="story">
-      <section>
-        <h2>Result</h2>
-        <p class:list={[{ todo: data.result.includes("[TODO: number]") }]}>{data.result}</p>
-      </section>
-      {data.next && (
-        <section>
-          <h2>What I'd do next</h2>
-          <p class:list={[{ todo: data.next.includes("[TODO: number]") }]}>{data.next}</p>
+      data.next && (
+        <section class="case-next">
+          <p class="eyebrow">What I'd do next</p>
+          <p>{data.next}</p>
         </section>
-      )}
-    </div>
+      )
+    }
     <div class="prose">
       <Content />
     </div>
     {
       data.link && (
-        <p>
+        <p class="case-link">
           <a class="back" href={data.link}>
             External link →
           </a>
         </p>
       )
     }
-    {
-      data.loop && (
-        <video data-lazy muted loop playsinline preload="none" poster={data.thumbnail} width="1280" height="720" aria-label={`${data.title} loop`}>
-          {data.loopWebm && <source data-src={data.loopWebm} type="video/webm" />}
-          <source data-src={data.loop} type="video/mp4" />
-        </video>
-      )
-    }
-    </div>
   </article>
   <script>
     document.querySelectorAll<HTMLButtonElement>("[data-play-film]").forEach((button) => {

@@ -12,6 +12,24 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText, Flip, Draggable, I
 const reduce = () => document.documentElement.classList.contains("reduce");
 
 let fittingName = false;
+let capRatio = 0;
+const PORTRAIT_RATIO = 0.745;
+const NAME_GAP = 30;
+
+// Height of a capital letter as a share of the font size, measured from the
+// real display font so the portrait can match the letters exactly.
+function capHeightRatio(el: HTMLElement) {
+  if (capRatio) return capRatio;
+  const style = getComputedStyle(el);
+  const ctx = document.createElement("canvas").getContext("2d");
+  if (!ctx) return 0.86;
+  const font = `${style.fontWeight} 200px ${style.fontFamily}`;
+  ctx.font = font;
+  const measured = ctx.measureText("HIT").actualBoundingBoxAscent / 200;
+  const sane = measured > 0.5 && measured < 1.1;
+  if (sane && document.fonts.check(font)) capRatio = measured;
+  return sane ? measured : 0.86;
+}
 
 function fitHeroName() {
   if (fittingName) return;
@@ -31,34 +49,64 @@ function fitHeroName() {
   portrait.style.transform = "none";
   name.style.whiteSpace = "nowrap";
   name.style.lineHeight = "1";
-  name.style.fontSize = "100px";
-  const probe = document.createRange();
-  probe.selectNodeContents(sample);
-  const ratio = Math.max(0.5, probe.getBoundingClientRect().height / 100);
-  const stacked = getComputedStyle(lock).flexDirection === "column";
-  const gap = stacked ? 0 : 22;
   const maxW = lock.clientWidth;
+  const stacked = getComputedStyle(lock).flexDirection === "column";
+  if (stacked) {
+    // Phone: name above a square portrait sized to the letter box.
+    name.style.fontSize = "100px";
+    const probe = document.createRange();
+    probe.selectNodeContents(sample);
+    const ratio = Math.max(0.5, probe.getBoundingClientRect().height / 100);
+    let lo = 36;
+    let hi = Math.min(maxW, 520);
+    let best = lo;
+    while (hi - lo > 0.5) {
+      const mid = (lo + hi) / 2;
+      name.style.fontSize = `${mid / ratio}px`;
+      if (Math.max(name.scrollWidth, mid) <= maxW + 1) {
+        best = mid;
+        lo = mid;
+      } else {
+        hi = mid;
+      }
+    }
+    name.style.fontSize = `${best / ratio}px`;
+    const glyph = probe.getBoundingClientRect();
+    const h1 = name.getBoundingClientRect();
+    portrait.style.width = `${glyph.height}px`;
+    portrait.style.height = `${glyph.height}px`;
+    portrait.style.transform = `translateY(${glyph.top - h1.top}px)`;
+    fittingName = false;
+    return;
+  }
+  // Desktop: one line. The portrait stands directly right of the name, as tall
+  // as the capital letters, and the pair fills the full row width.
+  const cap = capHeightRatio(name);
   let lo = 36;
   let hi = Math.min(maxW, 520);
   let best = lo;
   while (hi - lo > 0.5) {
     const mid = (lo + hi) / 2;
-    name.style.fontSize = `${mid / ratio}px`;
-    const nameW = name.scrollWidth;
-    const need = stacked ? Math.max(nameW, mid) : nameW + gap + mid;
-    if (need <= maxW + 1) {
+    name.style.fontSize = `${mid / cap}px`;
+    if (name.scrollWidth + NAME_GAP + mid * PORTRAIT_RATIO <= maxW + 1) {
       best = mid;
       lo = mid;
     } else {
       hi = mid;
     }
   }
-  name.style.fontSize = `${best / ratio}px`;
-  const glyph = probe.getBoundingClientRect();
-  const h1 = name.getBoundingClientRect();
-  portrait.style.width = `${glyph.height}px`;
-  portrait.style.height = `${glyph.height}px`;
-  portrait.style.transform = `translateY(${glyph.top - h1.top}px)`;
+  name.style.fontSize = `${best / cap}px`;
+  const mark = document.createElement("span");
+  mark.style.cssText = "display:inline-block;width:0;height:0;vertical-align:baseline";
+  sample.appendChild(mark);
+  const baseline = mark.getBoundingClientRect().bottom;
+  mark.remove();
+  const capTop = baseline - best - lock.getBoundingClientRect().top;
+  const width = best * PORTRAIT_RATIO;
+  portrait.style.width = `${width}px`;
+  portrait.style.height = `${best}px`;
+  portrait.style.transform = `translateY(${capTop}px)`;
+  lock.parentElement?.style.setProperty("--portrait-w", `${width}px`);
   fittingName = false;
 }
 
@@ -83,7 +131,7 @@ function setupPosters() {
         scrollTrigger: {
           trigger: poster,
           start: "top 92%",
-          end: "top 42%",
+          end: "top 66%",
           scrub: 0.45,
           onToggle: () => {
             const open = posters.some((el) => {
@@ -125,12 +173,12 @@ export function primeHero() {
   gsap.set(".name-mask > span", { yPercent: 115 });
   gsap.set(".topbar", { y: -140 });
   gsap.set(".fly-portrait", { yPercent: 120 });
-  gsap.set([".hero-kicker", ".hero-role", ".tagline", ".hero-foot"], { y: 22, opacity: 0 });
+  gsap.set([".hero-kicker", ".hero-foot"], { y: 22, opacity: 0 });
 }
 
 export function playHeroEntrance() {
   if (document.body.dataset.page !== "home") return;
-  const bits = [".hero-kicker", ".hero-role", ".tagline", ".hero-foot"];
+  const bits = [".hero-kicker", ".hero-foot"];
   if (reduce()) {
     document.body.classList.add("is-in");
     gsap.set([".name-mask > span", ".topbar", ".fly-portrait", ...bits], { clearProps: "all" });
@@ -178,13 +226,66 @@ function setupHeadingRise() {
   });
 }
 
+// Stat numbers count up from zero the first time the row scrolls into view.
+function countUpStats() {
+  document.querySelectorAll<HTMLElement>(".stat b").forEach((el, i) => {
+    const final = el.textContent || "";
+    const parts = final.match(/^(\D*)([\d,]+)(.*)$/);
+    if (!parts) return;
+    const [, pre, digits, post] = parts;
+    const target = Number(digits.replace(/,/g, ""));
+    const grouped = digits.includes(",");
+    // Hold the finished width so the neighbours do not shift while it counts.
+    el.style.minWidth = `${el.getBoundingClientRect().width}px`;
+    const state = { v: 0 };
+    gsap.to(state, {
+      v: target,
+      duration: 1.6,
+      delay: i * 0.14,
+      ease: "power2.out",
+      onUpdate: () => {
+        const n = Math.round(state.v);
+        el.textContent = pre + (grouped ? n.toLocaleString("en-US") : String(n)) + post;
+      },
+      onComplete: () => {
+        el.textContent = final;
+      },
+    });
+  });
+}
+
+// Skill categories sharpen out of a blur as they scroll up, tied to scroll position.
+// The hidden start state is set here, so the section stays readable without motion or JS.
+function setupSkillCats() {
+  gsap.utils.toArray<HTMLElement>(".skill-cat").forEach((cat) => {
+    const index = cat.querySelector(".skill-cat-index");
+    const title = cat.querySelector<HTMLElement>(".skill-cat-title");
+    const tags = cat.querySelector(".skill-cat-tags");
+    const note = cat.querySelector(".skill-cat-note");
+    if (!index || !title || !tags) return;
+    const split = SplitText.create(title, { type: "words", aria: "auto" });
+    gsap.set(index, { y: 8, opacity: 0, filter: "blur(5px)" });
+    gsap.set(split.words, { y: 16, opacity: 0, filter: "blur(7px)" });
+    gsap.set(tags, { y: 12, opacity: 0, filter: "blur(6px)" });
+    if (note) gsap.set(note, { y: 10, opacity: 0, filter: "blur(6px)" });
+    const shown = { y: 0, opacity: 1, filter: "blur(0px)", ease: "none" };
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: cat, start: "top 90%", end: "top 55%", scrub: 0.4 },
+    });
+    tl.to(index, { ...shown, duration: 0.3 }, 0)
+      .to(split.words, { ...shown, duration: 0.4, stagger: 0.08 }, 0.15)
+      .to(tags, { ...shown, duration: 0.3 }, 0.45);
+    if (note) tl.to(note, { ...shown, duration: 0.3 }, 0.6);
+  });
+}
+
 function setupSkills() {
   if (reduce()) {
     document.querySelector(".stats")?.classList.add("is-in");
     return;
   }
   document.querySelectorAll<HTMLElement>("[data-split]").forEach((line) => {
-    const split = SplitText.create(line, { type: "chars", charsClass: "char", aria: "auto" });
+    const split = SplitText.create(line, { type: "words,chars", wordsClass: "word", charsClass: "char", aria: "auto" });
     gsap.from(split.chars, {
       x: () => gsap.utils.random(-160, 160),
       y: () => gsap.utils.random(-110, 110),
@@ -210,18 +311,26 @@ function setupSkills() {
       scrollTrigger: { trigger: path, start: "top 88%" },
     });
   });
+  setupSkillCats();
+  let counted = false;
   ScrollTrigger.create({
     trigger: ".stats",
     start: "top 82%",
-    onEnter: () => document.querySelector(".stats")?.classList.add("is-in"),
+    onEnter: () => {
+      document.querySelector(".stats")?.classList.add("is-in");
+      if (!counted) countUpStats();
+      counted = true;
+    },
   });
-  gsap.from(".giant", {
-    y: 70,
-    opacity: 0,
-    duration: 1,
-    ease: "power3.out",
-    scrollTrigger: { trigger: ".giant", start: "top 85%" },
-  });
+  if (document.querySelector(".giant")) {
+    gsap.from(".giant", {
+      y: 70,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out",
+      scrollTrigger: { trigger: ".giant", start: "top 85%" },
+    });
+  }
 }
 
 function setupGallery(auto: boolean) {
@@ -229,24 +338,35 @@ function setupGallery(auto: boolean) {
   if (!stage) return () => undefined;
   const cards = [...stage.querySelectorAll<HTMLElement>(".gcard")];
   if (!cards.length) return () => undefined;
-  let offset = 36;
+  let offset = 0;
   let suppress = false;
-  const spacing = 214;
+
+  // Cards sit on the inside of a cylinder: the centre card is furthest away,
+  // the edge cards swing toward the viewer and turn to face the middle.
+  let cardWidth = cards[0].offsetWidth || 240;
+  const measure = () => {
+    cardWidth = cards[0].offsetWidth || cardWidth;
+  };
+  const resizeObserver = new ResizeObserver(measure);
+  resizeObserver.observe(stage);
 
   const layout = () => {
-    const width = stage.clientWidth;
+    const spacing = cardWidth * 1.11;
+    const radius = cardWidth * 2.3;
     const loop = cards.length * spacing;
-    const phase = ((offset % loop) + loop) % loop;
     cards.forEach((card, index) => {
-      let x = index * spacing - phase;
-      if (x < -spacing * 1.15) x += loop;
-      const mid = x + 120;
-      const nx = Math.max(-1.35, Math.min(1.35, (mid - width * 0.46) / (width * 0.5)));
-      const y = 36 + nx * nx * 64;
-      const rot = nx * 12;
-      const scale = 1 - Math.min(Math.abs(nx), 1.2) * 0.08;
-      card.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${scale})`;
-      card.style.zIndex = String(100 - Math.round(Math.abs(nx) * 40));
+      let arc = (index * spacing - offset) % loop;
+      if (arc < -loop / 2) arc += loop;
+      if (arc >= loop / 2) arc -= loop;
+      const theta = arc / radius;
+      if (Math.abs(theta) > 1.15) {
+        card.style.visibility = "hidden";
+        return;
+      }
+      const x = radius * Math.sin(theta);
+      const z = radius * (1 - Math.cos(theta));
+      card.style.visibility = "visible";
+      card.style.transform = `translate3d(${x.toFixed(2)}px, 0, ${z.toFixed(2)}px) rotateY(${(-theta).toFixed(4)}rad)`;
     });
   };
 
@@ -259,12 +379,19 @@ function setupGallery(auto: boolean) {
       if (Math.abs(self.deltaX) > 0.5) suppress = true;
       layout();
     },
+    onPress: () => stage.classList.add("is-dragging"),
     onRelease: () => {
+      stage.classList.remove("is-dragging");
       window.setTimeout(() => {
         suppress = false;
       }, 50);
     },
   });
+
+  // Cards are links around images. Without this the browser starts its own
+  // link/image drag, fires pointercancel, and the gallery drag dies after a few pixels.
+  const onDragStart = (event: Event) => event.preventDefault();
+  stage.addEventListener("dragstart", onDragStart);
 
   const onClick = (event: Event) => {
     if (!suppress) return;
@@ -283,9 +410,13 @@ function setupGallery(auto: boolean) {
   return () => {
     observer.kill();
     stage.removeEventListener("click", onClick, true);
+    stage.removeEventListener("dragstart", onDragStart);
+    stage.classList.remove("is-dragging");
     if (auto) gsap.ticker.remove(tick);
+    resizeObserver.disconnect();
     cards.forEach((card) => {
       card.style.transform = "";
+      card.style.visibility = "";
     });
   };
 }
@@ -303,6 +434,8 @@ function setupFlight() {
     if (name.classList.contains("is-docked")) return;
     const state = Flip.getState([name, portrait]);
     name.style.fontSize = "";
+    name.style.whiteSpace = "";
+    name.style.lineHeight = "";
     name.classList.add("is-docked");
     portrait.classList.add("is-docked");
     nameSlot.appendChild(name);
@@ -358,7 +491,23 @@ function setupShowcase() {
   const track = document.querySelector<HTMLElement>(".showcase-track");
   const counter = document.querySelector<HTMLElement>("[data-counter]");
   if (!section || !track) return;
-  const panels = track.querySelectorAll(".panel").length;
+  const panels = [...track.querySelectorAll<HTMLElement>(".panel")];
+  const syncCounter = () => {
+    if (!counter || !panels.length) return;
+    const frame = section.getBoundingClientRect();
+    const middle = frame.left + frame.width / 2;
+    let index = 0;
+    let nearest = Infinity;
+    panels.forEach((panel, i) => {
+      const box = panel.getBoundingClientRect();
+      const gap = Math.abs(box.left + box.width / 2 - middle);
+      if (gap < nearest) {
+        nearest = gap;
+        index = i;
+      }
+    });
+    counter.textContent = String(index + 1).padStart(2, "0");
+  };
   gsap.to(track, {
     x: () => -(track.scrollWidth - section.clientWidth + 48),
     ease: "none",
@@ -370,11 +519,8 @@ function setupShowcase() {
       scrub: 0.65,
       invalidateOnRefresh: true,
       anticipatePin: 1,
-      onUpdate: (self) => {
-        if (!counter) return;
-        const index = Math.min(panels - 1, Math.round(self.progress * (panels - 1)));
-        counter.textContent = String(index + 1).padStart(2, "0");
-      },
+      onUpdate: syncCounter,
+      onRefresh: syncCounter,
     },
   });
 }
@@ -383,61 +529,264 @@ function setupAwards() {
   const orbit = document.querySelector<HTMLElement>(".orbit");
   if (!orbit) return () => undefined;
   const cards = [...orbit.querySelectorAll<HTMLElement>(".cert")];
+  const count = cards.length;
+  if (!count) return () => undefined;
   const proxy = document.createElement("div");
-  let hold = false;
-  let auto = 0;
+  const step = 150;
+  let dragged = false;
+  const focus = () => -(Number(gsap.getProperty(proxy, "x")) || 0) / step;
+  const layout = () => {
+    const spread = Math.min(150, (orbit.clientWidth - 210) / Math.max(count - 1, 1));
+    const at = focus();
+    cards.forEach((card, index) => {
+      let d = (index - at) % count;
+      if (d > count / 2) d -= count;
+      if (d < -count / 2) d += count;
+      const far = Math.abs(d);
+      const edge = count / 2;
+      const fade = far > edge - 0.5 ? Math.max(0, (edge - far) / 0.5) : 1;
+      card.style.transform = `translate(-50%, -50%) translate(${d * spread}px, ${d * d * 14}px) rotate(${d * 7}deg) scale(${1 - Math.min(far, 2) * 0.05})`;
+      card.style.zIndex = String(40 - Math.round(far * 10));
+      card.style.opacity = String(fade);
+      card.classList.toggle("is-front", far < 0.5);
+    });
+  };
   const [instance] = Draggable.create(proxy, {
     trigger: orbit,
     type: "x",
     inertia: true,
-    onPress() {
-      hold = true;
+    minimumMovement: 4,
+    snap: { x: (value: number) => Math.round(value / step) * step },
+    onDragStart() {
+      dragged = true;
     },
-    onThrowComplete() {
-      hold = false;
+    onDrag: layout,
+    onThrowUpdate: layout,
+    onRelease() {
+      window.setTimeout(() => {
+        dragged = false;
+      }, 60);
     },
   });
-  const layout = () => {
-    const angle = auto + (instance?.x || 0) * 0.28;
-    const rx = Math.min(340, orbit.clientWidth * 0.34);
-    const ry = Math.min(120, orbit.clientHeight * 0.18);
-    cards.forEach((card, index) => {
-      const theta = angle * 0.01 + (index / cards.length) * Math.PI * 2;
-      const depth = Math.sin(theta);
-      const x = Math.cos(theta) * rx;
-      const y = depth * ry;
-      card.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) rotate(${Math.cos(theta) * 14}deg) scale(${0.86 + (depth + 1) * 0.08})`;
-      card.style.zIndex = String(10 + Math.round((depth + 1) * 20));
-      card.style.opacity = String(0.45 + (depth + 1) * 0.28);
+  const onClick = (event: Event) => {
+    if (dragged) return;
+    const card = (event.target as HTMLElement).closest<HTMLElement>(".cert");
+    if (!card) return;
+    const at = Math.round(focus());
+    let d = (cards.indexOf(card) - at) % count;
+    if (d > count / 2) d -= count;
+    if (d < -count / 2) d += count;
+    if (!d) return;
+    gsap.to(proxy, {
+      x: -(at + d) * step,
+      duration: 0.55,
+      ease: "power3.out",
+      onUpdate: layout,
+      onComplete: () => {
+        instance?.update();
+      },
     });
   };
-  const tick = () => {
-    if (!hold) auto += 0.35;
-    layout();
-  };
-  gsap.ticker.add(tick);
+  orbit.addEventListener("click", onClick);
+  const resize = new ResizeObserver(layout);
+  resize.observe(orbit);
+  gsap.set(proxy, { x: -Math.floor(count / 2) * step });
+  instance?.update();
+  layout();
   return () => {
     instance?.kill();
-    gsap.ticker.remove(tick);
+    resize.disconnect();
+    orbit.removeEventListener("click", onClick);
     cards.forEach((card) => {
       card.style.transform = "";
       card.style.opacity = "";
+      card.style.zIndex = "";
+      card.classList.remove("is-front");
     });
   };
 }
 
 function setupContact() {
-  const stage = document.querySelector(".contact-stage");
-  if (!stage) return () => undefined;
-  const drags = Draggable.create(".tile", {
-    bounds: stage,
-    inertia: true,
-    edgeResistance: 0.72,
-    dragClickables: true,
-    minimumMovement: 4,
+  const scene = document.querySelector<HTMLElement>(".wall-scene");
+  const wall = scene?.querySelector<HTMLElement>(".wall");
+  if (!scene || !wall) return () => undefined;
+  const tiles = [...wall.querySelectorAll<HTMLElement>(".wall-tile")];
+  const cols = Number(wall.dataset.cols) || 12;
+  const rows = Math.ceil(tiles.length / cols);
+  const shade = scene.querySelector<HTMLElement>(".wall-shade");
+  const ask = scene.querySelector<HTMLElement>(".wall-ask");
+  const phone = scene.querySelector<HTMLElement>(".phone-drop");
+  const card = scene.querySelector<HTMLElement>(".call-card");
+  const hints = [...scene.querySelectorAll<HTMLElement>(".wall-drag, .wall-top")];
+
+  // Stable pseudo-random scatter per tile, so a refresh never reshuffles the wall.
+  const rand = (i: number, k: number) => {
+    const v = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
+    return v - Math.floor(v);
+  };
+  const seeds = tiles.map((_, i) => ({
+    dx: (rand(i, 1) - 0.5) * 1500,
+    dy: (rand(i, 2) - 0.5) * 1100,
+    rot: (rand(i, 3) - 0.5) * 70,
+    scale: 0.35 + rand(i, 4) * 1.5,
+    delay: rand(i, 5),
+  }));
+
+  const state = { mix: 0 };
+  let step = 200;
+  let ox = 0;
+  let oy = 0;
+  const measure = () => {
+    step = Math.max(180, Math.round(window.innerWidth / 7));
+    wall.style.setProperty("--tile", `${step - 18}px`);
+    // Centre the grid gutters on the viewport.
+    ox = ox || Math.round((window.innerWidth % step) / 2) - step + 9;
+    oy = oy || Math.round((window.innerHeight % step) / 2) - step + 9;
+  };
+  const render = () => {
+    const width = cols * step;
+    const height = rows * step;
+    const wrapX = gsap.utils.wrap(-step, width - step);
+    const wrapY = gsap.utils.wrap(-step, height - step);
+    tiles.forEach((tile, i) => {
+      const seed = seeds[i];
+      const local = gsap.utils.clamp(0, 1, state.mix * 1.7 - seed.delay * 0.7);
+      const settle = 1 - Math.pow(1 - local, 3);
+      const away = 1 - settle;
+      const x = wrapX((i % cols) * step + ox) + seed.dx * away;
+      const y = wrapY(Math.floor(i / cols) * step + oy) + seed.dy * away;
+      const scale = 1 + (seed.scale - 1) * away;
+      tile.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${(seed.rot * away).toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+      tile.style.opacity = Math.min(1, local * 1.8).toFixed(3);
+    });
+  };
+
+  wall.classList.add("is-live");
+  scene.classList.add("is-live");
+  measure();
+  render();
+
+  // The phone drops in real time, so the spring keeps its bounce however fast the page scrolls.
+  let phoneDown = false;
+  let sway: gsap.core.Tween | null = null;
+  gsap.set(phone, { yPercent: -115, y: 0, rotation: 0 });
+  const dropPhone = () => {
+    if (!phone || phoneDown) return;
+    phoneDown = true;
+    gsap.killTweensOf(phone);
+    gsap.fromTo(
+      phone,
+      { yPercent: -115, rotation: -7 },
+      {
+        yPercent: 0,
+        rotation: 3,
+        duration: 1.7,
+        ease: "elastic.out(1, 0.38)",
+        onComplete: () => {
+          sway = gsap.to(phone, { rotation: -3, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 });
+        },
+      },
+    );
+  };
+  const liftPhone = () => {
+    if (!phone || !phoneDown) return;
+    phoneDown = false;
+    sway?.kill();
+    gsap.killTweensOf(phone);
+    gsap.to(phone, { yPercent: -115, rotation: 0, duration: 0.45, ease: "power2.in" });
+  };
+
+  gsap.set([shade, card, ...hints], { autoAlpha: 0 });
+  gsap.set(card, { xPercent: -50, x: 0 });
+  const tl = gsap.timeline({
+    defaults: { ease: "none" },
+    scrollTrigger: {
+      trigger: scene,
+      start: "top top",
+      end: "+=170%",
+      pin: true,
+      scrub: 0.7,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onRefresh: () => {
+        measure();
+        render();
+      },
+      onUpdate: (self) => {
+        if (self.progress > 0.8) dropPhone();
+        else if (self.progress < 0.72) liftPhone();
+      },
+    },
   });
+  const askLines = ask ? [...ask.children] : [];
+  // The question is already on screen when the scene pins, so the first frame is never empty.
+  const askIn = gsap.fromTo(
+    ask,
+    { autoAlpha: 0, y: 60 },
+    {
+      autoAlpha: 1,
+      y: 0,
+      ease: "none",
+      immediateRender: true,
+      scrollTrigger: { trigger: scene, start: "top 65%", end: "top 8%", scrub: 0.5 },
+    },
+  );
+  tl.to(state, { mix: 1, duration: 0.62, onUpdate: render }, 0.02)
+    // Fade the lines, not the container: the container belongs to askIn, and two tweens on one
+    // element race when the page jumps straight to the end.
+    .to(askLines, { autoAlpha: 0, y: -40, duration: 0.1 }, 0.44)
+    .to(shade, { autoAlpha: 1, duration: 0.16 }, 0.6)
+    .fromTo(card, { autoAlpha: 0, y: 36 }, { autoAlpha: 1, y: 0, duration: 0.16 }, 0.7)
+    .to(hints, { autoAlpha: 1, duration: 0.1 }, 0.8)
+    .to({}, { duration: 0.1 });
+
+  // Dragging pans the whole wall. The grid wraps, so it never runs out.
+  const proxy = document.createElement("div");
+  let lastX = 0;
+  let lastY = 0;
+  const pan = function (this: Draggable) {
+    ox += this.x - lastX;
+    oy += this.y - lastY;
+    lastX = this.x;
+    lastY = this.y;
+    render();
+  };
+  const drags = Draggable.create(proxy, {
+    type: ScrollTrigger.isTouch === 1 ? "x" : "x,y",
+    trigger: scene,
+    inertia: true,
+    dragClickables: false,
+    minimumMovement: 3,
+    cursor: "grab",
+    activeCursor: "grabbing",
+    onPress(this: Draggable) {
+      lastX = this.x;
+      lastY = this.y;
+    },
+    onDrag: pan,
+    onThrowUpdate: pan,
+  });
+  const onResize = () => {
+    measure();
+    render();
+  };
+  window.addEventListener("resize", onResize);
+
   return () => {
+    window.removeEventListener("resize", onResize);
     drags.forEach((drag) => drag.kill());
+    sway?.kill();
+    tl.scrollTrigger?.kill();
+    tl.kill();
+    askIn.scrollTrigger?.kill();
+    askIn.kill();
+    wall.classList.remove("is-live");
+    scene.classList.remove("is-live");
+    tiles.forEach((tile) => {
+      tile.style.transform = "";
+      tile.style.opacity = "";
+    });
+    gsap.set([shade, ask, ...askLines, phone, card, ...hints], { clearProps: "all" });
   };
 }
 
