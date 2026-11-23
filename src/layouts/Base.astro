@@ -83,7 +83,10 @@ preRows.forEach((row, r) => {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={bannerUrl} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preload" href="/fonts/Anton.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Satoshi-700.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/PermanentMarker.woff2" as="font" type="font/woff2" crossorigin />
@@ -165,11 +168,10 @@ preRows.forEach((row, r) => {
         playsinline
         autoplay
         preload="auto"
-        poster="/hero/berlin-hero-poster.jpg"
+        poster="/hero/berlin-hero-poster-lit.jpg"
         aria-hidden="true"
       >
-        <source src="/hero/berlin-hero.mp4" type="video/mp4" />
-        <source src="/hero/berlin-hero.webm" type="video/webm" />
+        <source src="/hero/berlin-hero-720.mp4" type="video/mp4" />
       </video>
       <div class="ink-dots"></div>
     </div>

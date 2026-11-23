@@ -263,13 +263,24 @@ function setupSkillCats() {
     const note = cat.querySelector(".skill-cat-note");
     if (!index || !title || !tags) return;
     const split = SplitText.create(title, { type: "words", aria: "auto" });
-    gsap.set(index, { y: 8, opacity: 0, filter: "blur(5px)" });
-    gsap.set(split.words, { y: 16, opacity: 0, filter: "blur(7px)" });
-    gsap.set(tags, { y: 12, opacity: 0, filter: "blur(6px)" });
-    if (note) gsap.set(note, { y: 10, opacity: 0, filter: "blur(6px)" });
-    const shown = { y: 0, opacity: 1, filter: "blur(0px)", ease: "none" };
+    // The blur-in is a desktop effect. Phones get the same rise and fade without the filter cost.
+    const soft = window.innerWidth > 860;
+    const blur = (px: number) => (soft ? { filter: `blur(${px}px)` } : {});
+    const pieces = [index, ...split.words, tags, ...(note ? [note] : [])];
+    gsap.set(index, { y: 8, opacity: 0, ...blur(5) });
+    gsap.set(split.words, { y: 16, opacity: 0, ...blur(7) });
+    gsap.set(tags, { y: 12, opacity: 0, ...blur(6) });
+    if (note) gsap.set(note, { y: 10, opacity: 0, ...blur(6) });
+    const shown = { y: 0, opacity: 1, ...blur(0), ease: "none" };
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: cat, start: "top 90%", end: "top 55%", scrub: 0.4 },
+      scrollTrigger: {
+        trigger: cat,
+        start: "top 90%",
+        end: soft ? "top 55%" : "top 70%",
+        scrub: 0.4,
+        // A finished blur(0px) still keeps every word on its own filter layer, so drop it.
+        onLeave: () => gsap.delayedCall(0.6, () => gsap.set(pieces, { clearProps: "filter" })),
+      },
     });
     tl.to(index, { ...shown, duration: 0.3 }, 0)
       .to(split.words, { ...shown, duration: 0.4, stagger: 0.08 }, 0.15)
@@ -403,15 +414,28 @@ function setupGallery(auto: boolean) {
     if (auto) offset += 0.35;
     layout();
   };
-  if (auto) gsap.ticker.add(tick);
-  else layout();
+  // The carousel only turns while it is on screen. Left running, it rewrote nine
+  // transforms on every frame for the whole visit, wherever the visitor was.
+  let turning = false;
+  const turn = (on: boolean) => {
+    if (!auto || turning === on) return;
+    turning = on;
+    if (on) gsap.ticker.add(tick);
+    else gsap.ticker.remove(tick);
+  };
+  const onScreen = new IntersectionObserver((entries) => entries.forEach((entry) => turn(entry.isIntersecting)), {
+    rootMargin: "200px",
+  });
+  layout();
+  if (auto) onScreen.observe(stage);
 
   return () => {
     observer.kill();
     stage.removeEventListener("click", onClick, true);
     stage.removeEventListener("dragstart", onDragStart);
     stage.classList.remove("is-dragging");
-    if (auto) gsap.ticker.remove(tick);
+    turn(false);
+    onScreen.disconnect();
     resizeObserver.disconnect();
     cards.forEach((card) => {
       card.style.transform = "";
@@ -797,7 +821,7 @@ export function startExperience() {
     const smoother = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
-      smooth: 1.15,
+      smooth: 0.8,
       effects: true,
       smoothTouch: false,
     });

@@ -85,10 +85,9 @@ body::before {
   inset: -20%;
   pointer-events: none;
   z-index: 35;
-  opacity: 0.1;
+  opacity: 0.03;
   background-image: url("/grain.png");
   background-size: 180px 180px;
-  mix-blend-mode: overlay;
   animation: grain 0.55s steps(2) infinite;
 }
 html.reduce body::before { animation: none; }
@@ -115,8 +114,9 @@ html.reduce body::before { animation: none; }
   object-fit: cover;
   opacity: 1;
   background: #17171a;
-  filter: brightness(1.3) contrast(1.05);
 }
+/* Brightness and contrast are baked into the video file, so the browser can hand it straight to the GPU. */
+html.ink-parked .ink-bg, html.ink-parked #ink { visibility: hidden; }
 .ink-cover {
   position: fixed;
   inset: 0;

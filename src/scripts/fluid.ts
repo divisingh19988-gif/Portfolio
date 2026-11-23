@@ -503,6 +503,19 @@ function startInk(canvas: HTMLCanvasElement): boolean {
   let visible = true;
   let last = performance.now();
 
+  // Once the ink has cleared the whole backdrop is an unbroken dark cover. Parking it stops the
+  // video decoding and drops three full-screen layers for the rest of the page.
+  const backdrop = document.querySelector<HTMLVideoElement>("#ink-video");
+  let parked = false;
+  const park = (on: boolean) => {
+    if (parked === on) return;
+    parked = on;
+    document.documentElement.classList.toggle("ink-parked", on);
+    if (!backdrop) return;
+    if (on) backdrop.pause();
+    else backdrop.play().catch(() => undefined);
+  };
+
   const frame = (now: number) => {
     requestAnimationFrame(frame);
     const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
@@ -520,10 +533,12 @@ function startInk(canvas: HTMLCanvasElement): boolean {
       // Six seconds is longer than any blot lives; after that there is nothing to draw.
       if (now - retiredSince > 6000) {
         document.documentElement.dataset.reveal = "0";
+        park(true);
         return;
       }
     } else {
       retiredSince = 0;
+      park(false);
     }
 
     if (moved) {

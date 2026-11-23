@@ -251,7 +251,8 @@ function startChrome() {
       (entries) => {
         entries.forEach((entry) => {
           const item = entry.target as HTMLVideoElement;
-          if (!entry.isIntersecting) {
+          // Only cards that are mostly on screen play, so a handful of loops decode at once, not all of them.
+          if (!entry.isIntersecting || entry.intersectionRatio < 0.6) {
             item.pause();
             return;
           }
@@ -263,7 +264,7 @@ function startChrome() {
           if (!reduce) item.play().catch(() => undefined);
         });
       },
-      { rootMargin: "240px" },
+      { threshold: [0, 0.6] },
     );
     videos.forEach((item) => observer.observe(item));
   }
