@@ -12,6 +12,36 @@ const { title, description = site.description, page = "case" } = Astro.props;
 const siteUrl = "https://digvijay.online";
 const pageUrl = new URL(Astro.url.pathname, siteUrl).href;
 const bannerUrl = `${siteUrl}/og.jpg`;
+// Tells search engines and AI tools who this site is about. Home page only.
+const personLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  mainEntity: {
+    "@type": "Person",
+    name: "Digvijay Rathore",
+    alternateName: ["Digvijay Singh Rathore", "Diggi"],
+    jobTitle: "GTM Engineer",
+    description: site.description,
+    url: `${siteUrl}/`,
+    image: `${siteUrl}/portrait/digvijay.png`,
+    email: site.email,
+    address: { "@type": "PostalAddress", addressLocality: "Berlin", addressCountry: "DE" },
+    sameAs: [site.linkedin, site.github],
+    knowsAbout: [
+      "Go-to-market engineering",
+      "Outbound automation",
+      "SEO",
+      "Generative engine optimization",
+      "AI agents",
+      "Clay",
+      "HubSpot",
+    ],
+    alumniOf: [
+      { "@type": "CollegeOrUniversity", name: "Gisma University of Applied Sciences" },
+      { "@type": "CollegeOrUniversity", name: "Christ University" },
+    ],
+  },
+};
 
 // Loader line, one span per letter so the stylesheet can type it out in order.
 const preRows = ["I MAKE MY", "OWN LUCK"];
@@ -39,6 +69,7 @@ preRows.forEach((row, r) => {
     <meta name="description" content={description} />
     <meta name="theme-color" content="#17171a" />
     <link rel="canonical" href={pageUrl} />
+    {page === "home" && <script type="application/ld+json" set:html={JSON.stringify(personLd)} />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Digvijay Rathore" />
     <meta property="og:url" content={pageUrl} />
