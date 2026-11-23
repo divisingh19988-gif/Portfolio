@@ -101,8 +101,18 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
         chip?.setAttribute("aria-label", on ? "Pause Billie Jean" : "Play Billie Jean by Michael Jackson");
         if (state) state.textContent = on ? "Pause" : "Play";
       };
+      // Phones: the control belongs to the opening screen. Once the visitor scrolls on it
+      // steps aside, unless they have pressed play and need it to pause.
+      const opening = document.querySelector("#top");
+      if (wrap && opening && "IntersectionObserver" in window) {
+        new IntersectionObserver(
+          (entries) => entries.forEach((entry) => wrap.classList.toggle("is-away", !entry.isIntersecting)),
+          { threshold: 0.25 },
+        ).observe(opening);
+      }
       chip?.addEventListener("click", () => {
         if (!frame) return;
+        wrap?.classList.add("is-used");
         peek();
         if (controller) {
           controller.togglePlay();
@@ -145,6 +155,9 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
       <a href="/impressum">Impressum</a>
       <a href="/privacy">Privacy</a>
     </div>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu">
+      <span></span>
+    </button>
   </div>
 
   <section class="hero" id="top" data-screen="HERO">
@@ -164,10 +177,6 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
         }
         <span class="loc-badge" title="Based in Berlin">DE</span>
       </nav>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu">
-        <span></span>
-        <span class="skip">Menu</span>
-      </button>
     </header>
     <div class="hero-stage">
       <p class="hero-kicker">↙ I turn MRR into a hockey stick</p>

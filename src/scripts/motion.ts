@@ -50,9 +50,9 @@ function fitHeroName() {
   name.style.whiteSpace = "nowrap";
   name.style.lineHeight = "1";
   const maxW = lock.clientWidth;
-  const stacked = getComputedStyle(lock).flexDirection === "column";
+  const stacked = getComputedStyle(lock).flexDirection.startsWith("column");
   if (stacked) {
-    // Phone: name above a square portrait sized to the letter box.
+    // Phone: the name fills the row; the portrait above it is sized by the stylesheet.
     name.style.fontSize = "100px";
     const probe = document.createRange();
     probe.selectNodeContents(sample);
@@ -71,11 +71,10 @@ function fitHeroName() {
       }
     }
     name.style.fontSize = `${best / ratio}px`;
-    const glyph = probe.getBoundingClientRect();
-    const h1 = name.getBoundingClientRect();
-    portrait.style.width = `${glyph.height}px`;
-    portrait.style.height = `${glyph.height}px`;
-    portrait.style.transform = `translateY(${glyph.top - h1.top}px)`;
+    portrait.style.width = "";
+    portrait.style.height = "";
+    portrait.style.marginTop = "";
+    portrait.style.transform = "";
     fittingName = false;
     return;
   }
