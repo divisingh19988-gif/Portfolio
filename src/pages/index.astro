@@ -53,15 +53,6 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
             ))
           }
         </nav>
-        <div class="side-minis">
-          {
-            gallery.slice(0, 8).map((entry) => (
-              <a href={`/work/${entry.id}`}>
-                <img src={entry.data.thumbnail} alt={entry.data.title} width="320" height="180" />
-              </a>
-            ))
-          }
-        </div>
         <a class="side-mail" href={site.mailto}>
           <span>{site.email}</span>
           <span>Email</span>
