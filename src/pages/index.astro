@@ -195,7 +195,7 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
       <div class="curve" aria-label="Project gallery">
         {
           gallery.map((entry) => (
-            <a class="gcard" href={`/work/${entry.id}`} draggable="false" style={`--shot:url(${entry.data.thumbnail})`}>
+            <a class="gcard" href={`/work/${entry.id}`} data-project-slug={entry.id} draggable="false" style={`--shot:url(${entry.data.thumbnail})`}>
               <span class="gcard-visual">
                 {entry.data.cardLoop || entry.data.loop ? (
                   <video class="gcard-video" draggable="false" data-lazy muted loop playsinline preload="none" poster={entry.data.thumbnail}>
@@ -253,7 +253,7 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
                   <h3>{chapter.title}</h3>
                   <p class="chapter-role">{chapter.role}</p>
                   <p>{chapter.copy}</p>
-                  {chapter.href && <a href={chapter.href}>{chapter.hrefLabel} →</a>}
+                  {chapter.href && <a href={chapter.href} data-project-slug={chapter.href.split("/").pop()}>{chapter.hrefLabel} →</a>}
                 </div>
                 <div class="chapter-stat">
                   <b>{chapter.stat}</b>
@@ -322,6 +322,20 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
             line.textContent = card.dataset.hook || "";
             if (dialog.parentElement !== document.body) document.body.appendChild(dialog);
             dialog.showModal();
+            (
+              window as Window & {
+                posthog?: { capture: (event: string, properties?: Record<string, string>) => void };
+              }
+            ).posthog?.capture("playbook_opened", {
+              playbook_title: card.dataset.title || "unknown",
+            });
+            (
+              window as Window & {
+                posthog?: { logger?: { info: (message: string, attributes?: Record<string, string>) => void } };
+              }
+            ).posthog?.logger?.info("portfolio playbook opened", {
+              playbook_title: card.dataset.title || "unknown",
+            });
           });
         });
         dialog.querySelector("[data-close-light]")?.addEventListener("click", () => dialog.close());
@@ -404,13 +418,13 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
         <p class="eyebrow">06 / Contact</p>
         <h2 class="call-heading"><span class="call-hot">Pick up.</span> It's for you.</h2>
         <div class="call-actions">
-          <a class="call-btn call-btn--main" href={site.cal} target="_blank" rel="noreferrer">Book a call</a>
-          <a class="call-btn" href={site.linkedin} target="_blank" rel="noreferrer">Say hi on LinkedIn</a>
+          <a class="call-btn call-btn--main" href={site.cal} data-contact-channel="call_booking" target="_blank" rel="noreferrer">Book a call</a>
+          <a class="call-btn" href={site.linkedin} data-contact-channel="linkedin" target="_blank" rel="noreferrer">Say hi on LinkedIn</a>
         </div>
         <p class="call-fine">
-          <a href={site.mailto}>{site.email}</a>
+          <a href={site.mailto} data-contact-channel="email">{site.email}</a>
           <span>·</span>
-          <a href={site.cv} download>Download CV</a>
+          <a href={site.cv} data-contact-channel="cv_download" download>Download CV</a>
         </p>
       </div>
       <p class="wall-drag">
@@ -434,6 +448,35 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
         } else {
           scene.classList.add("is-in");
         }
+
+        const capture = (event: string, properties: Record<string, string>) => {
+          (
+            window as Window & {
+              posthog?: { capture: (eventName: string, eventProperties?: Record<string, string>) => void };
+            }
+          ).posthog?.capture(event, properties);
+        };
+        const log = (message: string, attributes: Record<string, string>) => {
+          (
+            window as Window & {
+              posthog?: { logger?: { info: (message: string, attributes?: Record<string, string>) => void } };
+            }
+          ).posthog?.logger?.info(message, attributes);
+        };
+        document.querySelectorAll<HTMLAnchorElement>("[data-project-slug]").forEach((link) => {
+          link.addEventListener("click", () => {
+            const projectSlug = link.dataset.projectSlug || "unknown";
+            capture("portfolio_project_opened", { project_slug: projectSlug });
+            log("portfolio project opened", { project_slug: projectSlug });
+          });
+        });
+        scene.querySelectorAll<HTMLAnchorElement>("[data-contact-channel]").forEach((link) => {
+          link.addEventListener("click", () => {
+            const channel = link.dataset.contactChannel || "unknown";
+            capture("contact_cta_clicked", { channel });
+            log("portfolio contact cta clicked", { channel });
+          });
+        });
       }
     </script>
   </section>

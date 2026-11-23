@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "astro": "^5.18.2",
-    "gsap": "^3.13.0"
+    "gsap": "^3.13.0",
+    "posthog-js": "^1.453.2"
   }
 }

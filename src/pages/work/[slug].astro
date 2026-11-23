@@ -37,7 +37,7 @@ const actions = data.action.length > 0 ? data.action : data.built ? [data.built]
 ---
 
 <Base title={`${data.title} | ${site.name}`} description={data.hook} page="case">
-  <article class="case" data-screen="CASE">
+  <article class="case" data-screen="CASE" data-case-slug={entry.id}>
     <a class="back" href="/#works">← Index</a>
     <header class="case-head">
       <p class="eyebrow">{num} / Case file</p>
@@ -209,7 +209,7 @@ const actions = data.action.length > 0 ? data.action : data.built ? [data.built]
     {
       data.link && (
         <p class="case-link">
-          <a class="back" href={data.link}>
+          <a class="back" href={data.link} data-case-external-link>
             External link →
           </a>
         </p>
@@ -228,8 +228,23 @@ const actions = data.action.length > 0 ? data.action : data.built ? [data.built]
         }
         film.muted = true;
         film.play().catch(() => undefined);
+        capture("case_study_explainer_played", {
+          case_study_slug: document.querySelector<HTMLElement>("[data-case-slug]")?.dataset.caseSlug || "unknown",
+        });
         button.hidden = true;
       });
+    });
+
+    const capture = (event: string, properties: Record<string, string>) => {
+      (
+        window as Window & {
+          posthog?: { capture: (eventName: string, eventProperties?: Record<string, string>) => void };
+        }
+      ).posthog?.capture(event, properties);
+    };
+    const caseSlug = document.querySelector<HTMLElement>("[data-case-slug]")?.dataset.caseSlug || "unknown";
+    document.querySelector<HTMLAnchorElement>("[data-case-external-link]")?.addEventListener("click", () => {
+      capture("case_study_external_link_opened", { case_study_slug: caseSlug });
     });
   </script>
 </Base>

@@ -1,4 +1,5 @@
 ---
+import PostHog from "../components/posthog.astro";
 import "../styles/global.css";
 import { site, words } from "../data/site";
 
@@ -88,6 +89,7 @@ preRows.forEach((row, r) => {
     <link rel="preload" href="/fonts/Satoshi-700.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/PermanentMarker.woff2" as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
+    <PostHog />
     <script is:inline>
       (function () {
         var root = document.documentElement;
