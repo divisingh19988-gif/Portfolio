@@ -1545,10 +1545,32 @@ body[data-page="case"]::before { display: none; }
 .sound-toggle[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
 .track {
   position: fixed;
-  left: 112px;
+  right: 60px;
   bottom: 10px;
   z-index: 37;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 14px;
 }
+/* On the opening screen the control sits bottom right, under the links. Once the side panel
+   docks, that corner belongs to the panel's email bar, so the control moves to the bottom left. */
+body.docked .track { right: auto; left: 36px; flex-direction: row; }
+/* Handwritten nudge beside the chip. Hero only, and it steps aside once the music plays,
+   so it never stacks up against the other marker notes further down the page. */
+.track-note {
+  font-family: var(--font-marker);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--light);
+  white-space: nowrap;
+  transform: rotate(-2deg);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+body.docked .track-note,
+.track-chip[aria-pressed="true"] + .track-note { opacity: 0; }
 .track-chip {
   display: inline-flex;
   align-items: center;
@@ -1581,7 +1603,7 @@ body[data-page="case"]::before { display: none; }
 .track-chip[aria-pressed="true"] .track-state { color: var(--accent); }
 .track-dock {
   position: absolute;
-  left: -76px;
+  right: 0;
   bottom: calc(100% + 10px);
   width: 300px;
   max-width: calc(100vw - 48px);
@@ -1596,8 +1618,11 @@ body[data-page="case"]::before { display: none; }
   visibility: visible;
   transform: none;
 }
+body.docked .track-dock { right: auto; left: 0; }
 .track-frame:empty { display: none; }
-.track-frame iframe { display: block; border: 0; border-radius: 12px; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5); }
+/* Spotify swaps the placeholder for its own iframe, so the dock itself does the corner clipping. */
+.track-dock { border-radius: 12px; overflow: hidden; line-height: 0; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5); }
+.track-dock iframe { display: block; border: 0; }
 .reduce .track-chip[aria-pressed="true"] .track-disc { animation: none; }
 .copy-btn { border: 1px solid var(--line); padding: 10px 12px; }
 .todo { color: var(--accent); }
@@ -1989,8 +2014,10 @@ html.reduce .is-glitch::after { animation: none; text-shadow: none; }
   .contact-card h2 { font-size: 52px; }
   .pre-scale i:nth-child(even) { display: none; }
   .site-foot { padding: 20px 18px 84px; }
-  .track { left: 14px; bottom: 14px; }
-  .track-dock { left: 0; width: calc(100vw - 28px); max-width: 340px; }
+  .track, body.docked .track { left: 14px; right: auto; bottom: 14px; flex-direction: row; }
+  .track-dock, body.docked .track-dock { left: 0; right: auto; }
+  .track-note { display: none; }
+  .track-dock { width: calc(100vw - 28px); max-width: 340px; }
   #contact.sheet { padding: 0; height: auto; overflow: hidden; }
   .wall-scene { height: auto; min-height: 100vh; padding: 0 18px 150px; }
   .wall-plane { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }

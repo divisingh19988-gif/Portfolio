@@ -15,9 +15,9 @@ export const site = {
     "I'm Digvijay Rathore, an AI-native GTM engineer in Berlin. I build the pipeline: sourcing, enrichment, sequencing, and the agents that run it.",
 };
 
-// Music button: visible on the local preview only until it is approved for the live site.
-// Set to true to switch it on everywhere.
-export const musicEnabled: boolean = import.meta.env.DEV;
+// Music button on the home page. Set to false to switch it off everywhere
+// (the Spotify paragraph in the privacy policy follows this flag).
+export const musicEnabled: boolean = true;
 
 export const nav = [
   { id: "introduce", n: "01", label: "Introduce" },
