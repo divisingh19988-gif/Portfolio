@@ -95,6 +95,54 @@ preRows.forEach((row, r) => {
         if (window.matchMedia("(max-width: 860px)").matches) root.classList.add("is-mobile");
       })();
     </script>
+    <script is:inline>
+      // Cookieless analytics. Loads only on the live domain (or with ?ph_test=1 for a local check).
+      // No cookies, no browser storage, no session recordings.
+      (function () {
+        var host = location.hostname;
+        var live = host === "digvijay.online" || host === "www.digvijay.online";
+        var test = /[?&]ph_test=1/.test(location.search);
+        if (!live && !test) return;
+        var loader = document.createElement("script");
+        loader.async = true;
+        loader.src = "https://us-assets.i.posthog.com/static/array.js";
+        loader.onload = function () {
+          if (!window.posthog || !window.posthog.init) return;
+          window.posthog.init("phc_yKwDfbCxzZdNmbm3E4LQANvyKDYsUwx3oq3ghwgVq8B9", {
+            api_host: "https://us.i.posthog.com",
+            cookieless_mode: "always",
+            persistence: "memory",
+            autocapture: true,
+            capture_pageview: true,
+            capture_pageleave: true,
+            disable_session_recording: true,
+            disable_surveys: true,
+            enable_heatmaps: false,
+            capture_dead_clicks: false,
+            capture_performance: false,
+          });
+        };
+        document.head.appendChild(loader);
+        function track(name) {
+          if (window.posthog && window.posthog.capture) window.posthog.capture(name, { page: location.pathname });
+        }
+        document.addEventListener(
+          "click",
+          function (event) {
+            var el = event.target && event.target.closest ? event.target.closest("a, button") : null;
+            if (!el) return;
+            var href = el.getAttribute("href") || "";
+            if (href.indexOf("cal.com") > -1) track("book_call_clicked");
+            else if (href.indexOf("linkedin.com") > -1) track("linkedin_clicked");
+            else if (href.indexOf("github.com") > -1) track("github_clicked");
+            else if (href.indexOf("mailto:") === 0) track("email_clicked");
+            else if (el.hasAttribute("download")) track("cv_downloaded");
+            else if (el.hasAttribute("data-play-film")) track("walkthrough_played");
+          },
+          true,
+        );
+      })();
+    </script>
   </head>
   <body data-page={page}>
     <a class="skip" href="#smooth-content">Skip to content</a>
@@ -159,6 +207,11 @@ preRows.forEach((row, r) => {
     <div id="smooth-wrapper">
       <div id="smooth-content">
         <slot />
+        <footer class="site-foot">
+          <span>© 2026 Digvijay Rathore</span>
+          <a href="/impressum">Impressum</a>
+          <a href="/privacy">Privacy</a>
+        </footer>
       </div>
     </div>
     <script>

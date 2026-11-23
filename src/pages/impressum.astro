@@ -1,0 +1,47 @@
+---
+import Base from "../layouts/Base.astro";
+import { site } from "../data/site";
+---
+
+<Base title="Impressum | Digvijay Rathore" description="Legal notice for digvijay.online.">
+  <article class="case legal">
+    <a class="back" href="/">← Index</a>
+    <p class="eyebrow">Legal notice</p>
+    <h1>Impressum</h1>
+
+    <h2>Angaben gemäß § 5 DDG</h2>
+    <p>
+      Digvijay Singh Rathore<br />
+      Franz-Jacob-Str. 3<br />
+      10369 Berlin<br />
+      Germany
+    </p>
+
+    <h2>Kontakt / Contact</h2>
+    <p>Email: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+
+    <h2>Verantwortlich für den Inhalt / Responsible for content</h2>
+    <p>Digvijay Singh Rathore, address as above.</p>
+
+    <h2>Haftung für Inhalte / Liability for content</h2>
+    <p>
+      I build and maintain this site with care, but I cannot guarantee that every piece of information on it is complete,
+      correct and up to date at all times. Project descriptions reflect my own work and my own account of it.
+    </p>
+
+    <h2>Haftung für Links / Liability for links</h2>
+    <p>
+      This site links to external websites such as LinkedIn, GitHub and Cal.com. I have no influence on their content.
+      The operator of each linked site is responsible for it. If I learn of unlawful content behind a link, I will remove
+      the link.
+    </p>
+
+    <h2>Urheberrecht / Copyright</h2>
+    <p>
+      Text, layout and code on this site are my own work unless marked otherwise. Product names, logos and third-party
+      artwork shown here belong to their respective owners.
+    </p>
+
+    <p class="legal-foot"><a class="back" href="/privacy">Privacy policy →</a></p>
+  </article>
+</Base>

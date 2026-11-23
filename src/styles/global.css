@@ -1575,6 +1575,31 @@ body[data-page="case"]::before { display: none; }
 .case-next p:last-child { margin: 12px 0 0; font-size: 18px; line-height: 1.6; color: var(--light); }
 .case .prose { margin-top: 28px; max-width: 62ch; line-height: 1.6; color: var(--light); }
 .case .prose:empty { display: none; }
+.legal { max-width: 760px; }
+.legal h2 { margin: 34px 0 8px; font-size: 18px; letter-spacing: -0.01em; }
+.legal p, .legal li { line-height: 1.65; color: var(--light); max-width: 68ch; }
+.legal ul { padding-left: 20px; margin: 8px 0; }
+.legal a:not(.back) { color: var(--light); text-decoration: underline; text-underline-offset: 3px; }
+.legal .hook { margin-top: 10px; }
+.legal .todo { background: var(--accent); color: #fff; padding: 0 6px; }
+.legal-foot { margin-top: 40px; }
+.site-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  align-items: center;
+  padding: 22px 56px 26px 124px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg);
+}
+.site-foot a { color: var(--muted); text-decoration: none; }
+.site-foot a:hover { color: var(--light); }
+.side-legal { display: flex; gap: 14px; margin-top: 8px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+.side-legal a { color: var(--faint, rgba(236, 231, 220, 0.45)); text-decoration: none; }
+.side-legal a:hover { color: var(--light); }
 .case .prose h2 { color: var(--light); font-family: var(--font-display); font-weight: 400; text-transform: uppercase; }
 .case-link { margin: 44px 0 0; }
 .feature-film, .plan-shot { margin: 0; }
@@ -1904,6 +1929,7 @@ html.reduce .is-glitch::after { animation: none; text-shadow: none; }
   .tile, .contact-card { position: relative; left: auto !important; top: auto !important; width: auto; transform: none !important; }
   .contact-card h2 { font-size: 52px; }
   .pre-scale i:nth-child(even) { display: none; }
+  .site-foot { padding: 20px 18px 84px; }
   #contact.sheet { padding: 0; height: auto; overflow: hidden; }
   .wall-scene { height: auto; min-height: 100vh; padding: 0 18px 150px; }
   .wall-plane { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
