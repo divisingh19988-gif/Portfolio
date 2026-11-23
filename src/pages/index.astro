@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Brush from "../components/Brush.astro";
-import { certificates, nav, playbooks, site, skills, stats, story } from "../data/site";
+import { certificates, musicEnabled, nav, playbooks, site, skills, stats, story } from "../data/site";
 
 const works = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
 const gallery = works.filter((entry) => entry.data.featured && !entry.data.hidden);
@@ -60,6 +60,77 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
         <p class="side-legal"><a href="/impressum">Impressum</a><a href="/privacy">Privacy</a></p>
       </div>
     </aside>
+    {
+      musicEnabled && (
+        <div class="track" data-track>
+          <div class="track-dock" data-track-dock>
+            <div class="track-frame" data-track-frame></div>
+          </div>
+          <button class="track-chip" type="button" data-track-play aria-pressed="false" aria-label="Play Billie Jean by Michael Jackson">
+            <span class="track-disc" aria-hidden="true"></span>
+            <span data-track-label>Billie Jean</span>
+            <span class="track-state" data-track-state aria-hidden="true">Play</span>
+          </button>
+        </div>
+      )
+    }
+    <script>
+      // Music is opt-in: nothing from Spotify loads until the visitor presses play.
+      const TRACK = "spotify:track:5ChkMS8OtdzJeqyybCc9R5";
+      type SpotifyController = {
+        play: () => void;
+        togglePlay: () => void;
+        addListener: (name: string, fn: (event: { data: { isPaused: boolean } }) => void) => void;
+      };
+      const wrap = document.querySelector<HTMLElement>("[data-track]");
+      const chip = document.querySelector<HTMLButtonElement>("[data-track-play]");
+      const frame = document.querySelector<HTMLElement>("[data-track-frame]");
+      const state = document.querySelector<HTMLElement>("[data-track-state]");
+      let controller: SpotifyController | null = null;
+      let loading = false;
+      let hideTimer = 0;
+      // The player shows for a few seconds, then tucks away. Hovering the control brings it back.
+      const peek = () => {
+        wrap?.classList.add("is-open");
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(() => wrap?.classList.remove("is-open"), 6000);
+      };
+      const setPlaying = (on: boolean) => {
+        chip?.setAttribute("aria-pressed", on ? "true" : "false");
+        chip?.setAttribute("aria-label", on ? "Pause Billie Jean" : "Play Billie Jean by Michael Jackson");
+        if (state) state.textContent = on ? "Pause" : "Play";
+      };
+      chip?.addEventListener("click", () => {
+        if (!frame) return;
+        peek();
+        if (controller) {
+          controller.togglePlay();
+          return;
+        }
+        if (loading) return;
+        loading = true;
+        if (state) state.textContent = "Loading";
+        (window as unknown as { onSpotifyIframeApiReady: (api: unknown) => void }).onSpotifyIframeApiReady = (api) => {
+          const spotify = api as {
+            createController: (
+              el: HTMLElement,
+              options: { uri: string; width: string; height: number; theme: string },
+              ready: (c: SpotifyController) => void,
+            ) => void;
+          };
+          spotify.createController(frame, { uri: TRACK, width: "100%", height: 80, theme: "dark" }, (created) => {
+            controller = created;
+            created.addListener("ready", () => created.play());
+            created.addListener("playback_update", (event) => setPlaying(!event.data.isPaused));
+            setPlaying(false);
+          });
+        };
+        const script = document.createElement("script");
+        script.src = "https://open.spotify.com/embed/iframe-api/v1";
+        script.async = true;
+        document.body.appendChild(script);
+      });
+    </script>
     <div class="mobile-menu" id="menu">
       {
         nav.map((item) => (
@@ -414,6 +485,10 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
           <a href={site.mailto}>{site.email}</a>
           <span>·</span>
           <a href={site.cv} download>Download CV</a>
+          <span>·</span>
+          <a href="/impressum">Impressum</a>
+          <span>·</span>
+          <a href="/privacy">Privacy</a>
         </p>
       </div>
       <p class="wall-drag">

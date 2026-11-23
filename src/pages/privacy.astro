@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import { site } from "../data/site";
+import { musicEnabled, site } from "../data/site";
 ---
 
 <Base title="Privacy policy | Digvijay Rathore" description="How digvijay.online handles personal data.">
@@ -65,8 +65,18 @@ import { site } from "../data/site";
       policy of that service applies. This site does not embed their scripts, so they receive no data until you click.
     </p>
 
-    <h2>6. Fonts and media</h2>
+    <h2>{musicEnabled ? "6. Fonts, media and the music player" : "6. Fonts and media"}</h2>
     <p>Fonts, images and videos are served from this site itself. Nothing is loaded from Google Fonts or video platforms.</p>
+    {
+      musicEnabled && (
+        <p>
+          The home page has an optional music button. Nothing is loaded until you press it. When you do, a player from
+          Spotify (Spotify AB, Regeringsgatan 19, 111 53 Stockholm, Sweden) is loaded, and Spotify receives your IP address
+          and may set its own cookies, as described in Spotify's privacy policy. Legal basis: your consent, given by
+          pressing play (Art. 6(1)(a) GDPR). If you do not press the button, no data goes to Spotify.
+        </p>
+      )
+    }
 
     <h2>7. Your rights</h2>
     <p>Under the GDPR you have the right to:</p>

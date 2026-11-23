@@ -1331,6 +1331,9 @@ body.at-contact .sidebar {
   opacity: 0;
   pointer-events: none;
 }
+/* The panel's inner block re-enables clicks, so it must be switched off too, or the invisible
+   panel swallows clicks on the last screen (it sat on top of "Scroll to top"). */
+body.at-contact .sidebar * { pointer-events: none; }
 .role { margin: 10px 0 0; font-size: 13px; }
 .role-sub { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
 .side-nav { display: grid; gap: 7px; margin: 14px 0; }
@@ -1540,6 +1543,62 @@ body[data-page="case"]::before { display: none; }
   cursor: pointer;
 }
 .sound-toggle[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.track {
+  position: fixed;
+  left: 112px;
+  bottom: 10px;
+  z-index: 37;
+}
+.track-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(23, 23, 26, 0.82);
+  color: var(--light);
+  border: 1px solid var(--line);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 5px 9px 5px 6px;
+  cursor: pointer;
+}
+.track-chip:hover { border-color: var(--light); }
+.track-chip[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.track-disc {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--accent) 0 24%, #17171a 25% 32%, transparent 33%),
+    repeating-radial-gradient(circle, #0d0d0f 0 1px, #3a3a3f 1px 2px);
+}
+.track-chip[aria-pressed="true"] .track-disc { animation: track-spin 2.2s linear infinite; }
+@keyframes track-spin { to { transform: rotate(360deg); } }
+.track-state { color: var(--muted); padding-left: 8px; border-left: 1px solid var(--line); }
+.track-chip[aria-pressed="true"] .track-state { color: var(--accent); }
+.track-dock {
+  position: absolute;
+  left: -76px;
+  bottom: calc(100% + 10px);
+  width: 300px;
+  max-width: calc(100vw - 48px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+.track.is-open .track-dock,
+.track:hover .track-dock {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.track-frame:empty { display: none; }
+.track-frame iframe { display: block; border: 0; border-radius: 12px; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5); }
+.reduce .track-chip[aria-pressed="true"] .track-disc { animation: none; }
 .copy-btn { border: 1px solid var(--line); padding: 10px 12px; }
 .todo { color: var(--accent); }
 .star { margin-top: 72px; border-top: 1px solid var(--line); }
@@ -1930,6 +1989,8 @@ html.reduce .is-glitch::after { animation: none; text-shadow: none; }
   .contact-card h2 { font-size: 52px; }
   .pre-scale i:nth-child(even) { display: none; }
   .site-foot { padding: 20px 18px 84px; }
+  .track { left: 14px; bottom: 14px; }
+  .track-dock { left: 0; width: calc(100vw - 28px); max-width: 340px; }
   #contact.sheet { padding: 0; height: auto; overflow: hidden; }
   .wall-scene { height: auto; min-height: 100vh; padding: 0 18px 150px; }
   .wall-plane { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }

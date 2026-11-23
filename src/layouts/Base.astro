@@ -207,11 +207,15 @@ preRows.forEach((row, r) => {
     <div id="smooth-wrapper">
       <div id="smooth-content">
         <slot />
-        <footer class="site-foot">
-          <span>© 2026 Digvijay Rathore</span>
-          <a href="/impressum">Impressum</a>
-          <a href="/privacy">Privacy</a>
-        </footer>
+        {
+          page !== "home" && (
+            <footer class="site-foot">
+              <span>© 2026 Digvijay Rathore</span>
+              <a href="/impressum">Impressum</a>
+              <a href="/privacy">Privacy</a>
+            </footer>
+          )
+        }
       </div>
     </div>
     <script>
