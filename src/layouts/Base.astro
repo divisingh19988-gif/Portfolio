@@ -114,8 +114,21 @@ preRows.forEach((row, r) => {
         var root = document.documentElement;
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) root.classList.add("reduce");
         if (window.matchMedia("(max-width: 860px)").matches) root.classList.add("is-mobile");
+        // The opening screen stays hidden until the display fonts are in, so the fallback font never
+        // paints and then jumps. The loader covers it anyway. A timer shows it regardless after 5 s.
+        var ready = function () { root.classList.add("fonts-ready"); };
+        var timer = setTimeout(ready, 5000);
+        if (document.fonts && document.fonts.load) {
+          Promise.all([
+            document.fonts.load("400 1em Anton"),
+            document.fonts.load("500 1em Satoshi"),
+            document.fonts.load("700 1em Satoshi"),
+            document.fonts.load("1em Marker"),
+          ]).then(function () { clearTimeout(timer); ready(); }, ready);
+        } else ready();
       })();
     </script>
+    <noscript><style>.hero-stage, .topbar { visibility: visible !important; }</style></noscript>
     <script is:inline>
       // Cookieless analytics. Loads only on the live domain (or with ?ph_test=1 for a local check).
       // No cookies, no browser storage, no session recordings.

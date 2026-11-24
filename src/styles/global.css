@@ -422,6 +422,8 @@ body[data-page="case"] .ink-bg { opacity: 0; }
   flex-direction: column;
   position: relative;
 }
+html:not(.fonts-ready) body[data-page="home"] .hero-stage,
+html:not(.fonts-ready) body[data-page="home"] .topbar { visibility: hidden; }
 .hero-stage {
   margin-top: auto;
   padding: 0 28px 28px 52px;
