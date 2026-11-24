@@ -1,6 +1,8 @@
 ---
 title: "Leadbot"
 hook: "Buyer intent, scored, with 772 tests behind the feed."
+seoTitle: "Buyer-Intent Chrome Extension: Leadbot"
+seoDescription: "Leadbot pulls buyer-intent posts, scores them against the ICP and lands them in one feed. 70+ meetings booked for a client, 772 automated tests."
 role: "Founder's Associate, Cloud Studios"
 dates: "May 2026 to Nov 2026"
 tools:

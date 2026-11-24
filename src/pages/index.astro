@@ -26,7 +26,7 @@ const wallTiles = Array.from({ length: WALL_COLS * WALL_ROWS }, (_, i) => {
 const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
 ---
 
-<Base title={`${site.name} | ${site.role}`} page="home">
+<Base title={`${site.name} | ${site.role} in Berlin`} page="home">
   <div slot="fixed">
     <aside class="sidebar" aria-label="Identity">
       <div class="side-name-slot">
@@ -190,10 +190,12 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
         <div class="portrait-home">
           <div class="fly-portrait">
             <img
-              src="/portrait/digvijay.png"
-              alt="Digvijay Rathore"
-              width="900"
-              height="1100"
+              src="/portrait/digvijay.webp"
+              alt="Digvijay Rathore, GTM engineer in Berlin"
+              width="410"
+              height="406"
+              fetchpriority="high"
+              decoding="async"
             />
           </div>
         </div>
@@ -287,7 +289,7 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
                     <source data-src={entry.data.cardLoop || entry.data.loop} type="video/mp4" />
                   </video>
                 ) : (
-                  <img src={entry.data.thumbnail} alt="" width="1400" height="900" draggable="false" />
+                  <img src={entry.data.thumbnail} alt={`${entry.data.title} project preview`} width="1400" height="900" draggable="false" />
                 )}
                 <i></i>
                 <i></i>
@@ -364,7 +366,7 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
       {
         playbooks.map((item) => (
           <button class="play-card" type="button" data-playbook={item.image} data-hook={item.hook} data-title={item.title}>
-            <img src={item.image} alt="" width={item.width} height={item.height} loading="lazy" style={item.pos ? `object-position: ${item.pos}` : undefined} />
+            <img src={item.image} alt={`Playbook frame: ${item.title}`} width={item.width} height={item.height} loading="lazy" style={item.pos ? `object-position: ${item.pos}` : undefined} />
             <span>
               <strong>{item.title}</strong>
               <em>{item.hook}</em>

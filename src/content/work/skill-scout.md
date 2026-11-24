@@ -1,6 +1,8 @@
 ---
 title: "skill-scout"
 hook: "A skill does not enter the workflow until another agent has argued with it."
+seoTitle: "Multi-Agent Guard for Claude Skills"
+seoDescription: "skill-scout vets every Claude skill before it runs and guards each tool call: 282 skills tracked, 25 blocked at the gate, 350+ automated tests."
 role: "Side project"
 dates: "Jul 2026 to Aug 2026"
 tools:

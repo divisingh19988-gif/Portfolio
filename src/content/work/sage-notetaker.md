@@ -1,6 +1,8 @@
 ---
 title: "Sage Notetaker"
 hook: "A notetaker that keeps the meeting after everyone leaves."
+seoTitle: "AI Meeting Notetaker Built in 9 Days"
+seoDescription: "Sage is an AI meeting notetaker built at Cloud Studios in 9 days across 122 commits: searchable notes, action items and answers with sources."
 role: "Founder's Associate, Cloud Studios"
 dates: "Jun 2026 to Jul 2026"
 tools:

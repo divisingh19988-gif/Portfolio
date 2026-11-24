@@ -1,6 +1,8 @@
 ---
 title: "GetMOW GTM CRM"
 hook: "Every lead, one engine. An Attio-style CRM where agents do the research and a human makes the call."
+seoTitle: "Agent-Run GTM CRM for Outbound"
+seoDescription: "An Attio-style GTM CRM where AI agents discover, qualify and package every lead and a human makes the call. Built by Digvijay Rathore for GetMOW."
 role: "Co-Founder (Product Development and Head of Growth)"
 dates: "Aug 2026 to Nov 2026"
 tools:

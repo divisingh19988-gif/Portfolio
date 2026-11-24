@@ -1,6 +1,8 @@
 ---
 title: "Grok Bot"
 hook: "One person. Sixteen agents."
+seoTitle: "Team of 16 AI Agents for GTM"
+seoDescription: "One person, 16 specialised AI agents on Grok Bot: lead sourcing, LinkedIn outreach and email logging, with a human approving every send."
 role: "Side project"
 dates: ""
 tools:

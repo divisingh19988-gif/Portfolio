@@ -1,0 +1,27 @@
+# Digvijay Rathore
+
+> Digvijay Rathore is an AI-native GTM engineer based in Berlin. He builds outbound engines, AI agent teams and SEO and GEO systems that book demos and get B2B SaaS brands named in AI answers. This site is his portfolio: ten case studies, most with a short walkthrough video.
+
+## About
+- Name: Digvijay Rathore (also Digvijay Singh Rathore, "Diggi")
+- Role: GTM engineer. Co-founded GetMOW, a GEO agency for B2B SaaS. Previously Founder's Office at Cloud Studios, a Berlin app studio.
+- Location: Berlin, Germany
+- Education: MBA, Gisma University of Applied Sciences (Berlin)
+- Skills: outbound automation (Clay, Smartlead, FullEnrich), SEO and generative engine optimization, AI agents built with Claude Code, HubSpot and Attio-style CRMs, cold email deliverability
+- Contact: book a call at https://cal.com/digvijay-rathore-84nil7/15min or use the contact section at https://digvijay.online/#contact
+- Legal notice: https://digvijay.online/impressum/
+
+## Case studies
+- [GetMOW Agentic Loop](https://digvijay.online/work/getmow-agentic-loop/): a team of 7 specialised AI agents doing an SEO team's work to get B2B SaaS brands named in AI answers
+- [GetMOW Outbound Engine](https://digvijay.online/work/getmow-outbound-engine/): multichannel outbound with 18,000+ signal-based leads, a 7%+ positive reply rate and 7 demos in 6 weeks
+- [GetMOW GTM CRM](https://digvijay.online/work/getmow-gtm-crm/): an Attio-style CRM where agents research every lead and a human makes the call
+- [Intel Hub](https://digvijay.online/work/intel-hub/): four competitive intelligence pipelines and a weekly Claude brief
+- [Workshop](https://digvijay.online/work/workshop/): on-brand content for 7 channels for under 50 euros a month in API costs
+- [Leadbot](https://digvijay.online/work/leadbot/): a buyer-intent Chrome extension and lead feed, 70+ meetings booked for a client
+- [Sage Notetaker](https://digvijay.online/work/sage-notetaker/): an AI meeting notetaker built in 9 days
+- [skill-scout](https://digvijay.online/work/skill-scout/): a multi-agent guard that vets Claude skills before they run
+- [d-strange](https://digvijay.online/work/d-strange/): open-source decision skills for AI agents
+- [Grok Bot](https://digvijay.online/work/grok-bot/): one person running a team of 16 AI agents
+
+## Optional
+- [Privacy policy](https://digvijay.online/privacy/)

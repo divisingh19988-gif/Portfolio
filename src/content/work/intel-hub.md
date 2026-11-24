@@ -1,6 +1,8 @@
 ---
 title: "Intel Hub"
 hook: "Four pipelines. One weekly brief. One in-house app."
+seoTitle: "Competitive Intel Hub with AI Agents"
+seoDescription: "A competitive intelligence dashboard built at Cloud Studios: four pipelines (Meta Ad Library, SEO, Reddit, AI visibility) and a weekly Claude brief."
 role: "Founder's Associate, Cloud Studios"
 dates: "May 2026 to Nov 2026"
 tools:

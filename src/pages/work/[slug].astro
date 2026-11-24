@@ -32,11 +32,39 @@ const heroStill = !data.explainer && !heroDemo ? stills[0] : undefined;
 const moreDemos = heroDemo ? demos.slice(1) : demos;
 const moreStills = heroStill ? stills.slice(1) : stills;
 
+const siteUrl = "https://digvijay.online";
+const pageTitle = `${data.seoTitle ?? data.title} | ${site.name}`;
+const pageDescription = data.seoDescription ?? data.hook;
+const caseLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": data.link && data.link.includes("github.com") ? "SoftwareSourceCode" : "CreativeWork",
+    name: data.title,
+    headline: data.seoTitle ?? data.title,
+    description: pageDescription,
+    url: `${siteUrl}/work/${entry.id}/`,
+    image: `${siteUrl}${data.thumbnail}`,
+    inLanguage: "en",
+    author: { "@id": `${siteUrl}/#person` },
+    creator: { "@id": `${siteUrl}/#person` },
+    keywords: data.tools.join(", "),
+    ...(data.link && data.link.includes("github.com") ? { codeRepository: data.link } : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Digvijay Rathore", item: `${siteUrl}/` },
+      { "@type": "ListItem", position: 2, name: data.title, item: `${siteUrl}/work/${entry.id}/` },
+    ],
+  },
+];
+
 const situation = data.situation || data.problem;
 const actions = data.action.length > 0 ? data.action : data.built ? [data.built] : [];
 ---
 
-<Base title={`${data.title} | ${site.name}`} description={data.hook} page="case">
+<Base title={pageTitle} description={pageDescription} page="case" jsonLd={caseLd}>
   <article class="case" data-screen="CASE">
     <a class="back" href="/#works">← Index</a>
     <header class="case-head">

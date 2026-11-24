@@ -1,6 +1,8 @@
 ---
 title: "GetMOW Agentic Loop"
 hook: "ChatGPT names your competitor. I built the system that changes the answer."
+seoTitle: "GEO Agent System: GetMOW Agentic Loop"
+seoDescription: "As co-founder I built GetMOW's Agentic Loop: 7 AI agents doing an SEO team's work to get B2B SaaS brands named in ChatGPT and Perplexity answers."
 role: "Co-Founder (Product Development and Head of Growth)"
 dates: "Aug 2026 to Nov 2026"
 tools:

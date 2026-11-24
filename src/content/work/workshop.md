@@ -1,6 +1,8 @@
 ---
 title: "Workshop"
 hook: "Seven channels. One on-brand content machine. About 40% less cost per creative."
+seoTitle: "AI Content System for 7 Channels"
+seoDescription: "Workshop turns market intel into on-brand content for 7 channels: under €50 a month in API costs, about 40% lower AI spend per creative."
 role: "Founder's Associate, Cloud Studios"
 dates: "May 2026 to Nov 2026"
 tools:

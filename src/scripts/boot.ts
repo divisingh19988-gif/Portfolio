@@ -343,11 +343,14 @@ async function runPreloader() {
   const shell = document.querySelector<HTMLElement>("[data-preloader]");
   const num = document.querySelector<HTMLElement>("[data-count]");
   const bar = document.querySelector<HTMLElement>("[data-pre-bar]");
-  armHeroVideo();
+  const phone = document.documentElement.classList.contains("is-mobile");
+  // Phones start the background video only after the loader, so it does not fight the portrait for bandwidth.
+  if (!phone) armHeroVideo();
   if (!shell || !num) return;
   const stopFlip = flipPolaroids(shell);
   scrambleName(shell);
-  const images = [...shell.querySelectorAll("img")];
+  // Only the first three polaroids show before the count ends. The rest load in the background.
+  const images = [...shell.querySelectorAll("img")].slice(0, 3);
   let loaded = 0;
   const total = images.length + 2;
   const bump = () => {
@@ -362,8 +365,9 @@ async function runPreloader() {
   });
   document.fonts.ready.then(bump).catch(bump);
   const video = document.querySelector<HTMLVideoElement>("#ink-video");
-  let videoReady = !video || video.readyState >= 3;
-  if (video && !videoReady) {
+  let videoReady = phone || !video || video.readyState >= 3;
+  if (phone) bump();
+  else if (video && !videoReady) {
     const mark = () => {
       videoReady = true;
       bump();
@@ -377,8 +381,8 @@ async function runPreloader() {
     const tick = () => {
       const elapsed = performance.now() - started;
       // The count runs a fixed three seconds. If assets are still loading it holds at 99, for at most three more.
-      const limit = reduce ? 200 : 3000;
-      const ready = reduce || (loaded >= total && videoReady) || elapsed > limit + 3000;
+      const limit = reduce ? 200 : phone ? 2000 : 3000;
+      const ready = reduce || (loaded >= total && videoReady) || elapsed > limit + (phone ? 1500 : 3000);
       const shown = Math.min(ready ? 1 : 0.99, elapsed / limit);
       num.textContent = String(Math.round(shown * 100)).padStart(3, "0");
       if (bar) bar.style.left = `${shown * 100}%`;

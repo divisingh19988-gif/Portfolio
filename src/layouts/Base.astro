@@ -6,8 +6,9 @@ interface Props {
   title: string;
   description?: string;
   page?: "home" | "case";
+  jsonLd?: object[];
 }
-const { title, description = site.description, page = "case" } = Astro.props;
+const { title, description = site.description, page = "case", jsonLd = [] } = Astro.props;
 // Link previews need full addresses, so the banner and page URL are built on the live domain.
 const siteUrl = "https://digvijay.online";
 const pageUrl = new URL(Astro.url.pathname, siteUrl).href;
@@ -18,12 +19,13 @@ const personLd = {
   "@type": "ProfilePage",
   mainEntity: {
     "@type": "Person",
+    "@id": `${siteUrl}/#person`,
     name: "Digvijay Rathore",
     alternateName: ["Digvijay Singh Rathore", "Diggi"],
     jobTitle: "GTM Engineer",
     description: site.description,
     url: `${siteUrl}/`,
-    image: `${siteUrl}/portrait/digvijay.png`,
+    image: `${siteUrl}/portrait/digvijay.webp`,
     email: site.email,
     address: { "@type": "PostalAddress", addressLocality: "Berlin", addressCountry: "DE" },
     sameAs: [site.linkedin, site.github],
@@ -32,6 +34,8 @@ const personLd = {
       "Outbound automation",
       "SEO",
       "Generative engine optimization",
+      "Answer engine optimization",
+      "Cold email deliverability",
       "AI agents",
       "Clay",
       "HubSpot",
@@ -41,6 +45,17 @@ const personLd = {
       { "@type": "CollegeOrUniversity", name: "Christ University" },
     ],
   },
+};
+
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
+  name: "Digvijay Rathore",
+  alternateName: ["Digvijay Rathore | GTM Engineer in Berlin", "digvijay.online"],
+  url: `${siteUrl}/`,
+  inLanguage: "en",
+  publisher: { "@id": `${siteUrl}/#person` },
 };
 
 // Loader line, one span per letter so the stylesheet can type it out in order.
@@ -70,6 +85,9 @@ preRows.forEach((row, r) => {
     <meta name="theme-color" content="#17171a" />
     <link rel="canonical" href={pageUrl} />
     {page === "home" && <script type="application/ld+json" set:html={JSON.stringify(personLd)} />}
+    {page === "home" && <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />}
+    {jsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
+    {page === "home" && <link rel="preload" as="image" href="/portrait/digvijay.webp" type="image/webp" fetchpriority="high" />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Digvijay Rathore" />
     <meta property="og:url" content={pageUrl} />
@@ -166,8 +184,7 @@ preRows.forEach((row, r) => {
         class="ink-video"
         muted
         playsinline
-        autoplay
-        preload="auto"
+        preload="none"
         poster="/hero/berlin-hero-poster-lit.jpg"
         aria-hidden="true"
       >
@@ -187,11 +204,11 @@ preRows.forEach((row, r) => {
             <img src="/loader/card-1.jpg" alt="" width="420" height="462" />
             <img src="/loader/card-2.jpg" alt="" width="420" height="462" />
             <img src="/loader/card-3.jpg" alt="" width="420" height="462" />
-            <img src="/loader/card-4.jpg" alt="" width="420" height="462" />
-            <img src="/loader/card-5.jpg" alt="" width="420" height="462" />
-            <img src="/loader/card-6.jpg" alt="" width="420" height="462" />
-            <img src="/loader/card-7.jpg" alt="" width="420" height="462" />
-            <img src="/loader/card-9.jpg" alt="" width="420" height="462" />
+            <img src="/loader/card-4.jpg" alt="" width="420" height="462" fetchpriority="low" />
+            <img src="/loader/card-5.jpg" alt="" width="420" height="462" fetchpriority="low" />
+            <img src="/loader/card-6.jpg" alt="" width="420" height="462" fetchpriority="low" />
+            <img src="/loader/card-7.jpg" alt="" width="420" height="462" fetchpriority="low" />
+            <img src="/loader/card-9.jpg" alt="" width="420" height="462" fetchpriority="low" />
           </div>
           <p class="pre-line" role="img" aria-label="I make my own luck" set:html={preLineHtml} />
           <p class="preloader-num" data-count>000</p>

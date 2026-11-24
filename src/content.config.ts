@@ -6,6 +6,8 @@ const work = defineCollection({
   schema: z.object({
     title: z.string(),
     hook: z.string(),
+    seoTitle: z.string().optional(),
+    seoDescription: z.string().optional(),
     role: z.string(),
     dates: z.string(),
     tools: z.array(z.string()),
