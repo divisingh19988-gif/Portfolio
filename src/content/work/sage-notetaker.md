@@ -34,7 +34,6 @@ metrics:
   - label: "Commits"
     value: "122"
 thumbnail: /work/sage-notetaker/sage.jpg
-cardLoop: /work/sage-notetaker/explainer-loop.mp4
 explainer: /work/sage-notetaker/explainer.mp4
 explainerPoster: /work/sage-notetaker/explainer-poster.jpg
 explainerSilent: true

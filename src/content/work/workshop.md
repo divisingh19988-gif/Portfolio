@@ -39,7 +39,6 @@ metrics:
   - label: "Cost per creative"
     value: "about 40% lower"
 thumbnail: /work/workshop/workshop.jpg
-cardLoop: /work/workshop/explainer-loop.mp4
 order: 5
 featured: true
 anonymous: false

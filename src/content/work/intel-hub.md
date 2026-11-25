@@ -30,7 +30,6 @@ metrics:
   - label: "Pipelines"
     value: "4"
 thumbnail: /work/intel-hub/hub.jpg
-cardLoop: /work/intel-hub/explainer-loop.mp4
 order: 4
 featured: true
 anonymous: false

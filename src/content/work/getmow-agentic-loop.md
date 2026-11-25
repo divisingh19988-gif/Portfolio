@@ -32,9 +32,6 @@ results:
 next: ""
 metrics: []
 thumbnail: /work/getmow-agentic-loop/poster-1.jpg
-loop: /work/getmow-agentic-loop/loop-1.mp4
-loopWebm: /work/getmow-agentic-loop/loop-1.webm
-cardLoop: /work/getmow-agentic-loop/explainer-loop.mp4
 explainer: /work/getmow-agentic-loop/explainer.mp4
 explainerPoster: /work/getmow-agentic-loop/explainer-poster.webp
 explainerCaption: "Buyer asks. Competitors get named. Then the work. Then you are the name."

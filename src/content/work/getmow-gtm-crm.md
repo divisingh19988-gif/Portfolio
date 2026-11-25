@@ -37,7 +37,6 @@ metrics:
   - label: "Demos"
     value: "7 in 6 weeks"
 thumbnail: /work/getmow-gtm-crm/crm.jpg
-cardLoop: /work/getmow-gtm-crm/explainer-loop.mp4
 order: 3
 featured: true
 anonymous: false

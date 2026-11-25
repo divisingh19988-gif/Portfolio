@@ -35,7 +35,6 @@ metrics:
   - label: "Automated tests"
     value: "772"
 thumbnail: /work/leadbot/leadbot.jpg
-cardLoop: /work/leadbot/explainer-loop.mp4
 order: 6
 featured: true
 anonymous: false
