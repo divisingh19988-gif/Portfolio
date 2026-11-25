@@ -804,7 +804,29 @@ html.reduce .brush path { stroke-dashoffset: 0; }
   object-fit: cover;
   background: var(--shot) center / cover no-repeat;
 }
-.gcard-visual > i { opacity: 0; pointer-events: none; }
+/* Text-only card: the project name in the display face, then one red line, like the section heading. */
+.gcard-visual {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: calc(var(--gw) * 0.09) calc(var(--gw) * 0.08) calc(var(--gw) * 0.08);
+  background: #121214;
+  border: 1px solid rgba(236, 231, 220, 0.14);
+  box-sizing: border-box;
+}
+.gcard-name,
+.gcard-line {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: calc(var(--gw) * 0.125);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+.gcard-name { color: var(--light); }
+.gcard-line { color: var(--accent); margin-top: 0.12em; }
+.gcard:hover .gcard-visual { border-color: var(--accent); }
 .gcard-visual i:nth-child(2),
 .gcard-visual i:nth-child(3) { opacity: 0; }
 .gcard:hover .gcard-visual,

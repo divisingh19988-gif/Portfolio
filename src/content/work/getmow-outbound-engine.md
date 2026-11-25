@@ -3,6 +3,7 @@ title: "GetMOW Outbound Engine"
 hook: "18,000+ leads. One pipeline."
 seoTitle: "AI Outbound Engine: 18,000+ Leads"
 seoDescription: "A multichannel outbound engine on Clay, Smartlead and custom agents: 18,000+ leads and a 7%+ positive reply rate."
+cardLine: "Multichannel outreach"
 role: "Co-Founder, GetMOW"
 dates: "Aug 2026 to Nov 2026"
 tools:

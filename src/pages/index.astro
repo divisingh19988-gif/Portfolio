@@ -281,24 +281,14 @@ const cordLoops = Array.from({ length: 41 }, (_, i) => -106 + i * 9);
       <div class="curve" aria-label="Project gallery">
         {
           gallery.map((entry) => (
-            <a class="gcard" href={`/work/${entry.id}`} draggable="false" style={`--shot:url(${entry.data.thumbnail})`}>
+            <a class="gcard" href={`/work/${entry.id}`} draggable="false">
               <span class="gcard-visual">
-                {entry.data.cardLoop || entry.data.loop ? (
-                  <video class="gcard-video" draggable="false" data-lazy muted loop playsinline preload="none" poster={entry.data.thumbnail}>
-                    {!entry.data.cardLoop && entry.data.loopWebm && <source data-src={entry.data.loopWebm} type="video/webm" />}
-                    <source data-src={entry.data.cardLoop || entry.data.loop} type="video/mp4" />
-                  </video>
-                ) : (
-                  <img src={entry.data.thumbnail} alt={`${entry.data.title} project preview`} width="1400" height="900" draggable="false" />
-                )}
-                <i></i>
-                <i></i>
-                <i></i>
+                <span class="gcard-name">{entry.data.title}</span>
+                {entry.data.cardLine && <span class="gcard-line">{entry.data.cardLine}</span>}
               </span>
               <span class="gcard-tag">
                 <b></b>
-                <span class="gcard-tag-name">{entry.data.title}</span>
-                <span>/ {String(entry.data.order).padStart(2, "0")}</span>
+                <span>Case / {String(entry.data.order).padStart(2, "0")}</span>
               </span>
             </a>
           ))

@@ -8,6 +8,7 @@ const work = defineCollection({
     hook: z.string(),
     seoTitle: z.string().optional(),
     seoDescription: z.string().optional(),
+    cardLine: z.string().default(""),
     role: z.string(),
     dates: z.string(),
     tools: z.array(z.string()),

@@ -3,6 +3,7 @@ title: "d-strange"
 hook: "Stop burning tokens on trial and error. v0.1.0 is public."
 seoTitle: "Open-Source Decision Skills for AI Agents"
 seoDescription: "d-strange is an open-source skill suite that makes an AI agent name the path, say what is impossible and stress-test it before building. v0.1.0 is public."
+cardLine: "Decision skills"
 role: "Open source"
 dates: "v0.1.0"
 tools:
