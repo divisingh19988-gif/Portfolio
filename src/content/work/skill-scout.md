@@ -26,7 +26,7 @@ action:
   - "Added an approval step: every request to install, ignore or delete a skill comes to me on Slack, and nothing changes until I approve it."
   - "Built a console that scores the whole setup out of 100 and shows installed, pending, blocked and dead-weight skills, plus trending repos and history."
 result: "Running on my own Mac every day. The console tracks 282 installed skills, has blocked 25 at the gate and flagged 236 as dead weight, backed by 350+ automated tests. It regularly stops my own agents mid-task, which is exactly what it is for."
-next: "Implement this infrastructure in my next role."
+next: ""
 metrics:
   - label: "Skills tracked"
     value: "282"

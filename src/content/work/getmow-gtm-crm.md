@@ -3,7 +3,7 @@ title: "GetMOW GTM CRM"
 hook: "Every lead, one engine. An Attio-style CRM where agents do the research and a human makes the call."
 seoTitle: "Agent-Run GTM CRM for Outbound"
 seoDescription: "An Attio-style GTM CRM where AI agents discover, qualify and package every lead and a human makes the call. Built by Digvijay Rathore for GetMOW."
-role: "Co-Founder (Product Development and Head of Growth)"
+role: "Co-Founder"
 dates: "Aug 2026 to Nov 2026"
 tools:
   - "Next.js"
@@ -28,7 +28,7 @@ action:
   - "Kept a human on every send. Email and LinkedIn drafts for each touch are written by the machine and sent by a person, so the CRM has copy and mark as sent, and no send button."
   - "Made the home screen answer one question: what needs me today? Calls, borderline verdicts, drafts to send, and reports on pipeline health, agent runs and spend against a monthly budget."
 result: "One engine behind GetMOW's outbound: 18,000+ signal-based leads, 400 hyper-personalised cold emails a day, a 7%+ positive reply rate and 7 demos in 6 weeks."
-next: "Implement this infrastructure in my next role."
+next: ""
 metrics:
   - label: "Leads"
     value: "18,000+"
@@ -38,10 +38,6 @@ metrics:
     value: "7 in 6 weeks"
 thumbnail: /work/getmow-gtm-crm/crm.jpg
 cardLoop: /work/getmow-gtm-crm/explainer-loop.mp4
-explainer: /work/getmow-gtm-crm/explainer.mp4
-explainerPoster: /work/getmow-gtm-crm/explainer-poster.jpg
-explainerSilent: true
-explainerCaption: "Walkthrough recorded on sample data."
 order: 3
 featured: true
 anonymous: false

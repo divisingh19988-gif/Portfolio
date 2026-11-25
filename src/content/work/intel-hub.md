@@ -25,15 +25,12 @@ action:
   - "Backlinks and third-party outreach for citations and link building, with on-page and off-page SEO all done on autopilot. Tracked the top-ranking pages of competitors."
   - "Tracked keywords on Reddit, Facebook, Quora and 5+ community channels for buyers, with a direct link in the dashboard to join the thread and improve visibility."
 result: "A multi-tenant Intel Dashboard that picks every highly relevant piece of information off the internet and saves it in the company brain built in Obsidian, so the AI models can use this intel to create creatives for Meta and content for SEO, Reddit and Facebook groups."
-next: "Implement this infrastructure in my next role."
+next: ""
 metrics:
   - label: "Pipelines"
     value: "4"
 thumbnail: /work/intel-hub/hub.jpg
 cardLoop: /work/intel-hub/explainer-loop.mp4
-explainer: /work/intel-hub/explainer.mp4
-explainerPoster: /work/intel-hub/explainer-poster.jpg
-explainerSilent: true
 order: 4
 featured: true
 anonymous: false

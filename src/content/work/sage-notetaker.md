@@ -27,7 +27,7 @@ action:
   - "Added Ask Sage, which answers a question across every meeting on file and cites its sources, plus full-text search, talk-time analytics and shareable timestamped moments."
   - "Added AI Skills that turn a meeting into a follow-up email or a standup update, webhooks for Zapier, Make and n8n, and a public REST API."
 result: "A working Fireflies-style notetaker for a 2-person team, built in 9 days across 122 commits. Every meeting ends as searchable notes, action items and answers with sources."
-next: "Implement this infrastructure in my next role."
+next: ""
 metrics:
   - label: "Built in"
     value: "9 days"
