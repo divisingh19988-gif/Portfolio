@@ -198,10 +198,10 @@ export const story = [
     when: "2026",
     title: "GetMOW",
     role: "Co-Founder · Berlin",
-    copy: "Then my own venture: a GEO agency that gets B2B SaaS brands named in AI answers. I built the Agentic Loop, the product behind it, and a multichannel outbound engine that booked 7 demos in 6 weeks on autopilot.",
-    stat: "7 AI agents",
-    statLabel: "Doing the work of an SEO team",
-    href: "/work/getmow-agentic-loop",
+    copy: "Then my own venture: a GEO agency that gets B2B SaaS brands named in AI answers. I built internal AI tooling for GEO tracking and research, and a multichannel outbound engine.",
+    stat: "Co-Founder",
+    statLabel: "Product and growth",
+    href: "/work/geo-research-toolkit",
     hrefLabel: "Open the case",
   },
 ];
@@ -221,7 +221,7 @@ export const brandStats = [
 ];
 
 export const contactTiles = [
-  { slug: "getmow-agentic-loop", image: "/work/getmow-agentic-loop/poster-1.jpg", title: "Agentic Loop", left: "4%", top: "6%", rot: -6 },
+  { slug: "geo-research-toolkit", image: "/work/geo-research-toolkit/poster-1.jpg", title: "GEO Research Toolkit", left: "4%", top: "6%", rot: -6 },
   { slug: "getmow-outbound-engine", image: "/work/getmow-outbound-engine/gtm-workflow.jpg", title: "Outbound engine", left: "38%", top: "3%", rot: 3 },
   { slug: "intel-hub", image: "/work/intel-hub/hub.jpg", title: "Intel hub", left: "72%", top: "7%", rot: 5 },
   { slug: "workshop", image: "/work/workshop/poster-1.jpg", title: "Workshop", left: "76%", top: "40%", rot: -4 },

@@ -2,6 +2,11 @@
   "framework": "astro",
   "redirects": [
     {
+      "source": "/work/getmow-agentic-loop/?",
+      "destination": "/work/geo-research-toolkit",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "www.digvijay.online" }],
       "destination": "https://digvijay.online/$1",

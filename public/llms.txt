@@ -1,6 +1,6 @@
 # Digvijay Rathore
 
-> Digvijay Rathore is an AI-native GTM engineer based in Berlin. He builds outbound engines, AI agent teams and SEO and GEO systems that book demos and get B2B SaaS brands named in AI answers. This site is his portfolio: ten case studies, most with a short walkthrough video.
+> Digvijay Rathore is an AI-native GTM engineer based in Berlin. He builds outbound engines, AI agent teams and SEO and GEO systems that help B2B SaaS brands get named in AI answers. This site is his portfolio: ten case studies, most with a short walkthrough video.
 
 ## About
 - Name: Digvijay Rathore (also Digvijay Singh Rathore, "Diggi")
@@ -12,7 +12,7 @@
 - Legal notice: https://digvijay.online/impressum/
 
 ## Case studies
-- [GetMOW Agentic Loop](https://digvijay.online/work/getmow-agentic-loop/): a team of 7 specialised AI agents doing an SEO team's work to get B2B SaaS brands named in AI answers
+- [GEO Research Toolkit](https://digvijay.online/work/geo-research-toolkit/): internal AI tooling for GEO tracking and research, to help B2B SaaS brands get named in AI answers
 - [GetMOW Outbound Engine](https://digvijay.online/work/getmow-outbound-engine/): multichannel outbound with 18,000+ signal-based leads and a 7%+ positive reply rate
 - [GetMOW GTM CRM](https://digvijay.online/work/getmow-gtm-crm/): an Attio-style CRM where agents research every lead and a human makes the call
 - [Intel Hub](https://digvijay.online/work/intel-hub/): four competitive intelligence pipelines and a weekly Claude brief

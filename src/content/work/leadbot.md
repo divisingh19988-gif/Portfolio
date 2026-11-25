@@ -24,7 +24,7 @@ situation: "Buyer conversations were starting on LinkedIn, X, Reddit, Facebook a
 task: "Catch buyer-intent posts where they happen, score them against the ICP, and deliver them as one feed a seller can work from."
 action:
   - "Built Lead Studio, also called Leadbot, on Next.js and Supabase."
-  - "Built and shipped my own Chrome extension, Leadbot by Getmow.ai, which pulls buyer-intent posts from the communities."
+  - "Built and shipped my own Chrome extension, Leadbot, which pulls buyer-intent posts from the communities."
   - "Scored each post against the ICP and landed it in one feed."
   - "Sent each match to Slack in real time, with a link to the thread."
   - "Wrote 772 automated tests across the extension and the feed."
