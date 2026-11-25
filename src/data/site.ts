@@ -72,14 +72,6 @@ export const playbooks: { title: string; hook: string; image: string; width: num
     height: 1422,
   },
   {
-    title: "Organic clicks, 28 days",
-    hook: "10.1K clicks against 7.22K in the previous 28 days. Search Console.",
-    image: "/playbooks/gsc-clicks.jpg",
-    width: 948,
-    height: 386,
-    pos: "left center",
-  },
-  {
     title: "30 days of AEO",
     hook: "If we had 30 days to improve a German B2B company's AEO, we would start here.",
     image: "/playbooks/aeo-30-days-whiteboard.jpg",

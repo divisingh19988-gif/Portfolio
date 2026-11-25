@@ -29,7 +29,6 @@ results:
   - "A product that is my greatest build to date."
   - "7%+ positive reply rate, 0.2% bounce rate and less than 0.1% spam rate."
   - "A pool of 18,000+ signal-based leads in our ICP, the reason reply rates sit above the industry standard."
-  - "1,000+ new LinkedIn followers in 3 months of posting."
 next: ""
 metrics: []
 thumbnail: /work/getmow-agentic-loop/poster-1.jpg

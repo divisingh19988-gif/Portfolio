@@ -5,7 +5,7 @@ seoTitle: "Buyer-Intent Chrome Extension: Leadbot"
 seoDescription: "Leadbot pulls buyer-intent posts, scores them against the ICP and lands them in one feed. 1,000+ leads generated, 772 automated tests."
 cardLine: "Buyer-intent feed"
 role: "Founder's Associate, Cloud Studios"
-dates: "May 2026 to Nov 2026"
+dates: "Jun 2026 to Nov 2026"
 tools:
   - "Chrome extension"
   - "Claude API"
