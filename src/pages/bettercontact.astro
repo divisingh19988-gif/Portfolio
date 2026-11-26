@@ -1,0 +1,837 @@
+---
+import Base from "../layouts/Base.astro";
+import {
+  BONUS_AUDIT,
+  CLOSING_CTA,
+  FLOW_MODES,
+  GROK_BOT_FLEET,
+  HEARD_FROM_ROMAN,
+  HERO,
+  LIVE_WORKFLOWS,
+  PROJECTS,
+  PROJECTS_LEAD,
+  PROOF_STATS,
+  QUESTIONS,
+  SEO_TEAM,
+} from "../data/bettercontact";
+
+const num = (value: number) => String(value + 1).padStart(2, "0");
+const chips = (stack: string) => stack.split(" · ").map((part) => part.trim()).filter(Boolean);
+---
+
+<Base
+  title="For Roman Hipp · BetterContact | Digvijay Rathore"
+  description={HERO.subheadline}
+  page="pitch"
+  robots="noindex, nofollow"
+>
+  <article class="bc" data-screen="PITCH">
+    <header class="bc-top">
+      <p><i class="bc-sq" aria-hidden="true"></i> Digvijay Rathore</p>
+      <p>BetterContact</p>
+    </header>
+
+    <header class="bc-hero">
+      <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> {HERO.eyebrow}</p>
+      <h1>{HERO.headline}</h1>
+      <p class="bc-lead">{HERO.subheadline}</p>
+      <div class="bc-actions">
+        <a class="bc-btn" href={HERO.primaryCta.href} target="_blank" rel="noreferrer">{HERO.primaryCta.label}</a>
+        <a class="bc-btn bc-btn-ghost" href={HERO.secondaryCta.anchor}>{HERO.secondaryCta.label}</a>
+      </div>
+    </header>
+
+    <section class="bc-sec" data-heard aria-labelledby="heard-title">
+      <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> 01 · I did my homework</p>
+      <h2 id="heard-title">Things you said that shaped this page</h2>
+      <div class="bc-quotes">
+        {
+          HEARD_FROM_ROMAN.map((item, index) => (
+            <button
+              type="button"
+              class="bc-quote"
+              data-heard-card
+              data-build={item.build}
+              data-where={item.where}
+              aria-pressed={index === 0 ? "true" : "false"}
+              aria-controls="heard-build"
+            >
+              <span class="bc-idx">{num(index)}</span>
+              <span class="bc-said">{item.said}</span>
+              <span class="bc-where">{item.where}</span>
+            </button>
+          ))
+        }
+      </div>
+      <div class="bc-note" id="heard-build" data-heard-panel aria-live="polite">
+        <p class="bc-note-kicker">Build note · <span data-heard-where>{HEARD_FROM_ROMAN[0].where}</span></p>
+        <p data-heard-note>{HEARD_FROM_ROMAN[0].build}</p>
+      </div>
+    </section>
+
+    <section class="bc-sec" id="build" data-projects aria-labelledby="build-title">
+      <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> 02 · First 90 days</p>
+      <h2 id="build-title">Click a project</h2>
+      <p class="bc-intro">{PROJECTS_LEAD}</p>
+      <div class="bc-tabs" role="tablist" aria-label="First 90 days projects" data-project-tabs>
+        {
+          PROJECTS.map((project, index) => (
+            <button
+              type="button"
+              class="bc-tab"
+              id={`tab-${project.key}`}
+              role="tab"
+              data-project-tab
+              aria-selected={index === 0 ? "true" : "false"}
+              aria-controls={`panel-${project.key}`}
+            >
+              <span>{project.label}</span>
+              {project.pick && <span class="bc-badge">★ {project.pick}</span>}
+            </button>
+          ))
+        }
+      </div>
+      {
+        PROJECTS.map((project, index) => (
+          <div
+            class="bc-panel"
+            id={`panel-${project.key}`}
+            role="tabpanel"
+            data-project-panel
+            aria-labelledby={`tab-${project.key}`}
+            hidden={index !== 0}
+          >
+            <div class="bc-trio">
+              <article class="bc-card">
+                <h3>The leak</h3>
+                <p>{project.leak}</p>
+              </article>
+              <article class="bc-card">
+                <h3>How I'd build it</h3>
+                <p>{project.build}</p>
+              </article>
+              <article class="bc-card">
+                <h3>Stack & metric</h3>
+                <div class="bc-chips">
+                  {chips(project.stack).map((chip) => <span>{chip}</span>)}
+                </div>
+                <p class="bc-metric"><span>Metric</span>{project.metric}</p>
+              </article>
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="bc-sec" data-flow aria-labelledby="flow-title">
+      <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> 03 · The live workflow</p>
+      <h2 id="flow-title">Two engines. Flip between them.</h2>
+      <div class="bc-modes" role="tablist" aria-label="Workflow engines" data-flow-modes>
+        {
+          FLOW_MODES.map((mode, index) => (
+            <button
+              type="button"
+              class="bc-tab"
+              id={`flow-tab-${mode.key}`}
+              role="tab"
+              data-flow-mode
+              aria-selected={index === 0 ? "true" : "false"}
+              aria-controls={`flow-${mode.key}`}
+            >
+              <span>{mode.label}</span>
+            </button>
+          ))
+        }
+      </div>
+      {
+        FLOW_MODES.map((mode, modeIndex) => {
+          const flow = LIVE_WORKFLOWS[mode.key];
+          return (
+            <div
+              class="bc-flow"
+              id={`flow-${mode.key}`}
+              role="tabpanel"
+              data-flow-panel
+              aria-labelledby={`flow-tab-${mode.key}`}
+              hidden={modeIndex !== 0}
+            >
+              <ol class="bc-steps">
+                {flow.steps.map((step, index) => (
+                  <li>
+                    <span>{num(index)}</span>
+                    <p>{step}</p>
+                  </li>
+                ))}
+              </ol>
+              <div class="bc-pills" role="tablist" aria-label={`${mode.label} scenarios`} data-pills>
+                {flow.pills.map((pill, index) => (
+                  <button
+                    type="button"
+                    class="bc-pill"
+                    role="tab"
+                    data-pill
+                    data-scene={pill.preview}
+                    aria-selected={index === 0 ? "true" : "false"}
+                  >
+                    {pill.label}
+                  </button>
+                ))}
+              </div>
+              <div class="bc-preview" data-preview-box>
+                <span>Preview</span>
+                <p data-preview>{flow.pills[0].preview}</p>
+              </div>
+            </div>
+          );
+        })
+      }
+    </section>
+
+    <section class="bc-sec" aria-labelledby="fleet-title">
+      <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> 04 · {GROK_BOT_FLEET.eyebrow}</p>
+      <h2 id="fleet-title">{GROK_BOT_FLEET.headline}</h2>
+      <p class="bc-intro">{GROK_BOT_FLEET.lead}</p>
+      <div class="bc-picks" data-picks>
+        {
+          GROK_BOT_FLEET.agents.map((agent, index) => (
+            <button type="button" class="bc-pick" data-pick aria-pressed={index === 0 ? "true" : "false"}>
+              <span class="bc-idx">{num(index)}</span>
+              <span class="bc-pick-name">{agent.name}</span>
+              <span class="bc-pick-does">{agent.does}</span>
+              <span class="bc-pick-plugs">{agent.plugs}</span>
+            </button>
+          ))
+        }
+      </div>
+      <p class="bc-footnote">{GROK_BOT_FLEET.footnote}</p>
+    </section>
+
+    <section class="bc-sec" aria-labelledby="proof-title">
+      <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> 05 · Proof</p>
+      <h2 id="proof-title">An outbound engine I built from zero</h2>
+      <div class="bc-stats">
+        {PROOF_STATS.map((stat) => (
+          <p class="bc-stat"><b>{stat.v}</b><span>{stat.l}</span></p>
+        ))}
+      </div>
+
+      <h3 class="bc-subhead">Bonus: 5-minute audit of bettercontact.rocks ({BONUS_AUDIT.date})</h3>
+      <div class="bc-audit">
+        {BONUS_AUDIT.cards.map((card) => (
+          <article class="bc-card">
+            <h4>{card.k}</h4>
+            <p>{card.t}</p>
+          </article>
+        ))}
+      </div>
+
+      <div class="bc-seo">
+        <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> {SEO_TEAM.eyebrow}</p>
+        <h3 class="bc-subhead" id="seo-title">{SEO_TEAM.headline}</h3>
+        <p class="bc-intro">{SEO_TEAM.lead}</p>
+        <div class="bc-picks bc-picks-seo" data-picks>
+          {
+            SEO_TEAM.stages.map((stage, index) => (
+              <button type="button" class="bc-pick" data-pick aria-pressed={index === 0 ? "true" : "false"}>
+                <span class="bc-idx">{num(index)}</span>
+                <span class="bc-pick-name">{stage.name}</span>
+                <span class="bc-pick-does">{stage.does}</span>
+                <span class="bc-pick-plugs">{stage.plugs}</span>
+              </button>
+            ))
+          }
+        </div>
+        <a class="bc-btn" href={SEO_TEAM.cta.href} target="_blank" rel="noreferrer">{SEO_TEAM.cta.label}</a>
+      </div>
+    </section>
+
+    <section class="bc-sec" aria-labelledby="ask-title">
+      <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> 06 · Over coffee</p>
+      <h2 id="ask-title">6 questions I'd ask you</h2>
+      <div class="bc-qs">
+        {QUESTIONS.map((question, index) => (
+          <article class="bc-q">
+            <span>{num(index)}</span>
+            <p>{question}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="bc-close" aria-labelledby="close-title">
+      <p class="bc-eye"><i class="bc-sq" aria-hidden="true"></i> {CLOSING_CTA.eyebrow}</p>
+      <h2 id="close-title">{CLOSING_CTA.headline}</h2>
+      <p>{CLOSING_CTA.body}</p>
+      <a class="bc-btn" href={CLOSING_CTA.button.href} target="_blank" rel="noreferrer">{CLOSING_CTA.button.label}</a>
+    </section>
+
+    <footer class="bc-foot">
+      <a href="https://digvijay.online/">digvijay.online</a>
+      <a href="https://www.linkedin.com/in/digvijay-udawat" target="_blank" rel="noreferrer">LinkedIn</a>
+    </footer>
+  </article>
+
+  <noscript>
+    <style>
+      [data-project-panel][hidden],
+      [data-flow-panel][hidden] { display: block !important; }
+    </style>
+  </noscript>
+
+  <script>
+    const reduceMotion = document.documentElement.classList.contains("reduce");
+
+    function mark(buttons: HTMLButtonElement[], index: number, selected: boolean) {
+      buttons.forEach((button, i) => {
+        const on = i === index;
+        button.setAttribute(selected ? "aria-selected" : "aria-pressed", on ? "true" : "false");
+      });
+    }
+
+    function pulse(node: Element | null) {
+      if (!node || reduceMotion) return;
+      node.classList.remove("is-swap");
+      void (node as HTMLElement).offsetWidth;
+      node.classList.add("is-swap");
+    }
+
+    function bindKeys(list: HTMLElement) {
+      list.addEventListener("keydown", (event) => {
+        if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
+        const tabs = [...list.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+        if (!tabs.length) return;
+        const current = Math.max(
+          0,
+          tabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true"),
+        );
+        let next = current;
+        if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
+        if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
+        if (event.key === "Home") next = 0;
+        if (event.key === "End") next = tabs.length - 1;
+        event.preventDefault();
+        tabs[next].focus();
+        tabs[next].click();
+      });
+    }
+
+    const heard = document.querySelector<HTMLElement>("[data-heard]");
+    if (heard) {
+      const cards = [...heard.querySelectorAll<HTMLButtonElement>("[data-heard-card]")];
+      const note = heard.querySelector<HTMLElement>("[data-heard-note]");
+      const where = heard.querySelector<HTMLElement>("[data-heard-where]");
+      cards.forEach((card, index) => {
+        card.addEventListener("click", () => {
+          mark(cards, index, false);
+          if (note) note.textContent = card.dataset.build || "";
+          if (where) where.textContent = card.dataset.where || "";
+          pulse(heard.querySelector("[data-heard-panel]"));
+        });
+      });
+    }
+
+    const projects = document.querySelector<HTMLElement>("[data-projects]");
+    if (projects) {
+      const tabs = [...projects.querySelectorAll<HTMLButtonElement>("[data-project-tab]")];
+      const panels = [...projects.querySelectorAll<HTMLElement>("[data-project-panel]")];
+      const list = projects.querySelector<HTMLElement>("[data-project-tabs]");
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => {
+          mark(tabs, index, true);
+          panels.forEach((panel, i) => {
+            panel.hidden = i !== index;
+          });
+          pulse(panels[index]);
+        });
+      });
+      if (list) bindKeys(list);
+    }
+
+    const flow = document.querySelector<HTMLElement>("[data-flow]");
+    if (flow) {
+      const modes = [...flow.querySelectorAll<HTMLButtonElement>("[data-flow-mode]")];
+      const panels = [...flow.querySelectorAll<HTMLElement>("[data-flow-panel]")];
+      const list = flow.querySelector<HTMLElement>("[data-flow-modes]");
+      modes.forEach((mode, index) => {
+        mode.addEventListener("click", () => {
+          mark(modes, index, true);
+          panels.forEach((panel, i) => {
+            panel.hidden = i !== index;
+          });
+          pulse(panels[index]);
+        });
+      });
+      if (list) bindKeys(list);
+
+      panels.forEach((panel) => {
+        const pills = [...panel.querySelectorAll<HTMLButtonElement>("[data-pill]")];
+        const preview = panel.querySelector<HTMLElement>("[data-preview]");
+        const pillList = panel.querySelector<HTMLElement>("[data-pills]");
+        pills.forEach((pill, index) => {
+          pill.addEventListener("click", () => {
+            mark(pills, index, true);
+            if (preview) preview.textContent = pill.dataset.scene || "";
+            pulse(panel.querySelector("[data-preview-box]"));
+          });
+        });
+        if (pillList) bindKeys(pillList);
+      });
+    }
+
+    document.querySelectorAll<HTMLElement>("[data-picks]").forEach((group) => {
+      const cards = [...group.querySelectorAll<HTMLButtonElement>("[data-pick]")];
+      cards.forEach((card, index) => {
+        card.addEventListener("click", () => mark(cards, index, false));
+      });
+    });
+  </script>
+</Base>
+
+<style>
+  .bc {
+    position: relative;
+    z-index: 2;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 36px clamp(28px, 5vw, 64px) 80px;
+    color: var(--light);
+  }
+  .bc-sq {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    display: block;
+    flex: none;
+  }
+  .bc-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .bc-top p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+  .bc-eye {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .bc h1,
+  .bc h2,
+  .bc-subhead {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 0.92;
+    text-wrap: balance;
+    color: var(--light);
+  }
+  .bc h1 {
+    margin: 14px 0 18px;
+    max-width: 13em;
+    font-size: clamp(42px, 6.1vw, 86px);
+  }
+  .bc h2 {
+    margin: 10px 0 0;
+    max-width: 14em;
+    font-size: clamp(36px, 4.8vw, 68px);
+  }
+  .bc p { text-wrap: pretty; }
+  .bc-lead,
+  .bc-intro,
+  .bc-close p,
+  .bc-footnote {
+    max-width: 62ch;
+    font-size: clamp(17px, 1.45vw, 20px);
+    line-height: 1.55;
+  }
+  .bc-lead { margin: 0; color: var(--muted); }
+  .bc-intro { margin: 18px 0 0; color: var(--light); }
+  .bc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .bc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 16px;
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .bc-btn:hover { filter: brightness(1.08); }
+  .bc-btn-ghost {
+    background: transparent;
+    color: var(--light);
+    border-color: var(--line);
+  }
+  .bc-btn-ghost:hover { border-color: var(--light); filter: none; }
+  .bc-hero { margin-top: 7vh; }
+  .bc-sec { margin-top: 88px; }
+  #build { scroll-margin-top: 32px; }
+
+  .bc-quotes,
+  .bc-picks,
+  .bc-audit,
+  .bc-qs,
+  .bc-trio {
+    display: grid;
+    gap: 12px;
+  }
+  .bc-quotes { margin-top: 22px; }
+  .bc-quote,
+  .bc-pick,
+  .bc-tab,
+  .bc-pill {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    background: #141416;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+  }
+  .bc-quote,
+  .bc-pick {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 18px 16px 16px;
+  }
+  .bc-quote:hover,
+  .bc-pick:hover,
+  .bc-pill:hover,
+  .bc-tab:hover { border-color: rgba(236, 231, 220, 0.5); }
+  .bc-quote[aria-pressed="true"],
+  .bc-pick[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: rgba(255, 50, 29, 0.08);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+  .bc-idx {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+  }
+  .bc-said,
+  .bc-pick-does,
+  .bc-card p,
+  .bc-q p,
+  .bc-preview p,
+  .bc-steps p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .bc-where,
+  .bc-pick-plugs,
+  .bc-note-kicker,
+  .bc-badge,
+  .bc-preview > span,
+  .bc-metric span,
+  .bc-card h3,
+  .bc-card h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .bc-where { color: var(--muted); margin-top: auto; }
+  .bc-note {
+    margin-top: 12px;
+    padding: 22px 20px 24px;
+    border: 1px solid var(--accent);
+    background: rgba(255, 50, 29, 0.06);
+  }
+  .bc-note-kicker { margin: 0; color: var(--accent); }
+  .bc-note p:last-child {
+    margin: 12px 0 0;
+    max-width: 22em;
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(26px, 3vw, 40px);
+    line-height: 0.96;
+    text-wrap: balance;
+  }
+
+  .bc-tabs,
+  .bc-modes {
+    display: grid;
+    gap: 8px;
+    margin-top: 22px;
+  }
+  .bc-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 14px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: #141416;
+  }
+  .bc-tab[aria-selected="true"] {
+    background: var(--light);
+    color: var(--bg);
+    border-color: var(--light);
+  }
+  .bc-tab[aria-selected="true"]:hover { border-color: var(--light); }
+  .bc-badge { color: var(--accent); }
+  .bc-panel { margin-top: 12px; }
+  .bc-panel[hidden] { display: none; }
+  .bc-card {
+    padding: 18px 16px 20px;
+    border: 1px solid var(--line);
+    background: #141416;
+  }
+  .bc-card h3,
+  .bc-card h4 {
+    margin: 0 0 10px;
+    color: var(--accent);
+  }
+  .bc-card p,
+  .bc-steps p,
+  .bc-q p,
+  .bc-preview p { margin: 0; }
+  .bc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bc-chips span {
+    border: 1px solid var(--line);
+    padding: 6px 8px;
+    font-size: 12px;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+  }
+  .bc-metric {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .bc-metric span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--faint);
+  }
+
+  .bc-flow { margin-top: 8px; }
+  .bc-flow[hidden] { display: none; }
+  .bc-steps {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+  }
+  .bc-steps li {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 8px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .bc-steps span {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  .bc-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .bc-pill {
+    width: auto;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .bc-pill[aria-selected="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .bc-pill[aria-selected="true"]:hover { border-color: var(--accent); }
+  .bc-preview {
+    margin-top: 12px;
+    padding: 18px 18px 20px;
+    min-height: 9.25rem;
+    border: 1px solid var(--line);
+    background: rgba(236, 231, 220, 0.03);
+  }
+  .bc-preview > span { color: var(--accent); }
+  .bc-preview p { margin-top: 10px; max-width: 68ch; }
+
+  .bc-picks { margin-top: 22px; }
+  .bc-pick-name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(26px, 2.5vw, 36px);
+    line-height: 0.95;
+  }
+  .bc-pick-does { color: var(--muted); }
+  .bc-pick[aria-pressed="true"] .bc-pick-does { color: var(--light); }
+  .bc-pick-plugs { color: var(--muted); letter-spacing: 0.03em; text-transform: none; font-weight: 500; }
+  .bc-pick[aria-pressed="true"] .bc-pick-plugs { color: var(--accent); }
+  .bc-footnote {
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .bc-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    margin-top: 22px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .bc-stat {
+    min-width: 0;
+    margin: 0;
+    padding: 18px 16px 16px;
+    background: #141416;
+  }
+  .bc-stat b {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 2.6vw, 44px);
+    line-height: 0.9;
+    color: var(--accent);
+  }
+  .bc-stat span {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .bc-subhead {
+    margin: 48px 0 0;
+    max-width: 18em;
+    font-size: clamp(28px, 3.2vw, 44px);
+  }
+  .bc-audit { margin-top: 18px; }
+  .bc-seo { margin-top: 48px; }
+  .bc-seo .bc-btn { margin-top: 18px; }
+  .bc-qs { margin-top: 22px; }
+  .bc-q {
+    padding: 18px 16px 20px;
+    border: 1px solid var(--line);
+    background: #141416;
+  }
+  .bc-q span {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .bc-q p { margin-top: 10px; }
+
+  .bc-close {
+    margin-top: 88px;
+    padding: 32px 28px 28px;
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(255, 50, 29, 0.12), transparent 46%),
+      #141416;
+  }
+  .bc-close h2 { max-width: 10em; }
+  .bc-close p {
+    margin: 16px 0 0;
+    color: var(--muted);
+  }
+  .bc-close .bc-btn { margin-top: 22px; }
+  .bc-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin-top: 28px;
+    padding-top: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .bc-foot a { color: var(--muted); text-decoration: none; }
+  .bc-foot a:hover { color: var(--light); }
+
+  .is-swap { animation: bc-rise 0.32s ease; }
+  @keyframes bc-rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  :global(html.reduce) .is-swap { animation: none; }
+
+  @media (min-width: 720px) {
+    .bc-quotes,
+    .bc-qs,
+    .bc-picks-seo { grid-template-columns: 1fr 1fr; }
+    .bc-modes { grid-template-columns: 1fr 1fr; }
+    .bc-audit { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (min-width: 860px) {
+    .bc-tabs { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .bc-picks { grid-template-columns: 1fr 1fr; }
+    .bc-picks .bc-pick:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .bc-trio { grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.28fr) minmax(0, 0.95fr); }
+    .bc-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .bc-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .bc-steps li {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 14px 14px 16px;
+      border: 1px solid var(--line);
+      background: #141416;
+    }
+  }
+  @media (max-width: 859px) {
+    .bc { padding: 22px 22px 56px 28px; }
+    .bc-hero { margin-top: 36px; }
+    .bc-sec,
+    .bc-close { margin-top: 64px; }
+    .bc-actions { flex-direction: column; align-items: stretch; }
+    .bc-stats .bc-stat:last-child { grid-column: 1 / -1; }
+    .bc-close { padding: 26px 18px 22px; }
+  }
+</style>

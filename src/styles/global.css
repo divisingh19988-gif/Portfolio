@@ -144,11 +144,15 @@ html.ink-circle .ink-bg { opacity: 1; }
   pointer-events: none;
   opacity: 0.4;
 }
-body[data-page="case"] .dust { display: none; }
+body[data-page="case"] .dust,
+body[data-page="pitch"] .dust { display: none; }
 html.no-gl #ink,
 body[data-page="case"] #ink,
-body[data-page="case"] .ink-cover { display: none; }
-body[data-page="case"] .ink-bg { opacity: 0; }
+body[data-page="pitch"] #ink,
+body[data-page="case"] .ink-cover,
+body[data-page="pitch"] .ink-cover { display: none; }
+body[data-page="case"] .ink-bg,
+body[data-page="pitch"] .ink-bg { opacity: 0; }
 
 .mark {
   position: fixed;
@@ -1534,7 +1538,8 @@ body.poster-open .sidebar { opacity: 0; pointer-events: none; }
 
 /* Project pages: same dark sheet as the home page. No grain layer here,
    it sits above the screenshots and videos and makes sharp files look noisy. */
-body[data-page="case"]::before { display: none; }
+body[data-page="case"]::before,
+body[data-page="pitch"]::before { display: none; }
 .case {
   position: relative;
   z-index: 2;

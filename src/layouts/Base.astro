@@ -5,10 +5,11 @@ import { site, words } from "../data/site";
 interface Props {
   title: string;
   description?: string;
-  page?: "home" | "case";
+  page?: "home" | "case" | "pitch";
   jsonLd?: object[];
+  robots?: string;
 }
-const { title, description = site.description, page = "case", jsonLd = [] } = Astro.props;
+const { title, description = site.description, page = "case", jsonLd = [], robots } = Astro.props;
 // Link previews need full addresses, so the banner and page URL are built on the live domain.
 const siteUrl = "https://digvijay.online";
 const pageUrl = new URL(Astro.url.pathname, siteUrl).href;
@@ -82,6 +83,7 @@ preRows.forEach((row, r) => {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    {robots && <meta name="robots" content={robots} />}
     <meta name="theme-color" content="#17171a" />
     <link rel="canonical" href={pageUrl} />
     {page === "home" && <script type="application/ld+json" set:html={JSON.stringify(personLd)} />}
@@ -237,7 +239,7 @@ preRows.forEach((row, r) => {
       <div id="smooth-content">
         <slot />
         {
-          page !== "home" && (
+          page !== "home" && page !== "pitch" && (
             <footer class="site-foot">
               <span>© 2026 Digvijay Rathore</span>
               <a href="/impressum">Impressum</a>

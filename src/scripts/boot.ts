@@ -475,7 +475,10 @@ startLabelCycle();
 startGlitch();
 runPreloader().then(async () => {
   playHeroEntrance();
-  armHeroVideo();
+  // The pitch page is a long letter. Skip the home-page video and scroll effects so they
+  // do not look for hero nodes that are not there.
+  const pitch = document.body.dataset.page === "pitch";
+  if (!pitch) armHeroVideo();
   if (!reduce && document.body.dataset.page === "home") startFluid();
-  startExperience();
+  if (!pitch) startExperience();
 });
